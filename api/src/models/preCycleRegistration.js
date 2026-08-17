@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 const eventRegistrationSchema = new mongoose.Schema({
-    registrarId: {type: string, required: true, unique: true },
+    registrarId: {type: String, required: true, unique: true },
     apellido: { type: String, required: true },
     nombre: { type: String, required: true },
     edad: { type: Number, required: true },
     fechaNacimiento: { type: Date, required: true },
     dni: { type: String, required: true },
-    tituloSecundario: { type: Enumerator, required: true },
+    tituloSecundario: { type: String, enum:["si","no","incompleto"],default: "no", required: true },
     telefono: { type: String, required: true },
     email: { type: String, required: true },
     concurreAlgunaIglesias: { type: Boolean, required: true },

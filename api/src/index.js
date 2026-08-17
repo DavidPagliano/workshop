@@ -1,18 +1,21 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const config = require('./config/config');
+const cycle = require('./routes/preCycle.route');
+const event = require('./routes/event.route');
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
-
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use('/workshop/cycle', cycle);
+app.use('/workshop/event', event);
 
+app.get('/', (req, res) => res.send('Welcome to the API'));
 
-app.get("/", (res, req) => res.send("Welcome to the APi"));
-//escucha al servidor
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// Start server
+app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
