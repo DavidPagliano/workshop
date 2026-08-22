@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const eventRegistrationSchema = new mongoose.Schema({
+const preCycleRegistrationSchema = new mongoose.Schema({
     registrarId: {type: String, required: true, unique: true },
     apellido: { type: String, required: true },
     nombre: { type: String, required: true },
@@ -17,4 +17,4 @@ const eventRegistrationSchema = new mongoose.Schema({
     versionKey: false,
 });
 
-module.exports = mongoose.model('EventRegistration', eventRegistrationSchema);
+module.exports = mongoose.model('preCycleRegistration', preCycleRegistrationSchema);

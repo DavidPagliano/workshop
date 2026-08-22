@@ -54,3 +54,19 @@ exports.deleteEventRegistration = async (req, res) => {
         res.status(500).json({ message: 'Error interno del servidor' });
     }
 }
+
+exports.markAttendance = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { seRegistro } = req.body;
+
+    if (typeof seRegistro !== 'boolean') {
+      return res.status(400).json({ message: 'El campo attended debe ser un booleano' });
+    }
+
+    const updated = await eventService.updateAttendance(id, seRegistro);
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};

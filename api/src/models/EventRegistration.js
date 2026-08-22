@@ -16,3 +16,5 @@ const eventRegistrationSchema = new mongoose.Schema({
     timestamps: true,
     versionKey: false,
 })
+
+module.exports = mongoose.model('EventRegistration', eventRegistrationSchema);

@@ -5,7 +5,8 @@ const {
     getAllEventRegistrations, 
     getEventRegistrationById, 
     updateEventRegistration, 
-    deleteEventRegistration } = require('../controllers/eventRegistration.controller');
+    deleteEventRegistration,
+    markAttendance } = require('../controllers/eventRegistration.controller');
 const validateRequest = require('../middlewares/validateRequest');
 const { eventSchema } = require('../schemas/registrationSchema');
 
@@ -15,5 +16,6 @@ router.get('/', getAllEventRegistrations);
 router.get('/:id', getEventRegistrationById);
 router.put('/:id', updateEventRegistration);
 router.delete('/:id', deleteEventRegistration);
+router.patch('/:id/registrado', markAttendance);
 
 module.exports = router;
