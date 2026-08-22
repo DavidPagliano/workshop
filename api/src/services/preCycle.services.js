@@ -1,28 +1,28 @@
-const coPreCycleRegistration = require('../models/PreCycleRegistration');
+const coPreCycleRegistration = require('../models/coPreCycleRegistration');
 
 exports.registerAspirant = async (data) => {
-  const existingAspirant = await PreCycleRegistration.findOne({ dni: data.dni });
+  const existingAspirant = await coPreCycleRegistration.findOne({ dni: data.dni });
   
   if (existingAspirant) {
     throw new Error('El aspirante ya tiene una pre-inscripción registrada');
   }
 
-  const newAspirant = new PreCycleRegistration(data);
+  const newAspirant = new coPreCycleRegistration(data);
   return await newAspirant.save();
 };
 
 exports.getAllAspirants = async () => {
-  return await PreCycleRegistration.find();
+  return await coPreCycleRegistration.find();
 };
 
 exports.getAspirantById = async (id) => {
-  return await PreCycleRegistration.findById(id);
+  return await coPreCycleRegistration.findById(id);
 };
 
 exports.updateAspirant = async (id, data) => {
-  return await PreCycleRegistration.findByIdAndUpdate(id, data, { new: true });
+  return await coPreCycleRegistration.findByIdAndUpdate(id, data, { new: true });
 };
 
 exports.deleteAspirant = async (id) => {
-  return await PreCycleRegistration.findByIdAndDelete(id);
+  return await coPreCycleRegistration.findByIdAndDelete(id);
 };

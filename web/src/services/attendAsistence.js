@@ -36,7 +36,7 @@ export const markAttendance = async (id, seRegistro) => {
   try {
     // Usamos PATCH porque solo modificaremos el flag de asistencia
     const response = await api.patch(`/workshop/event/${id}/registrado`, {
-      attended: seRegistro,
+       seRegistro: seRegistro,
     });
     return response.data;
   } catch (error) {

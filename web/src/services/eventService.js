@@ -2,7 +2,7 @@ import api from './api';
 
 export const registerToEvent = async (registrationData) => {
   try {
-    const response = await api.post('/events', registrationData);
+    const response = await api.post('/workshop/event', registrationData);
     return response.data;
   } catch (error) {
     // Extraemos el mensaje de error del backend (lanzado por Zod o el Servicio)

@@ -2,7 +2,7 @@ const EventRegistration = require('../models/EventRegistration');
 
 exports.registerParticipant = async (data) => {
   // Validación de negocio: Verificar si el DNI ya está registrado
-  const existingUser = await EventRegistration.findOne({ documentId: data.dni });
+  const existingUser = await EventRegistration.findOne({ dni: data.dni });
   
   if (existingUser) {
     throw new Error('El documento ya se encuentra registrado en el evento');
@@ -49,7 +49,7 @@ exports.getAllEventRegistrations = async (req, res) => {
     // Si mandan ?dni=123 desde el frontend, lo pasamos como filtro
     const filters = req.query.dni ? { dni: req.query.dni } : {};
     
-    const results = await eventService.getAllParticipants(filters);
+    const results = await getAllParticipants(filters);
     res.status(200).json(results);
   } catch (error) {
     res.status(500).json({ message: 'Error interno del servidor' });
