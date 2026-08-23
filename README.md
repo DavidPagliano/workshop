@@ -107,7 +107,7 @@ Vite mostrará en la terminal la URL de la aplicación, normalmente `http://loca
 ### API
 
 | Comando | Descripción |
-|---|---|
+| --- | --- |
 | `npm run dev` | Inicia el backend con Nodemon y reinicio automático. |
 | `npm start` | Inicia el archivo compilado configurado en `build/index.js`. |
 | `npm test` | Placeholder; todavía no hay pruebas automatizadas configuradas. |
@@ -115,7 +115,7 @@ Vite mostrará en la terminal la URL de la aplicación, normalmente `http://loca
 ### Web
 
 | Comando | Descripción |
-|---|---|
+| --- | --- |
 | `npm run dev` | Inicia Vite en modo desarrollo con HMR. |
 | `npm run build` | Genera la versión de producción en `web/dist`. |
 | `npm run preview` | Sirve localmente la build de producción. |
@@ -130,7 +130,7 @@ La API utiliza el prefijo `/workshop` y `registrarId` como identificador públic
 Base URL: `/workshop/event`
 
 | Método | Endpoint | Descripción |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/workshop/event` | Obtiene todas las inscripciones. |
 | `GET` | `/workshop/event?dni=12345678` | Busca inscripciones por DNI. |
 | `GET` | `/workshop/event/:registrarId` | Obtiene una inscripción específica. |
@@ -143,7 +143,7 @@ El cuerpo de `PATCH` debe tener esta forma:
 
 ```json
 {
-	"seRegistro": true
+ "seRegistro": true
 }
 ```
 
@@ -152,7 +152,7 @@ El cuerpo de `PATCH` debe tener esta forma:
 Base URL: `/workshop/cycle`
 
 | Método | Endpoint | Descripción |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/workshop/cycle` | Obtiene todas las pre-inscripciones. |
 | `GET` | `/workshop/cycle/:registrarId` | Obtiene una pre-inscripción específica. |
 | `POST` | `/workshop/cycle` | Crea una pre-inscripción. |
@@ -172,7 +172,7 @@ Base URL: `/workshop/cycle`
 ### Backend
 
 | Librería | Uso |
-|---|---|
+| --- | --- |
 | `express` | Servidor HTTP y definición de rutas REST. |
 | `mongoose` | Modelado de datos y conexión con MongoDB. |
 | `zod` | Validación de cuerpos de las solicitudes. |
@@ -186,7 +186,7 @@ Base URL: `/workshop/cycle`
 ### Frontend
 
 | Librería | Uso |
-|---|---|
+| --- | --- |
 | `react` | Construcción de la interfaz mediante componentes. |
 | `react-dom` | Renderizado de React en el navegador. |
 | `vite` | Servidor de desarrollo y empaquetado de producción. |
