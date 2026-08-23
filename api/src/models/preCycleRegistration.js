@@ -13,7 +13,7 @@ const preCycleRegistrationSchema = new mongoose.Schema({
     concurreAlgunaIglesias: { type: Boolean, required: true },
     cual: { type: String }
 },{
-    timestamps: true,
+    timestamps: { createdAt: 'creado', updatedAt: 'actualizado' },
     versionKey: false,
 });
 

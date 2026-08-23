@@ -19,9 +19,9 @@ exports.getAllAspirants = async (req, res) => {
   }
 };
 
-exports.getAspirantById = async (req, res) => {
+exports.getAspirantByRegistrarId = async (req, res) => {
   try {
-    const result = await cycleServices.getAspirantById(req.params.id);
+    const result = await cycleServices.getAspirantByRegistrarId(req.params.registrarId);
     if (!result) {
       return res.status(404).json({ message: 'Aspirante no encontrado' });
     }
@@ -33,7 +33,7 @@ exports.getAspirantById = async (req, res) => {
 
 exports.updateAspirant = async (req, res) => {
   try {
-    const result = await cycleServices.updateAspirant(req.params.id, req.body);
+    const result = await cycleServices.updateAspirant(req.params.registrarId, req.body);
     if (!result) {
       return res.status(404).json({ message: 'Aspirante no encontrado para actualizar' });
     }
@@ -46,7 +46,7 @@ exports.updateAspirant = async (req, res) => {
 
 exports.deleteAspirant = async (req, res) => {
   try {
-    const result = await cycleServices.deleteAspirant(req.params.id);
+    const result = await cycleServices.deleteAspirant(req.params.registrarId);
     if(!result) {
       return res.status(404).json({ message: 'Aspirante no encontrado para eliminar' });
     }

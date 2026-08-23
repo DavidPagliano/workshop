@@ -29,13 +29,13 @@ export const searchAttendeeByDni = async (dni) => {
 
 /**
  * Actualiza el estado de asistencia de un participante.
- * @param {string} id - El ID de MongoDB del registro.
+ * @param {string} registrarId - El identificador público del registro.
  * @param {boolean} seRegistro - true si está presente, false si está ausente.
  */
-export const markAttendance = async (id, seRegistro) => {
+export const markAttendance = async (registrarId, seRegistro) => {
   try {
     // Usamos PATCH porque solo modificaremos el flag de asistencia
-    const response = await api.patch(`/workshop/event/${id}/registrado`, {
+    const response = await api.patch(`/workshop/event/${registrarId}/registrado`, {
        seRegistro: seRegistro,
     });
     return response.data;

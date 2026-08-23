@@ -13,25 +13,25 @@ exports.registerParticipant = async (data) => {
 };
 
 exports.getAllParticipants = async (filters = {}) => {
-  return await EventRegistration.find(filters).sort({ createdAt: -1 });
+  return await EventRegistration.find(filters).sort({ creado: -1 });
 };
 
-exports.getParticipantById = async (id) => {
-  return await EventRegistration.findById(id);
+exports.getParticipantByRegistrarId = async (registrarId) => {
+  return await EventRegistration.findOne({ registrarId });
 };
 
-exports.updateParticipant = async (id, data) => {
-  return await EventRegistration.findByIdAndUpdate(id, data, { new: true });
+exports.updateParticipant = async (registrarId, data) => {
+  return await EventRegistration.findOneAndUpdate({ registrarId }, data, { new: true });
 };
 
-exports.deleteParticipant = async (id) => {
-  return await EventRegistration.findByIdAndDelete(id);
+exports.deleteParticipant = async (registrarId) => {
+  return await EventRegistration.findOneAndDelete({ registrarId });
 };
 
 // Marcar asistencia
-exports.updateAttendance = async (id, seRegistro) => {
-  const updatedRegistration = await EventRegistration.findByIdAndUpdate(
-    id,
+exports.updateAttendance = async (registrarId, seRegistro) => {
+  const updatedRegistration = await EventRegistration.findOneAndUpdate(
+    { registrarId },
     { seRegistro: seRegistro },
     { new: true }
   );
@@ -43,15 +43,3 @@ exports.updateAttendance = async (id, seRegistro) => {
   return updatedRegistration;
 };
 
-// Busqueda por DNI
-exports.getAllEventRegistrations = async (req, res) => {
-  try {
-    // Si mandan ?dni=123 desde el frontend, lo pasamos como filtro
-    const filters = req.query.dni ? { dni: req.query.dni } : {};
-    
-    const results = await getAllParticipants(filters);
-    res.status(200).json(results);
-  } catch (error) {
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-};

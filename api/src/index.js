@@ -46,9 +46,9 @@ app.get('/', (req, res) => {
         methods: {
           GET: 'Obtiene la lista de inscriptos. Acepta query param opcional ?dni=DNI para búsqueda.',
           POST: 'Crea una nueva inscripción. Requiere body JSON validado por Zod.',
-          PUT: 'Actualiza una inscripción completa por ID (/workshop/event/:id).',
-          PATCH: 'Actualiza solo el estado de asistencia (/workshop/event/:id/attendance). Requiere { seRegistro: true|false }.',
-          DELETE: 'Elimina un registro por ID (/workshop/event/:id).'
+          PUT: 'Actualiza una inscripción completa por registrarId (/workshop/event/:registrarId).',
+          PATCH: 'Actualiza solo el estado de asistencia (/workshop/event/:registrarId/registrado). Requiere { seRegistro: true|false }.',
+          DELETE: 'Elimina un registro por registrarId (/workshop/event/:registrarId).'
         }
       },
       preCycleRegistration: {
@@ -56,8 +56,8 @@ app.get('/', (req, res) => {
         methods: {
           GET: 'Obtiene la lista de pre-inscriptos al ciclo 2027.',
           POST: 'Crea una nueva pre-inscripción. Requiere body JSON validado por Zod.',
-          PUT: 'Actualiza una pre-inscripción completa por ID (/workshop/cycle/:id).',
-          DELETE: 'Elimina una pre-inscripción por ID (/workshop/cycle/:id).'
+          PUT: 'Actualiza una pre-inscripción completa por registrarId (/workshop/cycle/:registrarId).',
+          DELETE: 'Elimina una pre-inscripción por registrarId (/workshop/cycle/:registrarId).'
         }
       }
     }

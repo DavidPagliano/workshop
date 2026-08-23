@@ -4,7 +4,7 @@ const validateRequest = (schema) => {
       schema.parse(req.body);
       next();
     } catch (error) {
-      const errors = error.errors.map(err => ({
+      const errors = error.issues.map(err => ({
         field: err.path[0],
         message: err.message
       }));

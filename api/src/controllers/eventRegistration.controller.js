@@ -12,16 +12,17 @@ exports.createEventRegistration = async (req, res) => {
 
 exports.getAllEventRegistrations = async (req, res) => {
   try {
-    const results = await eventService.getAllParticipants();
+    const filters = req.query.dni ? { dni: req.query.dni } : {};
+    const results = await eventService.getAllParticipants(filters);
     res.status(200).json(results);
   } catch (error) {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
 
-exports.getEventRegistrationById = async (req, res) => {
+exports.getEventRegistrationByRegistrarId = async (req, res) => {
   try {
-    const result = await eventService.getParticipantById(req.params.id);
+    const result = await eventService.getParticipantByRegistrarId(req.params.registrarId);
     if (!result) {
       return res.status(404).json({ message: 'Registro no encontrado' });
     }
@@ -33,7 +34,7 @@ exports.getEventRegistrationById = async (req, res) => {
 
 exports.updateEventRegistration = async (req, res) => {
     try {
-    const result = await eventService.updateParticipant(req.params.id, req.body);
+    const result = await eventService.updateParticipant(req.params.registrarId, req.body);
         if (!result) {
             return res.status(404).json({ message: 'Registro no encontrado  para actualizar' });
         }
@@ -45,7 +46,7 @@ exports.updateEventRegistration = async (req, res) => {
 
 exports.deleteEventRegistration = async (req, res) => {
     try {
-        const result = await eventService.deleteParticipant(req.params.id);
+        const result = await eventService.deleteParticipant(req.params.registrarId);
         if (!result) {
             return res.status(404).json({ message: 'Registro no encontrado para eliminar' });
         }
@@ -57,14 +58,14 @@ exports.deleteEventRegistration = async (req, res) => {
 
 exports.markAttendance = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { registrarId } = req.params;
     const { seRegistro } = req.body;
 
     if (typeof seRegistro !== 'boolean') {
       return res.status(400).json({ message: 'El campo attended debe ser un booleano' });
     }
 
-    const updated = await eventService.updateAttendance(id, seRegistro);
+    const updated = await eventService.updateAttendance(registrarId, seRegistro);
     res.status(200).json(updated);
   } catch (error) {
     res.status(404).json({ message: error.message });

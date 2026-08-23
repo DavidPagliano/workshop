@@ -19,19 +19,19 @@ export const getEventRegistrations = async () => {
   }
 };
 
-export const updateEventRegistration = async (id, updatedData) => {
+export const updateEventRegistration = async (registrarId, updatedData) => {
   try {
-    // Apuntamos al endpoint dinámico: /events/:id
-    const response = await api.put(`/workshop/event/${id}`, updatedData);
+    // Apuntamos al endpoint dinámico usando registrarId.
+    const response = await api.put(`/workshop/event/${registrarId}`, updatedData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error al actualizar el registro' };
   }
 };
 
-export const deleteEventRegistration = async (id) => {
+export const deleteEventRegistration = async (registrarId) => {
   try {
-    const response = await api.delete(`/workshop/event/${id}`);
+    const response = await api.delete(`/workshop/event/${registrarId}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error al eliminar el registro' };

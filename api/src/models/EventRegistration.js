@@ -9,11 +9,9 @@ const eventRegistrationSchema = new mongoose.Schema({
     telefono: { type: String, required: true },
     temas: { type: String,enum:["AI", "Audio", "video","sin temas"], default: "sin temas", required: true },
     seRegistro: { type: Boolean, default: false },
-    creado: { type: Date, default: Date.now },
-    actualizado: { type: Date, default: Date.now },
 },
 {
-    timestamps: true,
+    timestamps: { createdAt: 'creado', updatedAt: 'actualizado' },
     versionKey: false,
 })
 

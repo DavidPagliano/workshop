@@ -21,9 +21,9 @@ export const getPreCycleRegistrations = async () => {
 };
 
 // Actualizar
-export const updatePreCycleRegistration = async (id, updatedData) => {
+export const updatePreCycleRegistration = async (registrarId, updatedData) => {
   try {
-    const response = await api.put(`/workshop/cycle/${id}`, updatedData);
+    const response = await api.put(`/workshop/cycle/${registrarId}`, updatedData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error al actualizar la pre-inscripción' };
@@ -31,9 +31,9 @@ export const updatePreCycleRegistration = async (id, updatedData) => {
 };
 
 // Eliminar
-export const deletePreCycleRegistration = async (id) => {
+export const deletePreCycleRegistration = async (registrarId) => {
   try {
-    const response = await api.delete(`/workshop/cycle/${id}`);
+    const response = await api.delete(`/workshop/cycle/${registrarId}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error al eliminar la pre-inscripción' };

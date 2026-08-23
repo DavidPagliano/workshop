@@ -1,4 +1,4 @@
-const coPreCycleRegistration = require('../models/coPreCycleRegistration');
+const coPreCycleRegistration = require('../models/preCycleRegistration');
 
 exports.registerAspirant = async (data) => {
   const existingAspirant = await coPreCycleRegistration.findOne({ dni: data.dni });
@@ -15,14 +15,14 @@ exports.getAllAspirants = async () => {
   return await coPreCycleRegistration.find();
 };
 
-exports.getAspirantById = async (id) => {
-  return await coPreCycleRegistration.findById(id);
+exports.getAspirantByRegistrarId = async (registrarId) => {
+  return await coPreCycleRegistration.findOne({ registrarId });
 };
 
-exports.updateAspirant = async (id, data) => {
-  return await coPreCycleRegistration.findByIdAndUpdate(id, data, { new: true });
+exports.updateAspirant = async (registrarId, data) => {
+  return await coPreCycleRegistration.findOneAndUpdate({ registrarId }, data, { new: true });
 };
 
-exports.deleteAspirant = async (id) => {
-  return await coPreCycleRegistration.findByIdAndDelete(id);
+exports.deleteAspirant = async (registrarId) => {
+  return await coPreCycleRegistration.findOneAndDelete({ registrarId });
 };
