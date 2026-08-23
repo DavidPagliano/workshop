@@ -7,9 +7,10 @@
   ],
   "license": "ISC",
   "author": "David Pagliano",
-  "type": "commonjs",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
