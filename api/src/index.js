@@ -32,8 +32,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/workshop/cycle', cycle);
 app.use('/workshop/event', event);
-connectDB();
-
 app.get('/', (req, res) => {
   res.status(200).json({
     api_name: 'Event Registration API',
@@ -65,4 +63,6 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
+connectDB().then(() => {
+  app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
+});

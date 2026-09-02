@@ -7,7 +7,6 @@ const eventSchema = z.object({
   email: z.string().email('Debe ser un correo válido'),
   dni: z.string().min(6, 'DNI/Pasaporte inválido'),
   telefono: z.string().min(8, 'Número de teléfono inválido').max(15, 'Número de teléfono inválido'),
-  registrarId: z.string().min(1, 'El registrarId es requerido'),
   temas: z.enum(['AI', 'Audio', 'video', 'sin temas']),
 });
 
@@ -20,13 +19,18 @@ const preCycleSchema = z.object({
   dni: z.string().min(6, 'DNI/Pasaporte inválido'),
   email: z.string().email('Debe ser un correo válido'),
   telefono: z.string().min(8, 'Número de teléfono inválido'),
-  registrarId: z.string().min(1, 'El registrarId es requerido'),
   tituloSecundario: z.enum(['si', 'no', 'incompleto']),
   concurreAlgunaIglesias: z.boolean(),
   cual: z.string().optional()
 });
 
+// Schemas parciales para PUT (todos los campos opcionales)
+const eventUpdateSchema = eventSchema.partial();
+const preCycleUpdateSchema = preCycleSchema.partial();
+
 module.exports = {
   eventSchema,
-  preCycleSchema
+  eventUpdateSchema,
+  preCycleSchema,
+  preCycleUpdateSchema
 };
