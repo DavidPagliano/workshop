@@ -1,9 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Api para gestionar el evento de workshop 2026 y preinscripcion a los ciclos lectivos para el TSM",
   "keywords": [
-    "[]"
+    "2026",
+    "workshop",
+    "preinscripcion",
+    "tsm"
   ],
   "license": "ISC",
   "author": "David Pagliano",
@@ -12,6 +15,10 @@
     "dev": "nodemon src/index.js",
     "start": "node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "url": "git+https://github.com/DavidPagliano/workshop.git",
+    "type": "git"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

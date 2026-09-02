@@ -12,7 +12,7 @@ exports.createEventRegistration = async (req, res) => {
 
 exports.getAllEventRegistrations = async (req, res) => {
   try {
-    const filters = req.query.dni ? { dni: req.query.dni } : {};
+    const filters = req.query.dni ? { dni: String(req.query.dni) } : {};
     const results = await eventService.getAllParticipants(filters);
     res.status(200).json(results);
   } catch (error) {
