@@ -4,14 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Importación de las páginas
 import HomePage from './pages/HomePage'; 
 import AsistenciaPage from './pages/registracion'; // Tu módulo de Mesa de Entrada / Asistencia
-
-// Componentes simulados
-const PreCycleRegistrationForm = () => (
-  <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>
-    <h2>Registro Pre-Ciclo (Simulado)</h2>
-    <p>Página de pre-inscripción al ciclo lectivo.</p>
-  </div>
-);
+import { CyclePreinscriptionPage } from './pages/inscripcion-tsm/CyclePreinscriptionPage';
 
 const App = () => {
   return (
@@ -24,8 +17,8 @@ const App = () => {
         <Route path="/registro" element={<AsistenciaPage />} />
         <Route path="/asistencia" element={<AsistenciaPage />} />
         
-        {/* Rutas adicionales */}
-        <Route path="/pre-ciclo" element={<PreCycleRegistrationForm />} />
+        {/* Pre-inscripción al ciclo */}
+        <Route path="/pre-ciclo" element={<CyclePreinscriptionPage />} />
         
         {/* Ruta 404 */}
         <Route 
