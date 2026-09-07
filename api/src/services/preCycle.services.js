@@ -1,8 +1,20 @@
 const coPreCycleRegistration = require('../models/preCycleRegistration');
 
+// Genera el próximo registrarId secuencial (pcr-001, pcr-002, ...)
+const generateRegistrarId = async () => {
+  const lastDoc = await coPreCycleRegistration.findOne().sort({ creado: -1 }).select('registrarId').lean();
+  if (!lastDoc || !lastDoc.registrarId) return 'pcr-001';
+  const num = parseInt(lastDoc.registrarId.split('-').pop(), 10);
+  const nextNum = isNaN(num) ? 1 : num + 1;
+  return `pcr-${String(nextNum).padStart(3, '0')}`;
+};
+
 exports.registerAspirant = async (data) => {
+  // Generar registrarId en el servidor
+  data.registrarId = await generateRegistrarId();
+
   const existingAspirant = await coPreCycleRegistration.findOne({ dni: data.dni });
-  
+
   if (existingAspirant) {
     throw new Error('El aspirante ya tiene una pre-inscripción registrada');
   }

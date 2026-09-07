@@ -1,6 +1,18 @@
 const EventRegistration = require('../models/EventRegistration');
 
+// Genera el próximo registrarId secuencial (w-001, w-002, ...)
+const generateRegistrarId = async () => {
+  const lastDoc = await EventRegistration.findOne().sort({ creado: -1 }).select('registrarId').lean();
+  if (!lastDoc || !lastDoc.registrarId) return 'w-001';
+  const num = parseInt(lastDoc.registrarId.split('-').pop(), 10);
+  const nextNum = isNaN(num) ? 1 : num + 1;
+  return `w-${String(nextNum).padStart(3, '0')}`;
+};
+
 exports.registerParticipant = async (data) => {
+  // Generar registrarId en el servidor
+  data.registrarId = await generateRegistrarId();
+
   // Validación de negocio: Verificar si el DNI ya está registrado
   const existingUser = await EventRegistration.findOne({ dni: data.dni });
   
