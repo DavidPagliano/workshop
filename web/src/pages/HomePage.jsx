@@ -321,6 +321,22 @@ const HomePage = () => {
             variant="contained"
             color="secondary"
             size="large"
+            onClick={() => navigate("/inscripcion")}
+            sx={{
+              background: (theme) => theme.customGradients.magenta,
+              px: { xs: 2, sm: 4 },
+              py: { xs: 1, sm: 1.2 },
+              fontSize: { xs: "0.8rem", sm: "0.88rem", md: "0.95rem" },
+              width: { xs: "100%", sm: "auto" },
+            }}
+          >
+            Inscripcion al Evento
+          </Button>
+
+           <Button
+            variant="contained"
+            color="secondary"
+            size="large"
             onClick={() => navigate("/pre-ciclo")}
             sx={{
               background: (theme) => theme.customGradients.magenta,
@@ -348,11 +364,4 @@ const HomePage = () => {
     </Box>
   );
 }
-export default HomePage
-function HomePage() {
-  return (
-    <div>
-      <h1>Bienvenido a la HomePage (Simulada)</h1>
-    </div>
-  );
-}
+export default HomePage;
