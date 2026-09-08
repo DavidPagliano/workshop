@@ -1,234 +1,243 @@
-import { useState, useEffect } from "react";
-import {
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Grid,
-  Fade,
-} from "@mui/material";
-import toast from "react-hot-toast";
-import {
-  registerToPreCycle,
-  getPreCycleRegistrations,
-} from "../../services/preCycleService";
+import React, { useEffect, useState } from 'react';
+import { Button, Container, Typography, Box, Paper, IconButton } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import AddIcon from '@mui/icons-material/Add';
+import toast from 'react-hot-toast';
+import { getPreCycleRegistrations, registerToPreCycle } from '../../services/preCycleService';
+import { PreInscripcionModal } from './PreInscripcionModal';
 
-const formatRegistrarId = (num) => {
-  return String(num).padStart(4, "0");
-};
+// ─── Assets de fondo y decoración ────────────────────────────────────
+import bgGrid from "../../assets/images/fondo/FONDO3.png";
+import cursorImg from "../../assets/images/CURSOR.png";
+import masImg from "../../assets/images/MAS.png";
+import playImg from "../../assets/images/PLAY.png";
+import pixeladoImg from "../../assets/images/pixelado.png";
 
 export const CyclePreinscriptionPage = () => {
-  const [formData, setFormData] = useState({
-    registrarId: "",
-    nombre: "",
-    apellido: "",
-    dni: "",
-    telefono: "",
-    email: "",
-    fechaNacimiento: "",
-  });
+  const [list, setList] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-  const [showFields, setShowFields] = useState(false);
+  const fetchRecords = async () => {
+    try {
+      const data = await getPreCycleRegistrations();
+      setList(data || []);
+    } catch (error) {
+      toast.error(error.message || 'Error al cargar pre-inscripciones');
+    }
+  };
 
   useEffect(() => {
-    setShowFields(true);
-    fetchNextRegistrarId();
+    fetchRecords();
   }, []);
 
-  const fetchNextRegistrarId = async () => {
+  const handleCreate = async (formData) => {
     try {
-      const registrations = await getPreCycleRegistrations();
-      let nextNum = 1;
-
-      if (Array.isArray(registrations) && registrations.length > 0) {
-        const numericIds = registrations
-          .map((reg) => parseInt(reg.registrarId, 10))
-          .filter((id) => !isNaN(id));
-
-        if (numericIds.length > 0) {
-          nextNum = Math.max(...numericIds) + 1;
-        } else {
-          nextNum = registrations.length + 1;
-        }
-      }
-
-      const generatedId = formatRegistrarId(nextNum);
-
-      setFormData((prev) => ({
-        ...prev,
-        registrarId: generatedId,
-      }));
+      await registerToPreCycle(formData);
+      toast.success('Pre-inscripción registrada con éxito');
+      setOpenModal(false);
+      fetchRecords();
     } catch (error) {
-      console.error("Error al generar el ID:", error);
-      setFormData((prev) => ({
-        ...prev,
-        registrarId: formatRegistrarId(1),
-      }));
+      toast.error(error.message || 'Error al registrar pre-inscripción');
     }
   };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const payload = {
-        ...formData,
-        fechaNacimiento: formData.fechaNacimiento
-          ? new Date(formData.fechaNacimiento).toISOString()
-          : undefined,
-      };
-
-      await registerToPreCycle(payload);
-      toast.success("Pre-inscripción completada con éxito");
-
-      setFormData({
-        registrarId: "",
-        nombre: "",
-        apellido: "",
-        dni: "",
-        telefono: "",
-        email: "",
-        fechaNacimiento: "",
-      });
-
-      await fetchNextRegistrarId();
-    } catch (error) {
-      console.error(error);
-      const errorMsg = error?.message || "Error al procesar la pre-inscripción";
-      toast.error(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Orden vertical de campos (uno debajo de otro)
-  const fields = [
-    {
-      name: "nombre",
-      label: "Nombre",
-      type: "text",
-      required: true,
-      delay: 100,
-    },
-    {
-      name: "apellido",
-      label: "Apellido",
-      type: "text",
-      required: true,
-      delay: 200,
-    },
-    {
-      name: "dni",
-      label: "DNI / Documento",
-      type: "text",
-      required: true,
-      delay: 300,
-    },
-    {
-      name: "telefono",
-      label: "Teléfono de Contacto",
-      type: "text",
-      required: false,
-      delay: 400,
-    },
-    {
-      name: "email",
-      label: "Correo Electrónico",
-      type: "email",
-      required: true,
-      delay: 500,
-    },
-    {
-      name: "fechaNacimiento",
-      label: "Fecha de Nacimiento",
-      type: "date",
-      required: false,
-      delay: 600,
-      shrink: true,
-    },
-  ];
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          align="center"
-          color="primary"
-        >
-          Pre-inscripción al Ciclo 2027
-        </Typography>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        width: "100%",
+        position: "relative",
+        overflow: "hidden",
+        backgroundImage: `url(${bgGrid})`,
+        backgroundRepeat: "repeat",
+        backgroundPosition: "center",
+        backgroundSize: { xs: "cover", md: "auto" },
+        pt: { xs: 4, sm: 6, md: 8 },
+        pb: { xs: 6, sm: 8, md: 10 },
+        px: { xs: 1, sm: 0 },
+      }}
+    >
+      {/* ============================================================= */}
+      {/* ELEMENTOS FLOTANTES DECORATIVOS (Fondo)                       */}
+      {/* ============================================================= */}
 
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          align="center"
-          sx={{ mb: 4 }}
-        >
-          Ingresa tus datos a continuación para registrar tu pre-inscripción.
-        </Typography>
+      {/* Rastro Pixelado — lateral derecho */}
+      <Box
+        component="img"
+        src={pixeladoImg}
+        alt="Pixel art decoration"
+        sx={{
+          position: "absolute",
+          top: { xs: "2%", sm: "5%", md: "12%" },
+          right: { xs: "-60px", sm: "-30px", md: "5%" },
+          width: { xs: "140px", sm: "220px", md: "340px" },
+          opacity: { xs: 0.2, sm: 0.4, md: 0.85 },
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
 
-        <Box component="form" onSubmit={handleSubmit} noValidate>
-          <Grid container spacing={2.5}>
-            {fields.map((field) => (
-              /* xs={12} asegura que cada campo ocupe el 100% del ancho (1 columna) */
-              <Grid size={{ xs: 12 }} key={field.name}>
-                <Fade
-                  in={showFields}
-                  timeout={field.delay + 300}
-                  style={{ transitionDelay: `${field.delay}ms` }}
-                >
-                  <TextField
-                    required={field.required}
-                    fullWidth
-                    type={field.type}
-                    label={field.label}
-                    name={field.name}
-                    value={formData[field.name]}
-                    onChange={handleChange}
-                    InputLabelProps={
-                      field.shrink ? { shrink: true } : undefined
-                    }
-                  />
-                </Fade>
-              </Grid>
-            ))}
+      {/* Cursor 3D Celeste — arriba a la derecha */}
+      <Box
+        component="img"
+        src={cursorImg}
+        alt="3D Cursor"
+        sx={{
+          position: "absolute",
+          top: { xs: "3%", sm: "10%", md: "20%" },
+          right: { xs: "2%", sm: "5%", md: "18%" },
+          width: { xs: "50px", sm: "90px", md: "150px" },
+          transform: "rotate(-5deg)",
+          pointerEvents: "none",
+          zIndex: 1,
+          opacity: { xs: 0.5, sm: 0.8, md: 1 },
+          filter: "drop-shadow(0 12px 24px rgba(0, 180, 255, 0.35))",
+        }}
+      />
 
-            {/* Botón de envío al final de la columna */}
-            <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
-              <Fade
-                in={showFields}
-                timeout={1000}
-                style={{ transitionDelay: "700ms" }}
-              >
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={loading || !formData.registrarId}
-                >
-                  {loading ? "Registrando..." : "Completar Pre-inscripción"}
-                </Button>
-              </Fade>
-            </Grid>
-          </Grid>
+      {/* Botón PLAY 3D — lateral izquierdo */}
+      <Box
+        component="img"
+        src={playImg}
+        alt="3D Play Button"
+        sx={{
+          position: "absolute",
+          bottom: { xs: "3%", sm: "8%", md: "22%" },
+          left: { xs: "2%", sm: "4%", md: "10%" },
+          width: { xs: "55px", sm: "100px", md: "160px" },
+          pointerEvents: "none",
+          zIndex: 1,
+          opacity: { xs: 0.5, sm: 0.8, md: 1 },
+          filter: "drop-shadow(0 12px 20px rgba(213, 0, 186, 0.3))",
+        }}
+      />
+
+      {/* Cruz / Más 3D — esquina inferior derecha */}
+      <Box
+        component="img"
+        src={masImg}
+        alt="3D Cross Decoration"
+        sx={{
+          position: "absolute",
+          bottom: { xs: "2%", sm: "4%", md: "8%" },
+          right: { xs: "2%", sm: "5%", md: "12%" },
+          width: { xs: "70px", sm: "130px", md: "210px" },
+          pointerEvents: "none",
+          zIndex: 1,
+          opacity: { xs: 0.4, sm: 0.7, md: 1 },
+          filter: "drop-shadow(0 15px 30px rgba(3, 8, 59, 0.8))",
+        }}
+      />
+
+      {/* ============================================================= */}
+      {/* CONTENIDO PRINCIPAL DE LA PÁGINA                              */}
+      {/* ============================================================= */}
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
+        {/* Encabezado y acciones principales */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+          <Box>
+            <Typography variant="h4" component="h1" sx={{ color: '#00e5ff', fontWeight: 'bold' }}>
+              Gestión de Pre-inscripciones
+            </Typography>
+            <Typography variant="subtitle2" sx={{ color: '#8fa0dd' }}>
+              Ciclo 2027 — {list.length} inscriptos
+            </Typography>
+          </Box>
+
+          <Box display="flex" gap={1.5} alignItems="center">
+            <IconButton 
+              onClick={fetchRecords} 
+              sx={{ color: '#00e5ff', border: '1px solid #00e5ff', borderRadius: 1 }}
+            >
+              <RefreshIcon />
+            </IconButton>
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenModal(true)}
+              sx={{
+                bgcolor: '#00e5ff',
+                color: '#03083b',
+                fontWeight: 'bold',
+                boxShadow: '3px 3px 0px #d500ba',
+                '&:hover': { bgcolor: '#00b4ff' }
+              }}
+            >
+              AGREGAR
+            </Button>
+          </Box>
         </Box>
-      </Paper>
-    </Container>
+
+        {/* Contenedor central (Estado vacío o lista) */}
+        {list.length === 0 ? (
+          <Paper
+            elevation={0}
+            sx={{
+              p: 8,
+              textAlign: 'center',
+              backgroundColor: '#12193b',
+              border: '2px solid #2b3566',
+              boxShadow: '4px 4px 0px #d500ba',
+              borderRadius: 1
+            }}
+          >
+            <Typography mb={3} sx={{ color: '#00e5ff' }}>
+              No hay pre-inscripciones registradas.
+            </Typography>
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenModal(true)}
+              sx={{
+                color: '#00e5ff',
+                borderColor: '#00e5ff',
+                borderWidth: 2,
+                fontWeight: 'bold',
+                '&:hover': { borderColor: '#00b4ff', borderWidth: 2 }
+              }}
+            >
+              AGREGAR LA PRIMERA
+            </Button>
+          </Paper>
+        ) : (
+          <Box display="flex" flexDirection="column" gap={2}>
+            {list.map((item) => (
+              <Paper
+                key={item.registrarId || item._id}
+                sx={{
+                  p: 2,
+                  backgroundColor: '#12193b',
+                  border: '1px solid #00e5ff',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
+                <Box>
+                  <Typography variant="h6" sx={{ color: '#00e5ff' }}>
+                    {item.nombre} {item.apellido}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#8fa0dd' }}>
+                    DNI: {item.dni} | Teléfono: {item.telefono}
+                  </Typography>
+                </Box>
+                <Typography variant="subtitle2" sx={{ color: '#d500ba', fontWeight: 'bold' }}>
+                  ID: {item.registrarId}
+                </Typography>
+              </Paper>
+            ))}
+          </Box>
+        )}
+
+        {/* Modal emergente para registrar */}
+        <PreInscripcionModal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          onSubmit={handleCreate}
+        />
+      </Container>
+    </Box>
   );
 };
