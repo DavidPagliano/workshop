@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -15,21 +15,43 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
-  const initialFormState = {
-    nombre: '',
-    apellido: '',
-    dni: '',
-    edad: '',
-    telefono: '',
-    email: '',
-    fechaNacimiento: '',
-    tituloSecundario: 'no',
-    concurreAlgunaIglesias: false,
-    cual: ''
-  };
+// Estilos extraídos fuera del componente para evitar recrearlos en cada render
+const INPUT_STYLE = {
+  '& .MuiOutlinedInput-root': {
+    color: '#ffffff',
+    '& fieldset': { borderColor: '#00e5ff' },
+    '&:hover fieldset': { borderColor: '#00b4ff' },
+    '&.Mui-focused fieldset': { borderColor: '#00e5ff' },
+  },
+  '& .MuiInputLabel-root': { color: '#8fa0dd' },
+  '& .MuiInputLabel-root.Mui-focused': { color: '#00e5ff' },
+  '& .MuiSelect-icon': { color: '#00e5ff' },
+};
 
-  const [formData, setFormData] = useState(initialFormState);
+const INITIAL_FORM_STATE = {
+  nombre: '',
+  apellido: '',
+  dni: '',
+  edad: '',
+  telefono: '',
+  email: '',
+  fechaNacimiento: '',
+  tituloSecundario: 'no',
+  concurreAlgunaIglesias: false,
+  cual: ''
+};
+
+export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+
+  const resetForm = useCallback(() => {
+    setFormData(INITIAL_FORM_STATE);
+  }, []);
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,21 +63,31 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Normalización segura de la fecha
+    let fechaIso = '';
+    if (formData.fechaNacimiento) {
+      const parsedDate = new Date(formData.fechaNacimiento);
+      if (!isNaN(parsedDate.getTime())) {
+        fechaIso = parsedDate.toISOString();
+      }
+    }
+
     const dataToSubmit = {
       ...formData,
-      fechaNacimiento: formData.fechaNacimiento ? new Date(formData.fechaNacimiento).toISOString() : ''
+      fechaNacimiento: fechaIso,
+      // Si deshabilita la opción de iglesia, reseteamos el campo "cual"
+      cual: formData.concurreAlgunaIglesias ? formData.cual : ''
     };
 
-    console.log('Datos del formulario pre-inscripción:', dataToSubmit);
-
     onSubmit(dataToSubmit);
-    setFormData(initialFormState);
+    resetForm();
   };
 
   return (
     <Dialog 
       open={open} 
-      onClose={onClose} 
+      onClose={handleClose} 
       fullWidth 
       maxWidth="xs"
       PaperProps={{
@@ -71,7 +103,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
         <Typography variant="h6" component="span" fontWeight="bold">
           Nueva Pre-inscripción
         </Typography>
-        <IconButton onClick={onClose} size="small" sx={{ color: '#00e5ff' }}>
+        <IconButton onClick={handleClose} size="small" sx={{ color: '#00e5ff' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -86,7 +118,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           />
           <TextField
             label="Apellido *"
@@ -96,7 +128,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           />
           <TextField
             label="DNI / Documento *"
@@ -106,7 +138,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           />
           <TextField
             label="Edad *"
@@ -117,7 +149,8 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            inputProps={{ min: 0 }}
+            sx={INPUT_STYLE}
           />
           <TextField
             label="Teléfono de Contacto *"
@@ -127,7 +160,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           />
           <TextField
             label="Correo Electrónico *"
@@ -138,7 +171,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           />
           <TextField
             label="Fecha de Nacimiento *"
@@ -150,7 +183,7 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             required
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           />
           <TextField
             select
@@ -160,9 +193,9 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
             onChange={handleChange}
             fullWidth
             size="small"
-            sx={inputStyle}
+            sx={INPUT_STYLE}
           >
-            <MenuItem value="si">Si</MenuItem>
+            <MenuItem value="si">Sí</MenuItem>
             <MenuItem value="no">No</MenuItem>
             <MenuItem value="incompleto">Incompleto</MenuItem>
           </TextField>
@@ -203,14 +236,14 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
               onChange={handleChange}
               fullWidth
               size="small"
-              sx={inputStyle}
+              sx={INPUT_STYLE}
             />
           )}
         </DialogContent>
 
         <DialogActions sx={{ p: 2, justifyContent: 'space-between', gap: 1 }}>
           <Button 
-            onClick={onClose} 
+            onClick={handleClose} 
             variant="outlined" 
             sx={{ 
               color: '#ffffff', 
@@ -236,16 +269,4 @@ export const PreInscripcionModal = ({ open, onClose, onSubmit }) => {
       </form>
     </Dialog>
   );
-};
-
-const inputStyle = {
-  '& .MuiOutlinedInput-root': {
-    color: '#ffffff',
-    '& fieldset': { borderColor: '#00e5ff' },
-    '&:hover fieldset': { borderColor: '#00b4ff' },
-    '&.Mui-focused fieldset': { borderColor: '#00e5ff' },
-  },
-  '& .MuiInputLabel-root': { color: '#8fa0dd' },
-  '& .MuiInputLabel-root.Mui-focused': { color: '#00e5ff' },
-  '& .MuiSelect-icon': { color: '#00e5ff' },
 };
