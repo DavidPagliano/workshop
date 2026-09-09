@@ -3,9 +3,14 @@ import React from 'react';
 import { 
   Container, Paper, Typography, TextField, Box, 
   Grid, Card, CardContent, Button, Chip, Alert, 
-  List, ListItemButton, ListItemText, Divider, CircularProgress 
+  List, ListItemButton, ListItemText, Divider, CircularProgress,
+  InputAdornment
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import { useAsistencia } from '../../hooks/useAsistencia';
+import logo from '../../assets/images/MAS.png';
+import cursor from '../../assets/images/CURSOR.png';
 
 const AsistenciaPage = () => {
   const {
@@ -20,12 +25,70 @@ const AsistenciaPage = () => {
   } = useAsistencia();
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 5 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 'bold' }}>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(145deg, #03083B 0%, #071052 58%, #1a0b36 100%)' }}>
+      <Box
+        component="header"
+        sx={{
+          position: 'relative',
+          minHeight: { xs: 220, md: 270 },
+          display: 'flex',
+          alignItems: 'center',
+          overflow: 'hidden',
+          px: { xs: 3, md: 8 },
+          py: { xs: 4, md: 6 },
+          borderBottom: '2px solid',
+          borderColor: 'primary.main',
+          background: 'linear-gradient(135deg, rgba(7, 16, 82, 0.98), rgba(28, 25, 133, 0.9))',
+        }}
+      >
+        <Box
+          component="img"
+          src={cursor}
+          alt=""
+          sx={{
+            position: 'absolute',
+            right: { xs: -45, md: 35 },
+            bottom: -75,
+            width: { xs: 240, md: 390 },
+            opacity: 0.42,
+            transform: 'rotate(-8deg)',
+          }}
+        />
+        <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 680 }}>
+          <Typography
+            variant="overline"
+            sx={{ color: 'secondary.light', letterSpacing: '0.18em', fontWeight: 700 }}
+          >
+            Multimedia Day 2026
+          </Typography>
+          <Typography variant="h2" sx={{ mt: 1, fontWeight: 900, lineHeight: 1 }}>
+            <HowToRegIcon sx={{ mr: 1, verticalAlign: 'middle', fontSize: '0.8em' }} />
+            Registro y asistencia
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 2, color: 'rgba(255,255,255,0.78)', maxWidth: 540 }}>
+            Gestiona la acreditación de las personas inscriptas al evento.
+          </Typography>
+        </Box>
+        <Box
+          component="img"
+          src={logo}
+          alt="Logo Multimedia Day"
+          sx={{
+            position: 'absolute',
+            zIndex: 1,
+            right: { xs: 18, md: 70 },
+            top: { xs: 18, md: 28 },
+            width: { xs: 92, md: 150 },
+            objectFit: 'contain',
+          }}
+        />
+      </Box>
+      <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 5 } }}>
+        <Paper elevation={0} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 0, border: '1px solid rgba(0, 180, 255, 0.25)', backgroundColor: 'rgba(7, 16, 82, 0.88)' }}>
+        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 'bold', maxWidth: 720 }}>
           Mesa de Entrada - Control de Asistencia
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
           Base de datos obtenida de la inscripción previa. Selecciona un usuario inscripto para revisar su información y marcar la asistencia oficial al Multimedia Day 2026.
         </Typography>
 
@@ -42,7 +105,14 @@ const AsistenciaPage = () => {
           variant="outlined"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          sx={{ mb: 4 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon color="primary" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 4, '& .MuiOutlinedInput-root': { backgroundColor: 'rgba(3, 8, 59, 0.65)' } }}
         />
 
         {cargando ? (
@@ -56,7 +126,7 @@ const AsistenciaPage = () => {
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
                 Inscriptos Encontrados ({participantesFiltrados.length})
               </Typography>
-              <Paper variant="outlined" sx={{ maxHeight: 420, overflow: 'auto' }}>
+              <Paper variant="outlined" sx={{ maxHeight: 420, overflow: 'auto', backgroundColor: 'rgba(3, 8, 59, 0.6)' }}>
                 <List disablePadding>
                   {participantesFiltrados.length > 0 ? (
                     participantesFiltrados.map((p) => {
@@ -103,7 +173,7 @@ const AsistenciaPage = () => {
               </Typography>
               
               {usuarioSeleccionado ? (
-                <Card variant="outlined" sx={{ bgcolor: '#f8fafc', p: 1 }}>
+                <Card variant="outlined" sx={{ p: 1, background: 'linear-gradient(135deg, rgba(7, 16, 82, 0.96), rgba(28, 25, 133, 0.72))' }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                       <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold' }}>
@@ -163,7 +233,7 @@ const AsistenciaPage = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <Paper variant="outlined" sx={{ p: 5, textAlign: 'center', bgcolor: '#fafafa' }}>
+                <Paper variant="outlined" sx={{ p: 5, textAlign: 'center', backgroundColor: 'rgba(3, 8, 59, 0.6)' }}>
                   <Typography color="text.secondary">
                     Haz clic en un participante de la lista para desplegar su ficha de datos y confirmar su asistencia.
                   </Typography>
@@ -172,8 +242,9 @@ const AsistenciaPage = () => {
             </Grid>
           </Grid>
         )}
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

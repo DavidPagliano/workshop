@@ -1,4 +1,3 @@
-import React from 'react';
 import { TextField, Button, Box, FormLabel, FormGroup, FormControlLabel, Checkbox, FormHelperText, Alert } from '@mui/material';
 
 export function FormularioRegistro({ 
@@ -22,7 +21,22 @@ export function FormularioRegistro({
   ];
 
   return (
-    <Box component="form" onSubmit={onSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+    <Box
+      component="form"
+      onSubmit={onSubmit}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2.5,
+        '& .MuiOutlinedInput-root': {
+          backgroundColor: 'rgba(3, 8, 59, 0.58)',
+          '& fieldset': { borderColor: 'rgba(0, 180, 255, 0.38)' },
+          '&:hover fieldset': { borderColor: 'primary.main' },
+          '&.Mui-focused fieldset': { borderWidth: 2 },
+        },
+        '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.64)' },
+      }}
+    >
       {/* Alerta de DNI Duplicado en tiempo real */}
       {warning && (
         <Alert severity="warning" sx={{ mb: 1, fontWeight: 'medium' }}>
@@ -84,7 +98,7 @@ export function FormularioRegistro({
       
       {/* Grupo de Selección Múltiple (Checkboxes) */}
       <Box sx={{ mt: 1, mb: 1 }}>
-        <FormLabel component="legend" sx={{ fontWeight: 'bold', mb: 1, color: 'text.primary' }}>
+        <FormLabel component="legend" sx={{ fontWeight: 'bold', mb: 1, color: 'primary.main' }}>
           Temas de Interés (Selecciona uno o varios) *
         </FormLabel>
         <FormGroup>
@@ -95,7 +109,7 @@ export function FormularioRegistro({
                 <Checkbox
                   checked={formData.temasInteres.includes(tema)} // Verifica si está en el Array del Hook
                   onChange={() => handleCheckboxChange(tema)} // Lo agrega o quita
-                  color="primary"
+                  color="secondary"
                 />
               }
               label={tema}
@@ -112,7 +126,7 @@ export function FormularioRegistro({
         // Se deshabilita si está procesando la petición o si el DNI ya está registrado en la BD
         disabled={loading || !!warning} 
         size="large"
-        sx={{ mt: 1, py: 1.5, fontWeight: 'bold', fontSize: '1rem' }}
+        sx={{ mt: 1, py: 1.5, fontWeight: 'bold', fontSize: '1rem', alignSelf: { xs: 'stretch', sm: 'flex-start' } }}
       >
         {loading ? 'Procesando registro...' : 'Confirmar e Inscribirme'}
       </Button>
