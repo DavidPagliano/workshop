@@ -60,7 +60,6 @@ const HomePage = () => {
     >
       {/* ============================================================= */}
       {/* ELEMENTOS FLOTANTES DECORATIVOS (fondo)                       */}
-      {/* En mobile se ocultan o reducen para no tapar el contenido     */}
       {/* ============================================================= */}
 
       {/* Rastro Pixelado — lateral derecho */}
@@ -297,6 +296,7 @@ const HomePage = () => {
             alignItems: { xs: "stretch", sm: "center" },
             gap: { xs: 1.5, sm: 2.5 },
             px: { xs: 1, sm: 0 },
+            flexWrap: "wrap",
           }}
         >
           <Button
@@ -321,16 +321,52 @@ const HomePage = () => {
             variant="contained"
             color="secondary"
             size="large"
-            onClick={() => navigate("/pre-ciclo")}
+            onClick={() => navigate("/inscripcion")}
             sx={{
-              background: (theme) => theme.customGradients.magenta,
+              background: (theme) => theme.customGradients?.magenta || "linear-gradient(45deg, #D500BA 30%, #FF007F 90%)",
               px: { xs: 2, sm: 4 },
               py: { xs: 1, sm: 1.2 },
               fontSize: { xs: "0.8rem", sm: "0.88rem", md: "0.95rem" },
               width: { xs: "100%", sm: "auto" },
             }}
           >
-            Pre-Inscripción Ciclo 2027
+            Inscripcion al Evento
+          </Button>
+
+          {/* BOTÓN PREINSCRIPCIÓN */}
+          <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            onClick={() => navigate("/pre-ciclo")}
+            sx={{
+              background: (theme) => theme.customGradients?.magenta || "linear-gradient(45deg, #D500BA 30%, #FF007F 90%)",
+              px: { xs: 2, sm: 4 },
+              py: { xs: 1, sm: 1.2 },
+              fontSize: { xs: "0.8rem", sm: "0.88rem", md: "0.95rem" },
+              width: { xs: "100%", sm: "auto" },
+            }}
+          >
+            Preinscripción
+          </Button>
+
+          {/* BOTÓN ESTADÍSTICAS */}
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => navigate("/estadisticas")}
+            sx={{
+              borderColor: "#00B4FF",
+              color: "#00B4FF",
+              bgcolor: "transparent",
+              px: { xs: 2, sm: 4 },
+              py: { xs: 1, sm: 1.2 },
+              fontSize: { xs: "0.8rem", sm: "0.88rem", md: "0.95rem" },
+              width: { xs: "100%", sm: "auto" },
+              "&:hover": { bgcolor: "rgba(0, 180, 255, 0.1)", borderColor: "#00B4FF" },
+            }}
+          >
+            Estadísticas
           </Button>
         </Box>
 

@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Importación de las páginas
 import HomePage from './pages/HomePage'; 
-import AsistenciaPage from './pages/registracion'; // Tu módulo de Mesa de Entrada / Asistencia
+import AsistenciaPage from './pages/registracion'; // Módulo de Mesa de Entrada / Asistencia
 import { CyclePreinscriptionPage } from './pages/inscripcion-tsm/CyclePreinscriptionPage';
+import InscripcionPage from './pages/inscripcion-w/inscripcion-w';
+import EstadisticasPage from './pages/estadisticas/estadisticas';
 
 const App = () => {
   return (
@@ -13,12 +15,16 @@ const App = () => {
         {/* Ruta Raíz */}
         <Route path="/" element={<HomePage />} />
         
-        {/* Tu módulo de Mesa de Entrada / Asistencia */}
+        {/* Módulo de Mesa de Entrada / Asistencia */}
         <Route path="/registro" element={<AsistenciaPage />} />
         <Route path="/asistencia" element={<AsistenciaPage />} />
+        <Route path="/inscripcion" element={<InscripcionPage />} />
         
         {/* Pre-inscripción al ciclo */}
         <Route path="/pre-ciclo" element={<CyclePreinscriptionPage />} />
+        
+        {/* Página de Estadísticas */}
+        <Route path="/estadisticas" element={<EstadisticasPage />} />
         
         {/* Ruta 404 */}
         <Route 
