@@ -8,6 +8,8 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Link } from 'react-router-dom';
 import { useAsistencia } from '../../hooks/useAsistencia';
 import logo from '../../assets/images/MAS.png';
 import cursor from '../../assets/images/CURSOR.png';
@@ -38,12 +40,14 @@ const AsistenciaPage = () => {
         component="header"
         sx={{
           position: 'relative',
-          minHeight: { xs: 220, md: 270 },
+          minHeight: 86,
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 2,
           overflow: 'hidden',
-          px: { xs: 3, md: 8 },
-          py: { xs: 4, md: 6 },
+          px: { xs: 2, md: 5 },
+          py: 1.5,
           borderBottom: '2px solid',
           borderColor: 'primary.main',
           background: 'linear-gradient(135deg, rgba(7, 16, 82, 0.98), rgba(28, 25, 133, 0.9))',
@@ -56,40 +60,88 @@ const AsistenciaPage = () => {
           sx={{
             position: 'absolute',
             right: { xs: -45, md: 35 },
-            bottom: -75,
-            width: { xs: 240, md: 390 },
-            opacity: 0.42,
+            bottom: -65,
+            width: { xs: 180, md: 270 },
+            opacity: 0.28,
             transform: 'rotate(-8deg)',
+            pointerEvents: 'none',
           }}
         />
-        <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 680 }}>
-          <Typography
-            variant="overline"
-            sx={{ color: 'secondary.light', letterSpacing: '0.18em', fontWeight: 700, fontFamily: "'Omega Pixel BIFORM', monospace" }}
-          >
-            Multimedia Day // 2026
-          </Typography>
-          <Typography variant="h2" sx={{ mt: 1, fontWeight: 900, lineHeight: 1, maxWidth: { xs: 290, sm: 'none' } }}>
-            <HowToRegIcon sx={{ mr: 1, verticalAlign: 'middle', fontSize: '0.8em' }} />
-            Registro y asistencia
-          </Typography>
-          <Typography variant="body1" sx={{ mt: 2, color: 'rgba(255,255,255,0.78)', maxWidth: 540 }}>
-            Gestiona la acreditación de las personas inscriptas al evento.
+        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 1.25, flexShrink: 0 }}>
+          <Box component="img" src={logo} alt="Multimedia Day" sx={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <Typography sx={{ color: 'primary.main', fontFamily: "'Omega Pixel BIFORM', monospace", fontSize: { xs: '0.7rem', sm: '0.86rem' }, whiteSpace: 'nowrap' }}>
+            MULTIMEDIA DAY
           </Typography>
         </Box>
         <Box
-          component="img"
-          src={logo}
-          alt="Logo Multimedia Day"
+          component="nav"
+          aria-label="Navegación principal"
           sx={{
-            position: 'absolute',
+            position: 'relative',
             zIndex: 1,
-            right: { xs: 18, md: 70 },
-            top: { xs: 18, md: 28 },
-            width: { xs: 92, md: 150 },
-            objectFit: 'contain',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            gap: { xs: 0.25, md: 0.5 },
+            flexWrap: 'wrap',
           }}
-        />
+        >
+          {[
+            ['Inicio', '/'],
+            ['Pre-inscripción', '/pre-ciclo'],
+            ['Asistencia', '/asistencia'],
+            ['Estadísticas', '/estadisticas'],
+          ].map(([label, path]) => (
+            <Typography
+              key={label}
+              component={Link}
+              to={path}
+              sx={{
+                color: 'common.white',
+                px: { xs: 0.25, md: 0.5 },
+                py: 0.75,
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: '0.58rem', sm: '0.7rem' },
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                '&:hover': { color: 'primary.main' },
+              }}
+            >
+              {label}
+            </Typography>
+          ))}
+          <Typography
+            component="span"
+            sx={{
+              color: 'secondary.main',
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              fontSize: { xs: 
+                '0.58rem', sm: '0.7rem' },
+              px: { xs: 0.5, md: 1 },
+              py: 0.75,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Admin
+          </Typography>
+          <Typography
+            component="span"
+            sx={{
+              color: '#F3A6A6',
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              fontSize: { xs: '0.58rem', sm: '0.7rem' },
+              px: { xs: 1, md: 2 },
+              py: 0.75,
+              borderLeft: '1px solid',
+              borderColor: 'rgba(255, 255, 255, 0.35)',
+              whiteSpace: 'nowrap',
+              cursor: 'default',
+            }}
+          >
+            <LogoutIcon sx={{ fontSize: '1em', verticalAlign: 'middle', mr: 0.5 }} />
+            Salir
+          </Typography>
+        </Box>
       </Box>
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 5 } }}>
         <Paper elevation={0} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 0, border: '1px solid rgba(0, 180, 255, 0.25)', backgroundColor: 'rgba(7, 16, 82, 0.88)' }}>
@@ -132,9 +184,9 @@ const AsistenciaPage = () => {
             {/* Lista de Registrados de la Base Previa */}
             <Grid size={{ xs: 12, md: 5 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                Inscriptos Encontrados ({participantesFiltrados.length})
+                Inscriptos ({participantesFiltrados.length})
               </Typography>
-              <Paper variant="outlined" sx={{ maxHeight: 420, overflow: 'auto', backgroundColor: 'rgba(3, 8, 59, 0.6)' }}>
+              <Paper variant="outlined" sx={{ maxHeight: 420, overflow: 'auto', backgroundColor: 'rgba(3, 8, 59, 0.6)', boxShadow: '4px 4px 0 rgba(213, 0, 186, 0.5)' }}>
                 <List disablePadding>
                   {participantesFiltrados.length > 0 ? (
                     participantesFiltrados.map((p) => {
@@ -157,6 +209,7 @@ const AsistenciaPage = () => {
                               label={p.seRegistro ? "Presente" : "Pendiente"} 
                               color={p.seRegistro ? "success" : "default"}
                               size="small"
+                              sx={{ borderRadius: 0, px: 0.5 }}
                             />
                           </ListItemButton>
                           <Divider />
@@ -177,7 +230,7 @@ const AsistenciaPage = () => {
             {/* Recuadro de Información Completa del Usuario Seleccionado */}
             <Grid size={{ xs: 12, md: 7 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                Ficha del Usuario Seleccionado
+                Ficha del Inscripto
               </Typography>
               
               {usuarioSeleccionado ? (
@@ -190,6 +243,7 @@ const AsistenciaPage = () => {
                       <Chip 
                         label={usuarioSeleccionado.seRegistro ? "ASISTENCIA CONFIRMADA" : "PENDIENTE DE ACREDITACIÓN"} 
                         color={usuarioSeleccionado.seRegistro ? "success" : "warning"}
+                        sx={{ borderRadius: 0, px: 0.5 }}
                       />
                     </Box>
 
@@ -209,7 +263,14 @@ const AsistenciaPage = () => {
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 3 }}>
                       {usuarioSeleccionado.temasInteres && usuarioSeleccionado.temasInteres.length > 0 ? (
                         usuarioSeleccionado.temasInteres.map((tema, idx) => (
-                          <Chip key={idx} label={tema} variant="outlined" color="info" size="small" />
+                          <Chip
+                            key={idx}
+                            label={tema}
+                            variant="outlined"
+                            color="info"
+                            size="small"
+                            sx={{ borderRadius: 0, px: 0.5 }}
+                          />
                         ))
                       ) : (
                         <Typography variant="caption" color="text.secondary">
