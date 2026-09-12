@@ -16,7 +16,7 @@ export default function RegistroPage() {
   } = useRegistroForm();
 
   return (
-    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 7 }, backgroundImage: `linear-gradient(145deg, rgba(3, 8, 59, 0.96), rgba(7, 16, 82, 0.9)), url(${bgGrid})`, backgroundSize: 'cover, 420px', backgroundPosition: 'center, center', backgroundAttachment: 'fixed' }}>
+    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 7 }, backgroundColor: '#03083B', backgroundImage: `url(${bgGrid})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
       <Container maxWidth="sm">
       <Card elevation={0} sx={{ borderRadius: 0, p: { xs: 1, sm: 2 }, border: '1px solid rgba(0, 180, 255, 0.35)', backgroundColor: 'rgba(7, 16, 82, 0.92)', boxShadow: '6px 6px 0 rgba(213, 0, 186, 0.45)' }}>
         <CardContent>

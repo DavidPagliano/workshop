@@ -28,9 +28,10 @@ const AsistenciaPage = () => {
   return (
     <Box sx={{
       minHeight: '100vh',
-      backgroundImage: `linear-gradient(145deg, rgba(3, 8, 59, 0.96), rgba(7, 16, 82, 0.9)), url(${bgGrid})`,
-      backgroundSize: 'cover, 420px',
-      backgroundPosition: 'center, center',
+      backgroundColor: '#03083B',
+      backgroundImage: `url(${bgGrid})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
     }}>
       <Box
