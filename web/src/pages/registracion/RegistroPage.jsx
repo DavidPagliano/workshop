@@ -1,6 +1,7 @@
 import { Container, Card, CardContent, Typography, Alert, Box } from '@mui/material';
 import { useRegistroForm } from '../../hooks/useRegistroForm'; // Importamos la Lógica (Hook)
 import { FormularioRegistro } from '../../components/registracion/FormularioRegistro'; // Importamos la Vista (Componente)
+import bgGrid from '../../assets/images/fondo/FONDO3.png';
 
 export default function RegistroPage() {
   // 1. Consumimos la lógica aislada de nuestro Custom Hook
@@ -15,12 +16,12 @@ export default function RegistroPage() {
   } = useRegistroForm();
 
   return (
-    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 7 }, background: 'linear-gradient(145deg, #03083B 0%, #071052 58%, #1a0b36 100%)' }}>
+    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 7 }, backgroundImage: `linear-gradient(145deg, rgba(3, 8, 59, 0.96), rgba(7, 16, 82, 0.9)), url(${bgGrid})`, backgroundSize: 'cover, 420px', backgroundPosition: 'center, center', backgroundAttachment: 'fixed' }}>
       <Container maxWidth="sm">
       <Card elevation={0} sx={{ borderRadius: 0, p: { xs: 1, sm: 2 }, border: '1px solid rgba(0, 180, 255, 0.35)', backgroundColor: 'rgba(7, 16, 82, 0.92)', boxShadow: '6px 6px 0 rgba(213, 0, 186, 0.45)' }}>
         <CardContent>
           {/* Encabezado */}
-          <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ fontWeight: 900, color: 'primary.main' }}>
+          <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ fontWeight: 900, color: 'primary.main', fontFamily: "'Omega Pixel BIFORM', monospace", fontSize: { xs: '1.25rem', sm: '1.65rem' } }}>
             Inscripción al Evento
           </Typography>
           <Typography variant="subtitle1" align="center" color="text.secondary" sx={{ mb: 4, lineHeight: 1.6 }}>

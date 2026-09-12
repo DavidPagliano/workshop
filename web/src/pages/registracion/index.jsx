@@ -11,6 +11,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import { useAsistencia } from '../../hooks/useAsistencia';
 import logo from '../../assets/images/MAS.png';
 import cursor from '../../assets/images/CURSOR.png';
+import bgGrid from '../../assets/images/fondo/FONDO3.png';
 
 const AsistenciaPage = () => {
   const {
@@ -25,7 +26,13 @@ const AsistenciaPage = () => {
   } = useAsistencia();
 
   return (
-    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(145deg, #03083B 0%, #071052 58%, #1a0b36 100%)' }}>
+    <Box sx={{
+      minHeight: '100vh',
+      backgroundImage: `linear-gradient(145deg, rgba(3, 8, 59, 0.96), rgba(7, 16, 82, 0.9)), url(${bgGrid})`,
+      backgroundSize: 'cover, 420px',
+      backgroundPosition: 'center, center',
+      backgroundAttachment: 'fixed',
+    }}>
       <Box
         component="header"
         sx={{
@@ -57,11 +64,11 @@ const AsistenciaPage = () => {
         <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 680 }}>
           <Typography
             variant="overline"
-            sx={{ color: 'secondary.light', letterSpacing: '0.18em', fontWeight: 700 }}
+            sx={{ color: 'secondary.light', letterSpacing: '0.18em', fontWeight: 700, fontFamily: "'Omega Pixel BIFORM', monospace" }}
           >
-            Multimedia Day 2026
+            Multimedia Day // 2026
           </Typography>
-          <Typography variant="h2" sx={{ mt: 1, fontWeight: 900, lineHeight: 1 }}>
+          <Typography variant="h2" sx={{ mt: 1, fontWeight: 900, lineHeight: 1, maxWidth: { xs: 290, sm: 'none' } }}>
             <HowToRegIcon sx={{ mr: 1, verticalAlign: 'middle', fontSize: '0.8em' }} />
             Registro y asistencia
           </Typography>
@@ -85,11 +92,11 @@ const AsistenciaPage = () => {
       </Box>
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 5 } }}>
         <Paper elevation={0} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 0, border: '1px solid rgba(0, 180, 255, 0.25)', backgroundColor: 'rgba(7, 16, 82, 0.88)' }}>
-        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 'bold', maxWidth: 720 }}>
-          Mesa de Entrada - Control de Asistencia
+        <Typography variant="h4" color="primary" gutterBottom sx={{ fontWeight: 900, maxWidth: 720 }}>
+          Mesa de entrada | Control de asistencia
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
-          Base de datos obtenida de la inscripción previa. Selecciona un usuario inscripto para revisar su información y marcar la asistencia oficial al Multimedia Day 2026.
+          Selecciona una persona inscripta para revisar sus datos y marcar su asistencia oficial al Multimedia Day 2026.
         </Typography>
 
         {mensaje && (
@@ -101,7 +108,7 @@ const AsistenciaPage = () => {
         {/* Buscador por DNI, Nombre o Apellido */}
         <TextField
           fullWidth
-          label="Buscar por DNI, Nombre o Apellido..."
+          label="Buscar por DNI, nombre o apellido"
           variant="outlined"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
@@ -175,7 +182,7 @@ const AsistenciaPage = () => {
               {usuarioSeleccionado ? (
                 <Card variant="outlined" sx={{ p: 1, background: 'linear-gradient(135deg, rgba(7, 16, 82, 0.96), rgba(28, 25, 133, 0.72))' }}>
                   <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, flexWrap: 'wrap', mb: 2 }}>
                       <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold' }}>
                         {usuarioSeleccionado.nombre} {usuarioSeleccionado.apellido}
                       </Typography>
@@ -224,11 +231,11 @@ const AsistenciaPage = () => {
                           usuarioSeleccionado.seRegistro
                         )
                       }
-                      sx={{ py: 1.5, fontWeight: 'bold' }}
+                      sx={{ py: 1.5, fontWeight: 'bold', fontFamily: "'Omega Pixel BIFORM', monospace", fontSize: { xs: '0.72rem', sm: '0.85rem' } }}
                     >
                       {usuarioSeleccionado.seRegistro 
                         ? "ANULAR ASISTENCIA" 
-                        : "✔ CHECK: CONFIRMAR ASISTENCIA (REGISTRO EXITOSO)"}
+                        : "CONFIRMAR ASISTENCIA"}
                     </Button>
                   </CardContent>
                 </Card>
