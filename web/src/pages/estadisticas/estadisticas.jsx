@@ -281,9 +281,14 @@ export default function EstadisticasPage() {
             onClick={fetchData}
             disabled={loading}
             sx={{ 
-              color: THEME_COLORS.textCyan, 
-              borderColor: THEME_COLORS.textCyan,
-              '&:hover': { borderColor: THEME_COLORS.textPink, color: THEME_COLORS.textPink }
+              color: '#03083B',
+              backgroundColor: '#4dc9ff',
+              borderColor: "#00B4FF",
+              '&:hover': {
+                color: THEME_COLORS.textPink,
+                backgroundColor: '#00B4FF',
+                borderColor: THEME_COLORS.textPink
+              }
             }}
           >
             {loading ? 'CARGANDO...' : 'REFRESCAR'}
