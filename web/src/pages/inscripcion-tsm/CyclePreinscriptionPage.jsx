@@ -1,259 +1,493 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Button, Container, Typography, Box, Paper, IconButton, CircularProgress } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import AddIcon from '@mui/icons-material/Add';
-import toast from 'react-hot-toast';
-import { getPreCycleRegistrations, registerToPreCycle } from '../../services/preCycleService';
-import { PreInscripcionModal } from './PreInscripcionModal';
-
-// ─── Assets de fondo y decoración ────────────────────────────────────
-import bgGrid from "../../assets/images/fondo/FONDO3.png";
-import cursorImg from "../../assets/images/CURSOR.png";
-import masImg from "../../assets/images/MAS.png";
-import playImg from "../../assets/images/PLAY.png";
-import pixeladoImg from "../../assets/images/pixelado.png";
-
-// ─── Estilos constantes fuera del render ──────────────────────────────
-const CONTAINER_BG_STYLE = {
-  minHeight: "100vh",
-  width: "100%",
-  position: "relative",
-  overflow: "hidden",
-  backgroundImage: `url(${bgGrid})`,
-  backgroundRepeat: "repeat",
-  backgroundPosition: "center",
-  backgroundSize: { xs: "cover", md: "auto" },
-  pt: { xs: 4, sm: 6, md: 8 },
-  pb: { xs: 6, sm: 8, md: 10 },
-  px: { xs: 1, sm: 0 },
-};
-
-const DECORATIVE_IMAGES = [
-  {
-    src: pixeladoImg,
-    alt: "Pixel art decoration",
-    sx: {
-      position: "absolute",
-      top: { xs: "2%", sm: "5%", md: "12%" },
-      right: { xs: "-60px", sm: "-30px", md: "5%" },
-      width: { xs: "140px", sm: "220px", md: "340px" },
-      opacity: { xs: 0.2, sm: 0.4, md: 0.85 },
-      pointerEvents: "none",
-      zIndex: 1,
-    },
-  },
-  {
-    src: cursorImg,
-    alt: "3D Cursor",
-    sx: {
-      position: "absolute",
-      top: { xs: "3%", sm: "10%", md: "20%" },
-      right: { xs: "2%", sm: "5%", md: "18%" },
-      width: { xs: "50px", sm: "90px", md: "150px" },
-      transform: "rotate(-5deg)",
-      pointerEvents: "none",
-      zIndex: 1,
-      opacity: { xs: 0.5, sm: 0.8, md: 1 },
-      filter: "drop-shadow(0 12px 24px rgba(0, 180, 255, 0.35))",
-    },
-  },
-  {
-    src: playImg,
-    alt: "3D Play Button",
-    sx: {
-      position: "absolute",
-      bottom: { xs: "3%", sm: "8%", md: "22%" },
-      left: { xs: "2%", sm: "4%", md: "10%" },
-      width: { xs: "55px", sm: "100px", md: "160px" },
-      pointerEvents: "none",
-      zIndex: 1,
-      opacity: { xs: 0.5, sm: 0.8, md: 1 },
-      filter: "drop-shadow(0 12px 20px rgba(213, 0, 186, 0.3))",
-    },
-  },
-  {
-    src: masImg,
-    alt: "3D Cross Decoration",
-    sx: {
-      position: "absolute",
-      bottom: { xs: "2%", sm: "4%", md: "8%" },
-      right: { xs: "2%", sm: "5%", md: "12%" },
-      width: { xs: "70px", sm: "130px", md: "210px" },
-      pointerEvents: "none",
-      zIndex: 1,
-      opacity: { xs: 0.4, sm: 0.7, md: 1 },
-      filter: "drop-shadow(0 15px 30px rgba(3, 8, 59, 0.8))",
-    },
-  },
-];
+import { useState, useEffect, useCallback } from "react";
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  Fade,
+  Chip,
+  Card,
+  CardContent,
+  CardActionArea,
+  Divider,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import toast from "react-hot-toast";
+import {
+  registerToPreCycle,
+  getPreCycleRegistrations,
+  updatePreCycleRegistration,
+  deletePreCycleRegistration,
+} from "../../services/preCycleService";
+import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/PreinscriptionFormModal";
+import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreinscriptionViewModal";
+import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreinscriptionDeleteModal";
 
 export const CyclePreinscriptionPage = () => {
-  const [list, setList] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const fetchRecords = useCallback(async () => {
-    setLoading(true);
+  // ── Estado de la tabla ──
+  const [registrations, setRegistrations] = useState([]);
+  const [tableLoading, setTableLoading] = useState(true);
+
+  // ── Estado de modales ──
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [formEditData, setFormEditData] = useState(null); // null = crear, object = editar
+  const [formLoading, setFormLoading] = useState(false);
+
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [viewData, setViewData] = useState(null);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteData, setDeleteData] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // ── Cargar registros ──
+  const fetchRegistrations = useCallback(async () => {
+    setTableLoading(true);
     try {
       const data = await getPreCycleRegistrations();
-      setList(data || []);
+      setRegistrations(Array.isArray(data) ? data : []);
     } catch (error) {
-      toast.error(error.message || 'Error al cargar pre-inscripciones');
+      console.error("Error al cargar registros:", error);
+      toast.error("Error al cargar las pre-inscripciones");
     } finally {
-      setLoading(false);
+      setTableLoading(false);
     }
   }, []);
 
+  // La carga inicial sincroniza datos externos mediante una promesa HTTP.
   useEffect(() => {
-    fetchRecords();
-  }, [fetchRecords]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchRegistrations();
+  }, [fetchRegistrations]);
 
-  const handleOpenModal = useCallback(() => setOpenModal(true), []);
-  const handleCloseModal = useCallback(() => setOpenModal(false), []);
+  // ── Handlers: Formulario (Crear / Editar) ──
+  const handleOpenCreate = () => {
+    setFormEditData(null);
+    setFormModalOpen(true);
+  };
 
-  const handleCreate = async (formData) => {
+  const handleOpenEdit = (registration, e) => {
+    e.stopPropagation(); // Evitar que se abra el modal de vista
+    setFormEditData(registration);
+    setFormModalOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setFormModalOpen(false);
+    setFormEditData(null);
+  };
+
+  const handleFormSave = async (formData) => {
+    setFormLoading(true);
     try {
-      await registerToPreCycle(formData);
-      toast.success('Pre-inscripción registrada con éxito');
-      handleCloseModal();
-      fetchRecords();
+      const registrationData = Object.fromEntries(
+        Object.entries(formData).filter(([key]) => key !== "registrarId"),
+      );
+
+      if (formEditData) {
+        // Actualizar
+        await updatePreCycleRegistration(formEditData.registrarId, registrationData);
+        toast.success("Pre-inscripción actualizada con éxito");
+      } else {
+        // El backend genera registrarId para evitar colisiones.
+        await registerToPreCycle(registrationData);
+        toast.success("Pre-inscripción registrada con éxito");
+      }
+      handleFormClose();
+      await fetchRegistrations();
     } catch (error) {
-      toast.error(error.message || 'Error al registrar pre-inscripción');
+      console.error(error);
+      const errorMsg =
+        error?.message || "Error al procesar la pre-inscripción";
+      toast.error(errorMsg);
+    } finally {
+      setFormLoading(false);
     }
   };
 
-  return (
-    <Box sx={CONTAINER_BG_STYLE}>
-      {/* Elementos flotantes decorativos */}
-      {DECORATIVE_IMAGES.map((img, index) => (
-        <Box key={index} component="img" src={img.src} alt={img.alt} sx={img.sx} />
-      ))}
+  // ── Handlers: Vista ──
+  const handleOpenView = (registration) => {
+    setViewData(registration);
+    setViewModalOpen(true);
+  };
 
-      {/* Contenido Principal */}
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
-        {/* Encabezado y acciones principales */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+  const handleViewClose = () => {
+    setViewModalOpen(false);
+    setViewData(null);
+  };
+
+  // ── Handlers: Eliminar ──
+  const handleOpenDelete = (registration, e) => {
+    e.stopPropagation(); // Evitar que se abra el modal de vista
+    setDeleteData(registration);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteModalOpen(false);
+    setDeleteData(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteData) return;
+    setDeleteLoading(true);
+    try {
+      await deletePreCycleRegistration(deleteData.registrarId);
+      toast.success("Pre-inscripción eliminada con éxito");
+      handleDeleteClose();
+      await fetchRegistrations();
+    } catch (error) {
+      console.error(error);
+      const errorMsg =
+        error?.message || "Error al eliminar la pre-inscripción";
+      toast.error(errorMsg);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  // ── Columnas de la tabla ──
+  const columns = [
+    { key: "registrarId", label: "N° Reg." },
+    { key: "nombre", label: "Nombre" },
+    { key: "apellido", label: "Apellido" },
+    { key: "dni", label: "DNI" },
+    { key: "email", label: "Email" },
+  ];
+
+  return (
+    <Container maxWidth="lg" sx={{ minHeight: "100vh", pt: { xs: 4, sm: 6 }, pb: { xs: 6, sm: 8 } }}>
+      {/* ── Header ── */}
+      <Fade in timeout={500}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
           <Box>
-            <Typography variant="h4" component="h1" sx={{ color: '#00e5ff', fontWeight: 'bold' }}>
+            <Typography
+              variant={isMobile ? "h5" : "h4"}
+              component="h1"
+              color="primary"
+              sx={{ fontWeight: 700 }}
+            >
               Gestión de Pre-inscripciones
             </Typography>
-            <Typography variant="subtitle2" sx={{ color: '#8fa0dd' }}>
-              Ciclo 2027 — {list.length} inscriptos
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
+              Ciclo 2027 — {registrations.length} inscripto
+              {registrations.length !== 1 ? "s" : ""}
             </Typography>
           </Box>
 
-          <Box display="flex" gap={1.5} alignItems="center">
-            <IconButton 
-              onClick={fetchRecords} 
-              disabled={loading}
-              aria-label="Actualizar registros"
-              sx={{ color: '#00e5ff', border: '1px solid #00e5ff', borderRadius: 1 }}
-            >
-              <RefreshIcon />
-            </IconButton>
-
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Tooltip title="Refrescar">
+              <IconButton
+                onClick={fetchRegistrations}
+                disabled={tableLoading}
+                sx={{ color: "primary.main" }}
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={handleOpenModal}
-              sx={{
-                bgcolor: '#00e5ff',
-                color: '#03083b',
-                fontWeight: 'bold',
-                boxShadow: '3px 3px 0px #d500ba',
-                '&:hover': { bgcolor: '#00b4ff' }
-              }}
+              onClick={handleOpenCreate}
             >
-              AGREGAR
+              Agregar
             </Button>
           </Box>
         </Box>
+      </Fade>
 
-        {/* Contenedor central (Loading, Estado vacío o Lista) */}
-        {loading ? (
+      {/* ── Contenido: tabla (desktop) o cards (mobile) ── */}
+      {tableLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+          <CircularProgress size={36} />
+        </Box>
+      ) : registrations.length === 0 ? (
+        <Fade in timeout={700}>
           <Paper
-            elevation={0}
             sx={{
-              p: 8,
-              textAlign: 'center',
-              backgroundColor: '#12193b',
-              border: '2px solid #2b3566',
-              boxShadow: '4px 4px 0px #d500ba',
-              borderRadius: 1
+              p: 5,
+              textAlign: "center",
+              border: "1.5px solid",
+              borderColor: "primary.main",
+              boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
+              borderRadius: 0,
+              bgcolor: "background.paper",
             }}
           >
-            <CircularProgress sx={{ color: '#00e5ff' }} />
-          </Paper>
-        ) : list.length === 0 ? (
-          <Paper
-            elevation={0}
-            sx={{
-              p: 8,
-              textAlign: 'center',
-              backgroundColor: '#12193b',
-              border: '2px solid #2b3566',
-              boxShadow: '4px 4px 0px #d500ba',
-              borderRadius: 1
-            }}
-          >
-            <Typography mb={3} sx={{ color: '#00e5ff' }}>
+            <Typography variant="body1" color="textSecondary">
               No hay pre-inscripciones registradas.
             </Typography>
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
-              onClick={handleOpenModal}
-              sx={{
-                color: '#00e5ff',
-                borderColor: '#00e5ff',
-                borderWidth: 2,
-                fontWeight: 'bold',
-                '&:hover': { borderColor: '#00b4ff', borderWidth: 2 }
-              }}
+              onClick={handleOpenCreate}
+              sx={{ mt: 2 }}
             >
-              AGREGAR LA PRIMERA
+              Agregar la primera
             </Button>
           </Paper>
-        ) : (
-          <Box display="flex" flexDirection="column" gap={2}>
-            {list.map((item, index) => (
-              <Paper
-                key={item.registrarId || item._id || index}
+        </Fade>
+      ) : isMobile ? (
+        /* ── Vista Mobile: Cards ── */
+        <Fade in timeout={700} style={{ transitionDelay: "200ms" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {registrations.map((reg, index) => (
+              <Card
+                key={reg.registrarId || index}
+                variant="outlined"
                 sx={{
-                  p: 2,
-                  backgroundColor: '#12193b',
-                  border: '1px solid #00e5ff',
-                  color: '#ffffff',
-                  display: 'flex',
-                  justify: 'space-between',
-                  alignItems: 'center'
+                  border: "1.5px solid",
+                  borderColor: "primary.main",
+                  boxShadow: "3px 3px 0px rgba(213, 0, 186, 0.4)",
+                  borderRadius: 0,
+                  bgcolor: "background.paper",
                 }}
               >
-                <Box>
-                  <Typography variant="h6" sx={{ color: '#00e5ff' }}>
-                    {item.nombre} {item.apellido}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#8fa0dd' }}>
-                    DNI: {item.dni} | Teléfono: {item.telefono}
-                  </Typography>
+                <CardActionArea onClick={() => handleOpenView(reg)}>
+                  <CardContent sx={{ pb: 1 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 700 }}
+                      >
+                        {reg.nombre} {reg.apellido}
+                      </Typography>
+                      <Chip
+                        label={`#${reg.registrarId}`}
+                        size="small"
+                        sx={{
+                          bgcolor: "rgba(0, 180, 255, 0.12)",
+                          color: "primary.main",
+                          fontWeight: 600,
+                          borderRadius: 0,
+                          border: "1px solid rgba(0, 180, 255, 0.3)",
+                        }}
+                      />
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                    >
+                      DNI: {reg.dni} · {reg.email || "—"}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+                <Divider sx={{ borderColor: "divider" }} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 0.5,
+                    px: 1,
+                    py: 0.5,
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => handleOpenEdit(reg, { stopPropagation: () => {} })}
+                    sx={{
+                      color: "primary.main",
+                      "&:hover": { bgcolor: "rgba(0, 180, 255, 0.12)" },
+                    }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleOpenDelete(reg, { stopPropagation: () => {} })}
+                    sx={{
+                      color: "secondary.main",
+                      "&:hover": { bgcolor: "rgba(213, 0, 186, 0.12)" },
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
                 </Box>
-                {item.registrarId && (
-                  <Typography variant="subtitle2" sx={{ color: '#d500ba', fontWeight: 'bold' }}>
-                    ID: {item.registrarId}
-                  </Typography>
-                )}
-              </Paper>
+              </Card>
             ))}
           </Box>
-        )}
+        </Fade>
+      ) : (
+        /* ── Vista Desktop: Tabla ── */
+        <Fade in timeout={700} style={{ transitionDelay: "200ms" }}>
+          <TableContainer
+            component={Paper}
+            elevation={3}
+            sx={{
+              border: "1.5px solid",
+              borderColor: "primary.main",
+              boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
+              borderRadius: 0,
+              bgcolor: "background.paper",
+              overflowX: "auto",
+            }}
+          >
+            <Table sx={{ minWidth: 600 }}>
+              <TableHead>
+                <TableRow sx={{ bgcolor: "rgba(0, 180, 255, 0.08)" }}>
+                  {columns.map((col) => (
+                    <TableCell
+                      key={col.key}
+                      sx={{
+                        fontWeight: 700,
+                        color: "primary.main",
+                        borderBottom: "1.5px solid",
+                        borderColor: "divider",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {col.label}
+                    </TableCell>
+                  ))}
+                  <TableCell
+                    align="right"
+                    sx={{
+                      fontWeight: 700,
+                      color: "primary.main",
+                      borderBottom: "1.5px solid",
+                      borderColor: "divider",
+                    }}
+                  >
+                    Acciones
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {registrations.map((reg, index) => (
+                  <TableRow
+                    key={reg.registrarId || index}
+                    hover
+                    onClick={() => handleOpenView(reg)}
+                    sx={{
+                      cursor: "pointer",
+                      transition: "background-color 0.2s",
+                      "&:hover": {
+                        bgcolor: "rgba(0, 180, 255, 0.04) !important",
+                      },
+                      borderBottom:
+                        index < registrations.length - 1
+                          ? "1px solid"
+                          : "none",
+                      borderColor: "divider",
+                    }}
+                  >
+                    {columns.map((col) => (
+                      <TableCell
+                        key={col.key}
+                        sx={{ borderBottom: "1px solid", borderColor: "divider" }}
+                      >
+                        {col.key === "registrarId" ? (
+                          <Chip
+                            label={reg[col.key]}
+                            size="small"
+                            sx={{
+                              bgcolor: "rgba(0, 180, 255, 0.12)",
+                              color: "primary.main",
+                              fontWeight: 600,
+                              borderRadius: 0,
+                              border: "1px solid",
+                              borderColor: "rgba(0, 180, 255, 0.3)",
+                            }}
+                          />
+                        ) : (
+                          reg[col.key] || "—"
+                        )}
+                      </TableCell>
+                    ))}
+                    <TableCell
+                      align="right"
+                      sx={{ borderBottom: "1px solid", borderColor: "divider" }}
+                    >
+                      <Tooltip title="Editar">
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleOpenEdit(reg, e)}
+                          sx={{
+                            color: "primary.main",
+                            mr: 0.5,
+                            "&:hover": { bgcolor: "rgba(0, 180, 255, 0.12)" },
+                          }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Eliminar">
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleOpenDelete(reg, e)}
+                          sx={{
+                            color: "secondary.main",
+                            "&:hover": { bgcolor: "rgba(213, 0, 186, 0.12)" },
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Fade>
+      )}
 
-        {/* Modal emergente para registrar */}
-        <PreInscripcionModal
-          open={openModal}
-          onClose={handleCloseModal}
-          onSubmit={handleCreate}
-        />
-      </Container>
-    </Box>
+      {/* ── Modales ── */}
+      <PreinscriptionFormModal
+        open={formModalOpen}
+        onClose={handleFormClose}
+        onSave={handleFormSave}
+        initialData={formEditData}
+        loading={formLoading}
+      />
+
+      <PreinscriptionViewModal
+        open={viewModalOpen}
+        onClose={handleViewClose}
+        data={viewData}
+      />
+
+      <PreinscriptionDeleteModal
+        open={deleteModalOpen}
+        onClose={handleDeleteClose}
+        onConfirm={handleDeleteConfirm}
+        data={deleteData}
+        loading={deleteLoading}
+      />
+    </Container>
   );
 };

@@ -1,12 +1,11 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Importación de las páginas
 import HomePage from './pages/HomePage'; 
 import AsistenciaPage from './pages/registracion'; // Módulo de Mesa de Entrada / Asistencia
 import { CyclePreinscriptionPage } from './pages/inscripcion-tsm/CyclePreinscriptionPage';
-import InscripcionPage from './pages/inscripcion-w/inscripcion-w';
-import EstadisticasPage from './pages/estadisticas/estadisticas';
+import InscripcionPage from './pages/inscripcion-w/EventRegistrationPage';
+import EstadisticasPage from './pages/estadisticas/estadisticasPage';
 
 const App = () => {
   return (
@@ -26,11 +25,25 @@ const App = () => {
         {/* Página de Estadísticas */}
         <Route path="/estadisticas" element={<EstadisticasPage />} />
         
-        {/* Ruta 404 */}
-        <Route 
-          path="*" 
-          element={<h2 style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>404 - Página no encontrada</h2>} 
-        />
+        {/* 404 */}
+      <Route
+        path="*"
+        element={
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "120px",
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              color: "#00B4FF",
+            }}
+          >
+            <h1 style={{ fontSize: "4rem", margin: 0 }}>404</h1>
+            <p style={{ color: "#D500BA", letterSpacing: "0.1em" }}>
+              PÁGINA NO ENCONTRADA
+            </p>
+          </div>
+        }
+      />
       </Routes>
     </Router>
   );

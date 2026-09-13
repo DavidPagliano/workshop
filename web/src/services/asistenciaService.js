@@ -1,10 +1,24 @@
-// src/services/asistenciaService.js
-import { obtenerParticipantesSimulados, patchSeRegistroSimulado } from '../utils/dbSimulator';
+import { getAttendeesList, markAttendance } from './attendAsistence';
+
+const normalizarParticipante = (participante) => ({
+  ...participante,
+  celular: participante.celular ?? participante.telefono,
+  temasInteres: participante.temasInteres ?? (
+    participante.temas ? [participante.temas] : []
+  ),
+});
 
 export const getInscritosAPI = async () => {
-  return obtenerParticipantesSimulados();
+  const participantes = await getAttendeesList();
+  return Array.isArray(participantes)
+    ? participantes.map(normalizarParticipante)
+    : [];
 };
 
 export const updateAsistenciaAPI = async (registrarId, seRegistroValor) => {
-  return patchSeRegistroSimulado(registrarId, seRegistroValor);
+  const participanteActualizado = await markAttendance(
+    registrarId,
+    seRegistroValor,
+  );
+  return normalizarParticipante(participanteActualizado);
 };

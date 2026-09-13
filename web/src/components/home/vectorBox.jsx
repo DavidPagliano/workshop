@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@mui/material';
 
 export const VectorBox = ({ children, borderColor = '#D500BA', sx = {} }) => {

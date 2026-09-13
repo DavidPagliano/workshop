@@ -1,4 +1,3 @@
-// src/hooks/useAsistencia.js
 import { useState, useEffect } from 'react';
 import { getInscritosAPI, updateAsistenciaAPI } from '../services/asistenciaService';
 
@@ -8,16 +7,24 @@ export const useAsistencia = () => {
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const [mensaje, setMensaje] = useState('');
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
 
   const cargarDatos = async () => {
     setCargando(true);
-    const datos = await getInscritosAPI();
-    setParticipantes(datos);
-    setCargando(false);
+    setError('');
+    try {
+      const datos = await getInscritosAPI();
+      setParticipantes(datos);
+    } catch (requestError) {
+      setParticipantes([]);
+      setError(requestError.message || 'No se pudo cargar la lista de asistencia.');
+    } finally {
+      setCargando(false);
+    }
   };
 
   useEffect(() => {
-    cargarDatos();
+    void Promise.resolve().then(cargarDatos);
   }, []);
 
   const participantesFiltrados = participantes.filter((p) => {
@@ -36,30 +43,35 @@ export const useAsistencia = () => {
   // ACÁ ESTÁ EL FIX DEL MENSAJE 
   const handleConfirmarAsistencia = async (id, estadoActual) => {
     const nuevoEstado = !estadoActual;
-    
-    await updateAsistenciaAPI(id, nuevoEstado);
 
-    setParticipantes((prev) =>
-      prev.map((item) =>
-        (item._id === id || item.registrarId === id)
-          ? { ...item, seRegistro: nuevoEstado }
-          : item
-      )
-    );
+    try {
+      const participanteActualizado = await updateAsistenciaAPI(id, nuevoEstado);
 
-    if (usuarioSeleccionado && (usuarioSeleccionado._id === id || usuarioSeleccionado.registrarId === id)) {
-      setUsuarioSeleccionado((prev) => ({ ...prev, seRegistro: nuevoEstado }));
+      setParticipantes((prev) =>
+        prev.map((item) =>
+          (item._id === id || item.registrarId === id)
+            ? { ...item, ...participanteActualizado }
+            : item
+        )
+      );
+
+      if (usuarioSeleccionado && (usuarioSeleccionado._id === id || usuarioSeleccionado.registrarId === id)) {
+        setUsuarioSeleccionado((prev) => ({ ...prev, ...participanteActualizado }));
+      }
+
+      // Si nuevoEstado es TRUE -> Asistencia confirmada
+      // Si nuevoEstado es FALSE -> Asistencia anulada
+      if (nuevoEstado) {
+        setMensaje('✔ ¡REGISTRO EXITOSO! Asistencia confirmada.');
+      } else {
+        setMensaje('⚠️ Asistencia anulada. El participante figura como ausente.');
+      }
+
+      setError('');
+      setTimeout(() => setMensaje(''), 4000);
+    } catch (requestError) {
+      setError(requestError.message || 'No se pudo actualizar la asistencia.');
     }
-
-    // Si nuevoEstado es TRUE -> Asistencia confirmada
-    // Si nuevoEstado es FALSE -> Asistencia anulada
-    if (nuevoEstado) {
-      setMensaje('✔ ¡REGISTRO EXITOSO! Asistencia confirmada.');
-    } else {
-      setMensaje('⚠️ Asistencia anulada. El participante figura como ausente.');
-    }
-
-    setTimeout(() => setMensaje(''), 4000);
   };
 
   return {
@@ -70,6 +82,7 @@ export const useAsistencia = () => {
     handleSeleccionarUsuario,
     handleConfirmarAsistencia,
     mensaje,
+    error,
     cargando
   };
 };

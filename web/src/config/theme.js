@@ -14,8 +14,8 @@ let theme = createTheme({
       contrastText: '#FFFFFF',
     },
     background: {
-      default: '#03083B', // Azul noche profundo
-      paper: '#071052',   // Azul marino de los paneles contenedores
+      default: 'transparent',   // Deja visible el fondo de grilla definido en index.css
+      paper: 'rgba(7, 16, 82, 0.9)',   // Azul marino semi-transparente sobre la grilla
     },
     text: {
       primary: '#FFFFFF',
@@ -101,18 +101,6 @@ let theme = createTheme({
           backgroundColor: 'rgba(7, 16, 82, 0.9)',
           boxShadow: '4px 4px 0px rgba(213, 0, 186, 0.5)',
         },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 0,
-        },
-      },
-    },
-    MuiTextField: {
-      defaultProps: {
-        variant: 'outlined',
       },
     },
   },
