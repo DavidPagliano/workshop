@@ -8,7 +8,7 @@ const {
     deleteEventRegistration,
     markAttendance } = require('../controllers/eventRegistration.controller');
 const validateRequest = require('../middlewares/validateRequest');
-const { eventSchema, eventUpdateSchema } = require('../schemas/registrationSchema');
+const { eventSchema, eventUpdateSchema } = require('../schemas/registration.schema');
 
 // Zod valida -> Controlador recibe datos limpios -> Servicio ejecuta lógica -> Base de Datos
 router.post('/', validateRequest(eventSchema), createEventRegistration);

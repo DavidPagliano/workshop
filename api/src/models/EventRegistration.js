@@ -5,7 +5,7 @@ const eventRegistrationSchema = new mongoose.Schema({
     apellido: { type: String, required: true },
     nombre: { type: String, required: true },
     email: { type: String, required: true },
-    dni: { type: String, required: true },
+    dni: { type: String, required: true, unique: true, index: true },
     telefono: { type: String, required: true },
     temas: { type: String,enum:["AI", "Audio", "video","sin temas"], default: "sin temas", required: true },
     seRegistro: { type: Boolean, default: false },

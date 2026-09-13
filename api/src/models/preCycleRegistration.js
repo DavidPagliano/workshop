@@ -6,7 +6,7 @@ const preCycleRegistrationSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     edad: { type: Number, required: true },
     fechaNacimiento: { type: Date, required: true },
-    dni: { type: String, required: true },
+    dni: { type: String, required: true, unique: true, index: true },
     tituloSecundario: { type: String, enum:["si","no","incompleto"],default: "no", required: true },
     telefono: { type: String, required: true },
     email: { type: String, required: true },
