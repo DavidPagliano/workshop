@@ -357,13 +357,13 @@ const HomePage = () => {
             onClick={() => navigate("/estadisticas")}
             sx={{
               borderColor: "#00B4FF",
-              color: "#00B4FF",
-              bgcolor: "transparent",
+              color: "#03083B",
+              bgcolor: "#00B4FF",
               px: { xs: 2, sm: 4 },
               py: { xs: 1, sm: 1.2 },
               fontSize: { xs: "0.8rem", sm: "0.88rem", md: "0.95rem" },
               width: { xs: "100%", sm: "auto" },
-              "&:hover": { bgcolor: "rgba(0, 180, 255, 0.1)", borderColor: "#00B4FF" },
+              "&:hover": { bgcolor: "#4dc9ff", borderColor: "#00B4FF" },
             }}
           >
             Estadísticas
