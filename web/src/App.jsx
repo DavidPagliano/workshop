@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Importación de las páginas
 import HomePage from './pages/HomePage'; 
-import AsistenciaPage from './pages/registracion'; // Módulo de Mesa de Entrada / Asistencia
+import AsistenciaPage from './pages/registracion/registrationPage';
 import { CyclePreinscriptionPage } from './pages/inscripcion-tsm/CyclePreinscriptionPage';
 import InscripcionPage from './pages/inscripcion-w/EventRegistrationPage';
 import EstadisticasPage from './pages/estadisticas/estadisticasPage';
