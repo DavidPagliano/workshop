@@ -38,6 +38,19 @@ import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/Preins
 import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreinscriptionViewModal";
 import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreinscriptionDeleteModal";
 
+const editablePreCycleFields = [
+  "nombre",
+  "apellido",
+  "edad",
+  "fechaNacimiento",
+  "dni",
+  "email",
+  "telefono",
+  "tituloSecundario",
+  "concurreAlgunaIglesias",
+  "cual",
+];
+
 export const CyclePreinscriptionPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -99,7 +112,9 @@ export const CyclePreinscriptionPage = () => {
     setFormLoading(true);
     try {
       const registrationData = Object.fromEntries(
-        Object.entries(formData).filter(([key]) => key !== "registrarId"),
+        editablePreCycleFields
+          .filter((field) => Object.hasOwn(formData, field))
+          .map((field) => [field, formData[field]]),
       );
 
       if (formEditData) {

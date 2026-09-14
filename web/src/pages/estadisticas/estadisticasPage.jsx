@@ -9,12 +9,11 @@ import {
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 
 import { getAttendeesList } from "../../services/attendAsistence";
 import { getPreCycleRegistrations } from "../../services/preCycleService";
 import { CHART_COLORS } from "../../utils/estadisticasUtils";
+import { generateEstadisticasPDF } from "../../utils/exportPDF";
 
 // Importación de las Secciones
 import { MetricCards } from "../../components/estadisticas/MetricCards";
@@ -115,75 +114,25 @@ const EstadisticasPage = () => {
     return { total, counts, chartData };
   }, [cycleData]);
 
-  // Lógica para exportar PDF
+  // ── Exportar PDF ──
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.setFillColor(3, 8, 59);
-    doc.rect(0, 0, 210, 25, "F");
-    doc.setTextColor(0, 180, 255);
-    doc.setFontSize(16);
-    doc.text("WORKSHOP 2026 - REPORTE", 14, 16);
-    doc.setTextColor(100, 100, 100);
-    doc.setFontSize(9);
-    doc.text(`Generado: ${new Date().toLocaleString("es-AR")}`, 14, 32);
-
-    doc.setFontSize(12);
-    doc.setTextColor(3, 8, 59);
-    doc.text("Asistencia General", 14, 42);
-    autoTable(doc, {
-      startY: 46,
-      head: [["Métrica", "Total", "%"]],
-      body: [
-        ["Inscriptos Evento", metricasAsistencia.total, "100%"],
-        [
-          "Presentes",
-          metricasAsistencia.presentes,
-          `${metricasAsistencia.porcentaje}%`,
-        ],
-        [
-          "Ausentes",
-          metricasAsistencia.ausentes,
-          `${(100 - metricasAsistencia.porcentaje).toFixed(1)}%`,
-        ],
-      ],
-      theme: "grid",
-      headStyles: { fillColor: [0, 180, 255], textColor: [3, 8, 59] },
+    generateEstadisticasPDF({
+      eventData,
+      cycleData,
+      metricasAsistencia,
+      metricasTemas,
     });
-
-    doc.text("Temas de Interés", 14, doc.lastAutoTable.finalY + 12);
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 16,
-      head: [["Tema", "Cant.", "%"]],
-      body: metricasTemas.tableData.map((t) => [
-        t.tema,
-        t.cantidad,
-        `${t.porcentaje}%`,
-      ]),
-      theme: "grid",
-      headStyles: { fillColor: [213, 0, 186], textColor: [255, 255, 255] },
-    });
-
-    doc.text("Pre-Inscripciones 2027", 14, doc.lastAutoTable.finalY + 12);
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 16,
-      head: [["Reg ID", "Aspirante", "DNI", "Secundario"]],
-      body: cycleData.map((c) => [
-        c.registrarId || "—",
-        `${c.nombre} ${c.apellido}`,
-        c.dni,
-        c.tituloSecundario,
-      ]),
-      theme: "grid",
-      headStyles: { fillColor: [3, 8, 59], textColor: [255, 255, 255] },
-    });
-
-    doc.save(`Estadisticas_${new Date().toISOString().split("T")[0]}.pdf`);
   };
 
   return (
     <Container
       maxWidth="xl"
-      sx={{ minHeight: "100vh", pt: { xs: 2, sm: 3, md: 5 }, pb: { xs: 4, sm: 6, md: 8 }, px: { xs: 1.5, sm: 3 } }}
+      sx={{
+        minHeight: "100vh",
+        pt: { xs: 2, sm: 3, md: 5 },
+        pb: { xs: 4, sm: 6, md: 8 },
+        px: { xs: 1.5, sm: 3 },
+      }}
     >
       <Fade in timeout={400}>
         <Box
@@ -200,7 +149,10 @@ const EstadisticasPage = () => {
             <Typography
               variant="h4"
               color="primary"
-              sx={{ fontWeight: 800, fontSize: { xs: "1.4rem", sm: "1.8rem", md: "2.125rem" } }}
+              sx={{
+                fontWeight: 800,
+                fontSize: { xs: "1.4rem", sm: "1.8rem", md: "2.125rem" },
+              }}
             >
               Panel de Estadísticas
             </Typography>
@@ -215,7 +167,10 @@ const EstadisticasPage = () => {
               onClick={fetchData}
               disabled={loading}
               size="small"
-              sx={{ color: "primary.main", fontSize: { xs: "0.7rem", sm: "0.8rem" } }}
+              sx={{
+                color: "primary.main",
+                fontSize: { xs: "0.7rem", sm: "0.8rem" },
+              }}
             >
               Refrescar
             </Button>

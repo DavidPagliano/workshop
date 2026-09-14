@@ -132,7 +132,8 @@ const FichaUsuario = ({ usuario, onConfirmar }) => {
         color={usuario.seRegistro ? "secondary" : "primary"}
         onClick={() =>
           onConfirmar(
-            usuario._id || usuario.registrarId,
+            // El endpoint de asistencia busca por el identificador público.
+            usuario.registrarId || usuario._id,
             usuario.seRegistro
           )
         }
