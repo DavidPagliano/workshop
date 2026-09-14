@@ -66,7 +66,7 @@ exports.updateUserStatus = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { activo },
-      { new: true, runValidators: true, projection: '-password' },
+      { returnDocument: 'after', runValidators: true, projection: '-password' },
     ).lean();
 
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });

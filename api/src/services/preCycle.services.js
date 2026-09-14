@@ -35,7 +35,7 @@ exports.updateAspirant = async (registrarId, data) => {
   return await coPreCycleRegistration.findOneAndUpdate(
     { registrarId },
     { $set: data },
-    { new: true, runValidators: true, context: 'query' }
+    { returnDocument: 'after', runValidators: true, context: 'query' }
   );
 };
 

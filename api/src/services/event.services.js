@@ -36,7 +36,7 @@ exports.updateParticipant = async (registrarId, data) => {
   return await EventRegistration.findOneAndUpdate(
     { registrarId },
     { $set: data },
-    { new: true, runValidators: true, context: 'query' }
+    { returnDocument: 'after', runValidators: true, context: 'query' }
   );
 };
 
@@ -49,7 +49,7 @@ exports.updateAttendance = async (registrarId, seRegistro) => {
   const updatedRegistration = await EventRegistration.findOneAndUpdate(
     { registrarId },
     { seRegistro: seRegistro },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   if (!updatedRegistration) {
