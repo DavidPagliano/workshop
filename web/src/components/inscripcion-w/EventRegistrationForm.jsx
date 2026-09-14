@@ -39,7 +39,7 @@ export const EventRegistrationForm = ({
         value={formData.nombre}
         onChange={handleChange}
         required
-        slotProps={{ htmlInput: { minLength: 2, maxLength: 60 } }}
+        inputProps={{ minLength: 2, maxLength: 60 }}
         autoComplete="given-name"
       />
       <TextField
@@ -48,7 +48,7 @@ export const EventRegistrationForm = ({
         value={formData.apellido}
         onChange={handleChange}
         required
-        slotProps={{ htmlInput: { minLength: 2, maxLength: 60 } }}
+        inputProps={{ minLength: 2, maxLength: 60 }}
         autoComplete="family-name"
       />
     </Box>
@@ -59,7 +59,7 @@ export const EventRegistrationForm = ({
       value={formData.dni}
       onChange={handleChange}
       required
-      slotProps={{ htmlInput: { minLength: 6, maxLength: 30 } }}
+      inputProps={{ minLength: 6, maxLength: 30 }}
       helperText="Usaremos este dato para acreditar tu ingreso."
       autoComplete="off"
     />
@@ -71,7 +71,7 @@ export const EventRegistrationForm = ({
         value={formData.telefono}
         onChange={handleChange}
         required
-        slotProps={{ htmlInput: { minLength: 8, maxLength: 25 } }}
+        inputProps={{ minLength: 8, maxLength: 25 }}
         autoComplete="tel"
       />
       <TextField
@@ -81,7 +81,7 @@ export const EventRegistrationForm = ({
         value={formData.email}
         onChange={handleChange}
         required
-        slotProps={{ htmlInput: { maxLength: 254 } }}
+        inputProps={{ maxLength: 254 }}
         autoComplete="email"
       />
     </Box>
