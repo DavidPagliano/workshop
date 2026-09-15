@@ -24,6 +24,7 @@ const fieldLabels = [
   { key: "email", label: "Correo Electrónico" },
   { key: "fechaNacimiento", label: "Fecha de Nacimiento", isDate: true },
   { key: "concurreAlgunaIglesias", label: "Concurre a una iglesia", isBoolean: true },
+  { key: "pastor", label: "Pastor" },
   { key: "cual", label: "Iglesia" },
 ];
 

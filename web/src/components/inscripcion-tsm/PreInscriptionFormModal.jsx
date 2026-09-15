@@ -32,6 +32,7 @@ const emptyForm = {
   fechaNacimiento: "",
   tituloSecundario: "no",
   concurreAlgunaIglesias: false,
+  pastor: "",
   cual: "",
 };
 
@@ -104,7 +105,14 @@ export const PreinscriptionFormModal = ({
     const payload = {
       ...formData,
       edad: Number(formData.edad),
-      cual: formData.cual.trim(),
+      pastor:
+        formData.concurreAlgunaIglesias && formData.pastor
+          ? formData.pastor.trim()
+          : "",
+      cual:
+        formData.concurreAlgunaIglesias && formData.cual
+          ? formData.cual.trim()
+          : "",
       fechaNacimiento: formData.fechaNacimiento
         ? new Date(formData.fechaNacimiento).toISOString()
         : undefined,
@@ -231,17 +239,31 @@ export const PreinscriptionFormModal = ({
             </Grid>
 
             {formData.concurreAlgunaIglesias && (
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  required
-                  label="¿A cuál iglesia concurre?"
-                  name="cual"
-                  value={formData.cual}
-                  onChange={handleChange}
-                  inputProps={{ maxLength: 120 }}
-                />
-              </Grid>
+              <>
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    fullWidth
+                    required
+                    label="¿Quién es el pastor?"
+                    name="pastor"
+                    value={formData.pastor}
+                    onChange={handleChange}
+                    inputProps={{ maxLength: 120 }}
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    fullWidth
+                    required
+                    label="¿A cuál iglesia concurre?"
+                    name="cual"
+                    value={formData.cual}
+                    onChange={handleChange}
+                    inputProps={{ maxLength: 120 }}
+                  />
+                </Grid>
+              </>
             )}
           </Grid>
         </DialogContent>
@@ -254,7 +276,9 @@ export const PreinscriptionFormModal = ({
             type="submit"
             variant="contained"
             disabled={loading}
-            startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}
+            startIcon={
+              loading ? <CircularProgress size={18} color="inherit" /> : null
+            }
           >
             {loading
               ? "Guardando..."
