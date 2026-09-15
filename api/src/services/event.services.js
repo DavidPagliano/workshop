@@ -1,8 +1,12 @@
 const EventRegistration = require('../models/EventRegistration');
 
-// Genera el próximo registrarId secuencial (w-001, w-002, ...)
+// Genera el próximo registrarId secuencial (W-001, W-002, ...)
 const generateRegistrarId = async () => {
-  return `w-${crypto.randomBytes(8).toString('hex')}`;
+  const lastDoc = await EventRegistration.findOne().sort({ creado: -1 }).select('registrarId').lean();
+  if (!lastDoc || !lastDoc.registrarId) return 'W-001';
+  const num = parseInt(lastDoc.registrarId.split('-').pop(), 10);
+  const nextNum = isNaN(num) ? 1 : num + 1;
+  return `W-${String(nextNum).padStart(3, '0')}`;
 };
 
 exports.registerParticipant = async (data) => {
@@ -32,7 +36,7 @@ exports.updateParticipant = async (registrarId, data) => {
   return await EventRegistration.findOneAndUpdate(
     { registrarId },
     { $set: data },
-    { new: true, runValidators: true, context: 'query' }
+    { returnDocument: 'after', runValidators: true, context: 'query' }
   );
 };
 
@@ -45,7 +49,7 @@ exports.updateAttendance = async (registrarId, seRegistro) => {
   const updatedRegistration = await EventRegistration.findOneAndUpdate(
     { registrarId },
     { seRegistro: seRegistro },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   if (!updatedRegistration) {
