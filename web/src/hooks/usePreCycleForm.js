@@ -12,7 +12,7 @@ export const emptyPreCycleForm = {
   fechaNacimiento: "",
   tituloSecundario: "no",
   concurreAlgunaIglesias: false,
-  pastor: "",
+  nombrePastor: "",
   cual: "",
 };
 
@@ -27,6 +27,7 @@ export const usePreCycleForm = ({ open, initialData, onSave }) => {
       setFormData({
         ...emptyPreCycleForm,
         ...initialData,
+        nombrePastor: initialData.nombrePastor ?? initialData.pastor ?? "",
         fechaNacimiento: initialData.fechaNacimiento
           ? new Date(initialData.fechaNacimiento).toISOString().split("T")[0]
           : "",
@@ -49,9 +50,9 @@ export const usePreCycleForm = ({ open, initialData, onSave }) => {
     onSave({
       ...formData,
       edad: Number(formData.edad),
-      pastor:
-        formData.concurreAlgunaIglesias && formData.pastor
-          ? formData.pastor.trim()
+      nombrePastor:
+        formData.concurreAlgunaIglesias && formData.nombrePastor
+          ? formData.nombrePastor.trim()
           : "",
       cual:
         formData.concurreAlgunaIglesias && formData.cual

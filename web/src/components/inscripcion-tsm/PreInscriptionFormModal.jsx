@@ -36,7 +36,7 @@ const emptyForm = {
   fechaNacimiento: "",
   tituloSecundario: "no",
   concurreAlgunaIglesias: false,
-  pastor: "",
+  nombrePastor: "",
   cual: "",
 };
 
@@ -91,6 +91,7 @@ export const PreinscriptionFormModal = ({
         setFormData({
           ...emptyForm,
           ...initialData,
+          nombrePastor: initialData.nombrePastor ?? initialData.pastor ?? "",
           // Convertir fecha ISO a formato input date (YYYY-MM-DD)
           fechaNacimiento: initialData.fechaNacimiento
             ? new Date(initialData.fechaNacimiento).toISOString().split("T")[0]
@@ -116,9 +117,9 @@ export const PreinscriptionFormModal = ({
     const payload = {
       ...formData,
       edad: Number(formData.edad),
-      pastor:
-        formData.concurreAlgunaIglesias && formData.pastor
-          ? formData.pastor.trim()
+      nombrePastor:
+        formData.concurreAlgunaIglesias && formData.nombrePastor
+          ? formData.nombrePastor.trim()
           : "",
       cual:
         formData.concurreAlgunaIglesias && formData.cual
@@ -271,8 +272,8 @@ export const PreinscriptionFormModal = ({
                     fullWidth
                     required
                     label="¿Quién es el pastor?"
-                    name="pastor"
-                    value={formData.pastor}
+                    name="nombrePastor"
+                    value={formData.nombrePastor}
                     onChange={handleChange}
                     slotProps={{ htmlInput: { maxLength: 120 } }}
                   />

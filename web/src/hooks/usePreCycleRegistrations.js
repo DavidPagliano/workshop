@@ -18,6 +18,7 @@ const editablePreCycleFields = [
   "foto",
   "tituloSecundario",
   "concurreAlgunaIglesias",
+  "nombrePastor",
   "cual",
 ];
 

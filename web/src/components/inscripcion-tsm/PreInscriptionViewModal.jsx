@@ -27,7 +27,7 @@ const fieldLabels = [
   { key: "email", label: "Correo Electrónico" },
   { key: "fechaNacimiento", label: "Fecha de Nacimiento", isDate: true },
   { key: "concurreAlgunaIglesias", label: "Concurre a una iglesia", isBoolean: true },
-  { key: "pastor", label: "Pastor" },
+  { key: "nombrePastor", label: "Pastor" },
   { key: "cual", label: "Iglesia" },
 ];
 
@@ -162,7 +162,7 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
                   ? data[field.key]
                     ? "Sí"
                     : "No"
-                  : data[field.key] || "—"}
+                  : data[field.key] || (field.key === "nombrePastor" ? data.pastor : "—")}
               </Typography>
             </Box>
             {index < fieldLabels.length - 1 && (
