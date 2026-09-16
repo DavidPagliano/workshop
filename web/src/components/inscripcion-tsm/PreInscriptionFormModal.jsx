@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -23,22 +23,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { PhotoCapture } from "./PhotoCapture";
-
-const emptyForm = {
-  registrarId: "",
-  nombre: "",
-  apellido: "",
-  dni: "",
-  edad: "",
-  telefono: "",
-  email: "",
-  foto: "",
-  fechaNacimiento: "",
-  tituloSecundario: "no",
-  concurreAlgunaIglesias: false,
-  pastor: "",
-  cual: "",
-};
+import { usePreCycleForm } from "../../hooks/usePreCycleForm";
 
 const fields = [
   { name: "nombre", label: "Nombre", type: "text", required: true },
@@ -75,61 +60,18 @@ export const PreinscriptionFormModal = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isEditMode = Boolean(initialData);
-  const [formData, setFormData] = useState(emptyForm);
   const contentRef = useRef(null);
+  const { formData, setFormData, handleChange, handleSubmit } = usePreCycleForm({
+    open,
+    initialData,
+    onSave,
+  });
 
-  // Sincroniza el formulario con el registro seleccionado al abrir el modal.
   useEffect(() => {
-    if (open) {
-      if (contentRef.current) {
-        contentRef.current.scrollTop = 0;
-      }
-
-      if (initialData) {
-        // Modo editar: cargar datos existentes
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setFormData({
-          ...emptyForm,
-          ...initialData,
-          // Convertir fecha ISO a formato input date (YYYY-MM-DD)
-          fechaNacimiento: initialData.fechaNacimiento
-            ? new Date(initialData.fechaNacimiento).toISOString().split("T")[0]
-            : "",
-        });
-      } else {
-        // Modo crear: limpiar formulario
-        setFormData(emptyForm);
-      }
+    if (open && contentRef.current) {
+      contentRef.current.scrollTop = 0;
     }
   }, [open, initialData]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const payload = {
-      ...formData,
-      edad: Number(formData.edad),
-      pastor:
-        formData.concurreAlgunaIglesias && formData.pastor
-          ? formData.pastor.trim()
-          : "",
-      cual:
-        formData.concurreAlgunaIglesias && formData.cual
-          ? formData.cual.trim()
-          : "",
-      fechaNacimiento: formData.fechaNacimiento
-        ? new Date(formData.fechaNacimiento).toISOString()
-        : undefined,
-    };
-    onSave(payload);
-  };
 
   return (
     <Dialog

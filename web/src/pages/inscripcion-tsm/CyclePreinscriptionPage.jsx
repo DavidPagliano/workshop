@@ -1,4 +1,3 @@
-import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -27,168 +26,37 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import toast from "react-hot-toast";
-import {
-  registerToPreCycle,
-  getPreCycleRegistrations,
-  updatePreCycleRegistration,
-  deletePreCycleRegistration,
-} from "../../services/preCycleService";
-import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/PreinscriptionFormModal";
-import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreinscriptionViewModal";
+import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/PreInscriptionFormModal";
+import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreInscriptionViewModal";
 import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreinscriptionDeleteModal";
-
-const editablePreCycleFields = [
-  "nombre",
-  "apellido",
-  "edad",
-  "fechaNacimiento",
-  "dni",
-  "email",
-  "telefono",
-  "foto",
-  "tituloSecundario",
-  "concurreAlgunaIglesias",
-  "cual",
-];
+import { usePreCycleRegistrations } from "../../hooks/usePreCycleRegistrations";
 
 export const CyclePreinscriptionPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // ── Estado de la tabla ──
-  const [registrations, setRegistrations] = useState([]);
-  const [tableLoading, setTableLoading] = useState(true);
-
-  // ── Estado de modales ──
-  const [formModalOpen, setFormModalOpen] = useState(false);
-  const [formEditData, setFormEditData] = useState(null); // null = crear, object = editar
-  const [formLoading, setFormLoading] = useState(false);
-
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [viewData, setViewData] = useState(null);
-
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deleteData, setDeleteData] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-
-  const blurActiveElement = () => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-  };
-
-  // ── Cargar registros ──
-  const fetchRegistrations = useCallback(async () => {
-    setTableLoading(true);
-    try {
-      const data = await getPreCycleRegistrations();
-      setRegistrations(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error al cargar registros:", error);
-      toast.error("Error al cargar las pre-inscripciones");
-    } finally {
-      setTableLoading(false);
-    }
-  }, []);
-
-  // La carga inicial sincroniza datos externos mediante una promesa HTTP.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchRegistrations();
-  }, [fetchRegistrations]);
-
-  // ── Handlers: Formulario (Crear / Editar) ──
-  const handleOpenCreate = () => {
-    blurActiveElement();
-    setFormEditData(null);
-    setFormModalOpen(true);
-  };
-
-  const handleOpenEdit = (registration, e) => {
-    e.stopPropagation(); // Evitar que se abra el modal de vista
-    blurActiveElement();
-    setFormEditData(registration);
-    setFormModalOpen(true);
-  };
-
-  const handleFormClose = () => {
-    setFormModalOpen(false);
-    setFormEditData(null);
-  };
-
-  const handleFormSave = async (formData) => {
-    setFormLoading(true);
-    try {
-      const registrationData = Object.fromEntries(
-        editablePreCycleFields
-          .filter((field) => Object.hasOwn(formData, field))
-          .map((field) => [field, formData[field]]),
-      );
-
-      if (formEditData) {
-        // Actualizar
-        await updatePreCycleRegistration(formEditData.registrarId, registrationData);
-        toast.success("Pre-inscripción actualizada con éxito");
-      } else {
-        // El backend genera registrarId para evitar colisiones.
-        await registerToPreCycle(registrationData);
-        toast.success("Pre-inscripción registrada con éxito");
-      }
-      handleFormClose();
-      await fetchRegistrations();
-    } catch (error) {
-      console.error(error);
-      const errorMsg =
-        error?.message || "Error al procesar la pre-inscripción";
-      toast.error(errorMsg);
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
-  // ── Handlers: Vista ──
-  const handleOpenView = (registration) => {
-    blurActiveElement();
-    setViewData(registration);
-    setViewModalOpen(true);
-  };
-
-  const handleViewClose = () => {
-    setViewModalOpen(false);
-    setViewData(null);
-  };
-
-  // ── Handlers: Eliminar ──
-  const handleOpenDelete = (registration, e) => {
-    e.stopPropagation(); // Evitar que se abra el modal de vista
-    blurActiveElement();
-    setDeleteData(registration);
-    setDeleteModalOpen(true);
-  };
-
-  const handleDeleteClose = () => {
-    setDeleteModalOpen(false);
-    setDeleteData(null);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!deleteData) return;
-    setDeleteLoading(true);
-    try {
-      await deletePreCycleRegistration(deleteData.registrarId);
-      toast.success("Pre-inscripción eliminada con éxito");
-      handleDeleteClose();
-      await fetchRegistrations();
-    } catch (error) {
-      console.error(error);
-      const errorMsg =
-        error?.message || "Error al eliminar la pre-inscripción";
-      toast.error(errorMsg);
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
+  const {
+    registrations,
+    tableLoading,
+    fetchRegistrations,
+    formModalOpen,
+    formEditData,
+    formLoading,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleFormClose,
+    handleFormSave,
+    viewModalOpen,
+    viewData,
+    handleOpenView,
+    handleViewClose,
+    deleteModalOpen,
+    deleteData,
+    deleteLoading,
+    handleOpenDelete,
+    handleDeleteClose,
+    handleDeleteConfirm,
+  } = usePreCycleRegistrations();
 
   // ── Columnas de la tabla ──
   const columns = [
