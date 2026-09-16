@@ -16,7 +16,8 @@ const app = express();
 
 const isDev = config.nodeEnv === 'development';
 
-const whitelist = [config.url_web_dev];
+const whitelist = [config.url_web_dev,'http://localhost:5173',
+  'https://localhost:5173'];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -40,7 +41,7 @@ const globalLimiter = rateLimit({
   legacyHeaders: false,
   message: { message: 'Demasiadas solicitudes desde esta IP, intente nuevamente más tarde.' },
 });
-
+app.set('trust proxy', 1);
 app.use(globalLimiter);
 app.use(cors(corsOptions));
 app.use(helmet());
