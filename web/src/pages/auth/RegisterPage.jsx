@@ -22,7 +22,7 @@ const RegisterPage = () => {
     setMensaje({ tipo: "", texto: "" });
     setLoading(true);
     try {
-      await api.post("/workshop/auth/register-request", {
+      await api.post("/workshop/auth/register", {
         ...form,
         role: "staff_registracion",
       });

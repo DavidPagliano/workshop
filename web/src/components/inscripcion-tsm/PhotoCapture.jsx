@@ -25,23 +25,25 @@ export const PhotoCapture = ({ value = "", onChange, disabled = false }) => {
   } = usePhotoCapture({ value, onChange });
 
   return (
-    <Box sx={{ p: { xs: 1.25, sm: 2.5 }, border: "2px dashed", borderColor: "primary.main", borderRadius: 1, textAlign: "center", bgcolor: "rgba(0, 180, 255, 0.04)" }}>
-      <Typography variant="subtitle2" sx={{ mb: 1, color: "text.secondary" }}>
+    <Box sx={{ p: { xs: 1.25, sm: 2.5 }, width: "100%", boxSizing: "border-box", border: "2px dashed", borderColor: "primary.main", borderRadius: 1, textAlign: "center", bgcolor: "rgba(0, 180, 255, 0.04)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <Typography variant="subtitle2" sx={{ width: "100%", mb: 1, color: "text.secondary", textAlign: "center" }}>
         Foto del aspirante (opcional)
       </Typography>
-      <Avatar
-        src={value || undefined}
-        alt="Previsualización de la foto del aspirante"
-        sx={{ width: { xs: 72, sm: 120 }, height: { xs: 72, sm: 120 }, mx: "auto", mb: { xs: 1, sm: 1.5 }, bgcolor: "rgba(0, 180, 255, 0.12)" }}
-      >
-        <PhotoCameraIcon />
-      </Avatar>
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <Avatar
+          src={value || undefined}
+          alt="Previsualización de la foto del aspirante"
+          sx={{ width: { xs: 72, sm: 120 }, height: { xs: 72, sm: 120 }, mb: { xs: 1, sm: 1.5 }, bgcolor: "rgba(0, 180, 255, 0.12)" }}
+        >
+          <PhotoCameraIcon />
+        </Avatar>
+      </Box>
       {cameraOpen && (
-        <Box sx={{ maxWidth: 280, mx: "auto", mb: 1.5 }}>
+        <Box sx={{ width: "100%", maxWidth: 280, display: "flex", justifyContent: "center", mb: 1.5 }}>
           <Box component="video" ref={videoRef} autoPlay playsInline muted sx={{ display: "block", width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: "50%", bgcolor: "#000" }} />
         </Box>
       )}
-      {error && <Alert severity="error" sx={{ mb: 1.5, textAlign: "left" }}>{error}</Alert>}
+      {error && <Alert severity="error" sx={{ width: "100%", boxSizing: "border-box", mb: 1.5, textAlign: "left" }}>{error}</Alert>}
       <Stack
         direction="row"
         spacing={1}
@@ -52,10 +54,11 @@ export const PhotoCapture = ({ value = "", onChange, disabled = false }) => {
         sx={{
           width: "100%",
           minWidth: 0,
+          alignItems: "stretch",
           "& > .MuiButton-root": {
-            flex: { xs: "1 1 calc(33.333% - 8px)", sm: "1 1 150px" },
+            flex: "1 1 0",
             minWidth: 0,
-            maxWidth: { xs: "none", sm: 190 },
+            maxWidth: "none",
             px: { xs: 0.75, sm: 1.5 },
             whiteSpace: "normal",
             textAlign: "center",
@@ -88,7 +91,7 @@ export const PhotoCapture = ({ value = "", onChange, disabled = false }) => {
           </Button>
         )}
       </Stack>
-      <Typography variant="caption" display="block" sx={{ mt: 1, color: "text.secondary" }}>
+      <Typography variant="caption" display="block" sx={{ width: "100%", mt: 1, color: "text.secondary", textAlign: "center" }}>
         Se recorta al centro y se comprime para guardar una imagen liviana.
       </Typography>
     </Box>

@@ -9,7 +9,7 @@ const { auditLogSchema } = require('../schemas/audit.schema');
 
 const auditLogLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,  // 1 minuto
-  limit: 60,                 // 60 logs por minuto por IP (suficiente para navegación normal)
+  limit: 150,                 // 150 logs por minuto por IP (suficiente para navegación normal)
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Demasiados logs de auditoría' },

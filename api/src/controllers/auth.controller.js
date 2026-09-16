@@ -5,6 +5,7 @@ const { logAction } = require('../utils/auditLogger');
 exports.login = async (req, res) => {
   try {
     const result = await authService.login(req.body);
+    await logAction(req, 'LOGIN', `Inicio de sesión exitoso: ${result.user.username}`);
     res.status(200).json(result);
   } catch (error) {
     if (error.code === 'AUTH_NOT_CONFIGURED') {

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -23,7 +23,22 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { PhotoCapture } from "./PhotoCapture";
-import { usePreCycleForm } from "../../hooks/usePreCycleForm";
+
+const emptyForm = {
+  registrarId: "",
+  nombre: "",
+  apellido: "",
+  dni: "",
+  edad: "",
+  telefono: "",
+  email: "",
+  foto: "",
+  fechaNacimiento: "",
+  tituloSecundario: "no",
+  concurreAlgunaIglesias: false,
+  pastor: "",
+  cual: "",
+};
 
 const fields = [
   { name: "nombre", label: "Nombre", type: "text", required: true },
@@ -60,18 +75,61 @@ export const PreinscriptionFormModal = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isEditMode = Boolean(initialData);
+  const [formData, setFormData] = useState(emptyForm);
   const contentRef = useRef(null);
-  const { formData, setFormData, handleChange, handleSubmit } = usePreCycleForm({
-    open,
-    initialData,
-    onSave,
-  });
 
+  // Sincroniza el formulario con el registro seleccionado al abrir el modal.
   useEffect(() => {
-    if (open && contentRef.current) {
-      contentRef.current.scrollTop = 0;
+    if (open) {
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+
+      if (initialData) {
+        // Modo editar: cargar datos existentes
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setFormData({
+          ...emptyForm,
+          ...initialData,
+          // Convertir fecha ISO a formato input date (YYYY-MM-DD)
+          fechaNacimiento: initialData.fechaNacimiento
+            ? new Date(initialData.fechaNacimiento).toISOString().split("T")[0]
+            : "",
+        });
+      } else {
+        // Modo crear: limpiar formulario
+        setFormData(emptyForm);
+      }
     }
   }, [open, initialData]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const payload = {
+      ...formData,
+      edad: Number(formData.edad),
+      pastor:
+        formData.concurreAlgunaIglesias && formData.pastor
+          ? formData.pastor.trim()
+          : "",
+      cual:
+        formData.concurreAlgunaIglesias && formData.cual
+          ? formData.cual.trim()
+          : "",
+      fechaNacimiento: formData.fechaNacimiento
+        ? new Date(formData.fechaNacimiento).toISOString()
+        : undefined,
+    };
+    onSave(payload);
+  };
 
   return (
     <Dialog
@@ -124,7 +182,7 @@ export const PreinscriptionFormModal = ({
       </DialogTitle>
 
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1 }}>
-        <DialogContent ref={contentRef} sx={{ pt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 3 }, overflowY: "auto", overflowX: "hidden", flex: 1, minHeight: 0 }}>
+        <DialogContent ref={contentRef} sx={{ pt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 3 }, overflowY: "auto", flex: 1, minHeight: 0 }}>
           <Grid container spacing={2.5}>
             <Grid size={{ xs: 12 }}>
               <PhotoCapture
@@ -244,12 +302,7 @@ export const PreinscriptionFormModal = ({
             type="submit"
             variant="contained"
             disabled={loading}
-            sx={{
-              whiteSpace: "nowrap",
-              minWidth: 0,
-              px: { xs: 1, sm: 2 },
-              fontSize: { xs: "0.62rem", sm: "0.75rem" },
-            }}
+            sx={{ whiteSpace: "nowrap" }}
             startIcon={
               loading ? <CircularProgress size={18} color="inherit" /> : null
             }
@@ -257,9 +310,7 @@ export const PreinscriptionFormModal = ({
             {loading
               ? "Guardando..."
               : isEditMode
-              ? isMobile
-                ? "Guardar"
-                : "Guardar Cambios"
+              ? "Guardar Cambios"
               : "Registrar"}
           </Button>
         </DialogActions>
