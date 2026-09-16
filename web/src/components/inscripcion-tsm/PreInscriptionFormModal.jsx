@@ -115,20 +115,32 @@ export const PreinscriptionFormModal = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = {
-      ...formData,
+      nombre: formData.nombre.trim(),
+      apellido: formData.apellido.trim(),
+      dni: formData.dni.trim(),
       edad: Number(formData.edad),
-      nombrePastor:
-        formData.concurreAlgunaIglesias && formData.nombrePastor
-          ? formData.nombrePastor.trim()
-          : "",
-      cual:
-        formData.concurreAlgunaIglesias && formData.cual
-          ? formData.cual.trim()
-          : "",
+      telefono: formData.telefono.trim(),
+      email: formData.email.trim(),
+      tituloSecundario: formData.tituloSecundario,
+      concurreAlgunaIglesias: Boolean(formData.concurreAlgunaIglesias),
       fechaNacimiento: formData.fechaNacimiento
         ? new Date(formData.fechaNacimiento).toISOString()
         : undefined,
     };
+
+    if (formData.foto && formData.foto.trim() !== '') {
+      payload.foto = formData.foto;
+    }
+
+    if (formData.concurreAlgunaIglesias) {
+      if (formData.nombrePastor && formData.nombrePastor.trim() !== '') {
+        payload.nombrePastor = formData.nombrePastor.trim();
+      }
+      if (formData.cual && formData.cual.trim() !== '') {
+        payload.cual = formData.cual.trim();
+      }
+    }
+
     onSave(payload);
   };
 
