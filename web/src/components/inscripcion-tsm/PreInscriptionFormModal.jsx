@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -18,8 +18,11 @@ import {
   IconButton,
   Fade,
   CircularProgress,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { PhotoCapture } from "./PhotoCapture";
 
 const emptyForm = {
   registrarId: "",
@@ -29,6 +32,7 @@ const emptyForm = {
   edad: "",
   telefono: "",
   email: "",
+  foto: "",
   fechaNacimiento: "",
   tituloSecundario: "no",
   concurreAlgunaIglesias: false,
@@ -68,12 +72,19 @@ export const PreinscriptionFormModal = ({
   initialData = null,
   loading = false,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isEditMode = Boolean(initialData);
   const [formData, setFormData] = useState(emptyForm);
+  const contentRef = useRef(null);
 
   // Sincroniza el formulario con el registro seleccionado al abrir el modal.
   useEffect(() => {
     if (open) {
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+
       if (initialData) {
         // Modo editar: cargar datos existentes
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -126,6 +137,7 @@ export const PreinscriptionFormModal = ({
       onClose={loading ? undefined : onClose}
       maxWidth="sm"
       fullWidth
+      fullScreen={isMobile}
       slots={{ transition: Fade }}
       slotProps={{
         transition: { timeout: 300 },
@@ -136,6 +148,12 @@ export const PreinscriptionFormModal = ({
             boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
             borderRadius: 0,
             bgcolor: "background.paper",
+            maxHeight: isMobile ? "100vh" : "calc(100vh - 32px)",
+            height: isMobile ? "100vh" : "auto",
+            width: isMobile ? "100%" : undefined,
+            margin: isMobile ? 0 : undefined,
+            display: "flex",
+            flexDirection: "column",
           },
         },
       }}
@@ -163,9 +181,17 @@ export const PreinscriptionFormModal = ({
         </IconButton>
       </DialogTitle>
 
-      <Box component="form" onSubmit={handleSubmit} noValidate>
-        <DialogContent sx={{ pt: 3 }}>
+      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1 }}>
+        <DialogContent ref={contentRef} sx={{ pt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 3 }, overflowY: "auto", overflowX: "hidden", flex: 1, minHeight: 0 }}>
           <Grid container spacing={2.5}>
+            <Grid size={{ xs: 12 }}>
+              <PhotoCapture
+                value={formData.foto}
+                onChange={(foto) => setFormData((prev) => ({ ...prev, foto }))}
+                disabled={loading}
+              />
+            </Grid>
+
             {/* Mostrar registrarId como solo lectura en modo editar */}
             {isEditMode && (
               <Grid size={{ xs: 12 }}>
@@ -193,8 +219,8 @@ export const PreinscriptionFormModal = ({
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleChange}
-                  inputProps={{ min: field.min, max: field.max }}
                   slotProps={{
+                    htmlInput: { min: field.min, max: field.max },
                     inputLabel: field.shrink ? { shrink: true } : undefined,
                   }}
                 />
@@ -248,7 +274,7 @@ export const PreinscriptionFormModal = ({
                     name="pastor"
                     value={formData.pastor}
                     onChange={handleChange}
-                    inputProps={{ maxLength: 120 }}
+                    slotProps={{ htmlInput: { maxLength: 120 } }}
                   />
                 </Grid>
 
@@ -260,7 +286,7 @@ export const PreinscriptionFormModal = ({
                     name="cual"
                     value={formData.cual}
                     onChange={handleChange}
-                    inputProps={{ maxLength: 120 }}
+                    slotProps={{ htmlInput: { maxLength: 120 } }}
                   />
                 </Grid>
               </>
@@ -268,14 +294,20 @@ export const PreinscriptionFormModal = ({
           </Grid>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, gap: 1 }}>
-          <Button onClick={onClose} disabled={loading} variant="outlined">
+        <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 2.5 }, pt: 1, gap: 1, flexShrink: 0, bgcolor: "background.paper", borderTop: "1px solid", borderColor: "divider", "& .MuiButton-root": { flex: 1, minWidth: 0 } }}>
+          <Button onClick={onClose} disabled={loading} variant="outlined" sx={{ whiteSpace: "nowrap" }}>
             Cancelar
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={loading}
+            sx={{
+              whiteSpace: "nowrap",
+              minWidth: 0,
+              px: { xs: 1, sm: 2 },
+              fontSize: { xs: "0.62rem", sm: "0.75rem" },
+            }}
             startIcon={
               loading ? <CircularProgress size={18} color="inherit" /> : null
             }
@@ -283,7 +315,9 @@ export const PreinscriptionFormModal = ({
             {loading
               ? "Guardando..."
               : isEditMode
-              ? "Guardar Cambios"
+              ? isMobile
+                ? "Guardar"
+                : "Guardar Cambios"
               : "Registrar"}
           </Button>
         </DialogActions>

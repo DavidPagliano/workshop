@@ -19,9 +19,11 @@ const preCycleSchema = z.object({
   dni: z.string().trim().min(6, 'DNI/Pasaporte inválido').max(30),
   email: z.string().trim().email('Debe ser un correo válido').max(254),
   telefono: z.string().trim().min(8, 'Número de teléfono inválido').max(25),
+  foto: z.string().max(200000, 'La foto no puede superar los 200 KB').optional(),
   tituloSecundario: z.enum(['si', 'no', 'incompleto']),
   concurreAlgunaIglesias: z.boolean(),
-  cual: z.string().trim().max(120).optional()
+  cual: z.string().trim().max(120).optional(),
+  nombrePastor: z.string().trim().max(120).optional()
 }).strict();
 
 // Schemas parciales para PUT (todos los campos opcionales)

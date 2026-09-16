@@ -46,6 +46,7 @@ const editablePreCycleFields = [
   "dni",
   "email",
   "telefono",
+  "foto",
   "tituloSecundario",
   "concurreAlgunaIglesias",
   "cual",
@@ -71,6 +72,12 @@ export const CyclePreinscriptionPage = () => {
   const [deleteData, setDeleteData] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  const blurActiveElement = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   // ── Cargar registros ──
   const fetchRegistrations = useCallback(async () => {
     setTableLoading(true);
@@ -93,12 +100,14 @@ export const CyclePreinscriptionPage = () => {
 
   // ── Handlers: Formulario (Crear / Editar) ──
   const handleOpenCreate = () => {
+    blurActiveElement();
     setFormEditData(null);
     setFormModalOpen(true);
   };
 
   const handleOpenEdit = (registration, e) => {
     e.stopPropagation(); // Evitar que se abra el modal de vista
+    blurActiveElement();
     setFormEditData(registration);
     setFormModalOpen(true);
   };
@@ -140,6 +149,7 @@ export const CyclePreinscriptionPage = () => {
 
   // ── Handlers: Vista ──
   const handleOpenView = (registration) => {
+    blurActiveElement();
     setViewData(registration);
     setViewModalOpen(true);
   };
@@ -152,6 +162,7 @@ export const CyclePreinscriptionPage = () => {
   // ── Handlers: Eliminar ──
   const handleOpenDelete = (registration, e) => {
     e.stopPropagation(); // Evitar que se abra el modal de vista
+    blurActiveElement();
     setDeleteData(registration);
     setDeleteModalOpen(true);
   };

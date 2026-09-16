@@ -9,6 +9,9 @@ import {
   Fade,
   Divider,
   Typography,
+  Avatar,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
@@ -49,6 +52,9 @@ const formatDate = (value) => {
  * @param {object|null} data - Los datos del inscripto a mostrar
  */
 export const PreinscriptionViewModal = ({ open, onClose, data }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   if (!data) return null;
 
   return (
@@ -57,6 +63,7 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
       onClose={onClose}
       maxWidth="sm"
       fullWidth
+      fullScreen={isMobile}
       slots={{ transition: Fade }}
       slotProps={{
         transition: { timeout: 300 },
@@ -67,6 +74,10 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
             boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
             borderRadius: 0,
             bgcolor: "background.paper",
+            maxHeight: isMobile ? "100vh" : "calc(100vh - 32px)",
+            height: isMobile ? "100vh" : "auto",
+            display: "flex",
+            flexDirection: "column",
           },
         },
       }}
@@ -90,16 +101,35 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ pt: 3 }}>
+      <DialogContent sx={{ pt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 3 }, overflowY: "auto", flex: 1, minHeight: 0 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+          <Avatar
+            src={data.foto || undefined}
+            alt={`Foto de ${data.nombre || "aspirante"}`}
+            sx={{
+              width: { xs: 120, sm: 150 },
+              height: { xs: 120, sm: 150 },
+              border: "3px solid",
+              borderColor: "primary.main",
+              bgcolor: "rgba(0, 180, 255, 0.12)",
+              boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
+            }}
+          >
+            <PersonIcon sx={{ fontSize: { xs: 58, sm: 72 }, color: "primary.main" }} />
+          </Avatar>
+        </Box>
+
         {fieldLabels.map((field, index) => (
           <Box key={field.key}>
             <Box
               sx={{
                 display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
                 justifyContent: "space-between",
-                alignItems: "center",
-                py: 1.5,
-                px: 1,
+                alignItems: { xs: "stretch", sm: "center" },
+                gap: { xs: 0.5, sm: 2 },
+                py: { xs: 1.25, sm: 1.5 },
+                px: { xs: 0.5, sm: 1 },
                 "&:hover": {
                   bgcolor: "rgba(0, 180, 255, 0.05)",
                 },
@@ -110,7 +140,8 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
                 sx={{
                   color: "text.secondary",
                   fontWeight: 500,
-                  minWidth: 160,
+                  minWidth: { xs: 0, sm: 160 },
+                  width: { xs: "100%", sm: "auto" },
                 }}
               >
                 {field.label}
@@ -119,8 +150,10 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
                 variant="body1"
                 sx={{
                   fontWeight: 500,
-                  textAlign: "right",
+                  textAlign: { xs: "left", sm: "right" },
                   wordBreak: "break-word",
+                  overflowWrap: "anywhere",
+                  width: { xs: "100%", sm: "auto" },
                 }}
               >
                 {field.isDate
@@ -139,8 +172,8 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
         ))}
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2.5, pt: 1 }}>
-        <Button onClick={onClose} variant="outlined">
+      <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 2.5 }, pt: 1, flexShrink: 0, borderTop: "1px solid", borderColor: "divider" }}>
+        <Button onClick={onClose} variant="outlined" fullWidth={isMobile}>
           Cerrar
         </Button>
       </DialogActions>

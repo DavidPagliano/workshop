@@ -21,7 +21,7 @@ const App = () => {
     <Routes>
       {/* ── Rutas Públicas ── */}
       <Route path="/" element={<HomePage />} />
-      <Route path="/inscripcion-w" element={<EventRegistrationPage />} />
+      <Route path="/inscripcion" element={<EventRegistrationPage />} />
       <Route
         path="/registro"
         element={

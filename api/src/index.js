@@ -44,7 +44,7 @@ const globalLimiter = rateLimit({
 app.use(globalLimiter);
 app.use(cors(corsOptions));
 app.use(helmet());
-app.use(express.json({ limit: '25kb' }));
+app.use(express.json({ limit: '500kb' }));
 
 // Enrutamiento modular
 app.use('/workshop/auth', auth);

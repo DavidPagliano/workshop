@@ -10,8 +10,10 @@ const preCycleRegistrationSchema = new mongoose.Schema({
     tituloSecundario: { type: String, enum:["si","no","incompleto"],default: "no", required: true },
     telefono: { type: String, required: true },
     email: { type: String, required: true },
+    foto: { type: String },
     concurreAlgunaIglesias: { type: Boolean, required: true },
-    cual: { type: String }
+    cual: { type: String },
+    nombrePastor: { type: String }
 },{
     timestamps: { createdAt: 'creado', updatedAt: 'actualizado' },
     versionKey: false,
