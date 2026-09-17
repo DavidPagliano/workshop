@@ -1,4 +1,5 @@
-import { Box, Container, Typography, Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, Container, Typography, Button, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 // ─── Componentes locales ─────────────────────────────────────────────
@@ -11,6 +12,42 @@ import cursorImg from "../assets/images/CURSOR.png";
 import masImg from "../assets/images/MAS.png";
 import playImg from "../assets/images/PLAY.png";
 import pixeladoImg from "../assets/images/pixelado.png";
+
+// Imágenes de Workshops Anteriores
+import ws1 from "../assets/images/workshops/ws1.jpeg";
+import ws2 from "../assets/images/workshops/ws2.jpeg";
+import ws3 from "../assets/images/workshops/ws3.jpeg";
+import ws4 from "../assets/images/workshops/ws4.jpeg";
+import ws5 from "../assets/images/workshops/ws5.png";
+
+// Array de imágenes del carrusel
+const WORKSHOP_IMAGES = [
+  {
+    id: 1,
+    title: "Workshop 2024",
+    src: ws1,
+  },
+  {
+    id: 2,
+    title: "Workshop 2019",
+    src: ws2,
+  },
+  {
+    id: 3,
+    title: "Workshop 2024",
+    src: ws3,
+  },
+  {
+    id: 4,
+    title: "Workshop 2019",
+    src: ws4,
+  },
+  {
+    id: 5,
+    title: "Workshop 2025",
+    src: ws5,
+  }
+];
 
 // ─── Helpers reutilizables ───────────────────────────────────────────
 
@@ -34,6 +71,297 @@ const CornerDots = ({ size = 8, offset = -5, color = "#00B4FF" }) => {
       }}
     />
   ));
+};
+
+/** Componente Contador Regresivo ajustado a UTC-3 (Argentina) */
+const CountdownTimer = () => {
+  const TARGET_DATE = new Date("2026-10-06T19:00:00-03:00").getTime();
+
+  const calculateTimeLeft = () => {
+    const now = Date.now();
+    const difference = TARGET_DATE - now;
+
+    if (difference <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatNumber = (num) => String(num).padStart(2, "0");
+
+  const timerItems = [
+    { label: "DÍAS", value: formatNumber(timeLeft.days) },
+    { label: "HORAS", value: formatNumber(timeLeft.hours) },
+    { label: "MIN", value: formatNumber(timeLeft.minutes) },
+    { label: "SEG", value: formatNumber(timeLeft.seconds) },
+  ];
+
+  return (
+    <Box
+      sx={{
+        display: "inline-flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mb: { xs: 4, sm: 6 },
+        width: "100%",
+      }}
+    >
+      <Typography
+        sx={{
+          fontFamily: "'Omega Pixel BIFORM', monospace",
+          fontSize: { xs: "0.75rem", sm: "0.9rem" },
+          color: "#D500BA",
+          letterSpacing: "0.15em",
+          mb: 1.5,
+          textTransform: "uppercase",
+        }}
+      >
+        Tiempo restante para el evento
+      </Typography>
+
+      <Box
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: { xs: 1.5, sm: 3, md: 4 },
+          bgcolor: "#03083B",
+          border: "2px solid #00B4FF",
+          boxShadow: {
+            xs: "4px 4px 0px #D500BA",
+            sm: "5px 5px 0px #D500BA",
+          },
+          px: { xs: 2, sm: 3, md: 4 },
+          py: { xs: 1.5, sm: 2 },
+          position: "relative",
+        }}
+      >
+        <CornerDots size={6} offset={-4} color="#00B4FF" />
+
+        {timerItems.map((item, idx) => (
+          <Box
+            key={idx}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              minWidth: { xs: "45px", sm: "65px", md: "80px" },
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: "1.5rem", sm: "2.3rem", md: "3rem" },
+                fontWeight: 800,
+                color: "#FFFFFF",
+                lineHeight: 1,
+                textShadow: "0 0 8px rgba(0, 180, 255, 0.6)",
+              }}
+            >
+              {item.value}
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: "'Neue Haas Grotesk', sans-serif",
+                fontSize: { xs: "0.6rem", sm: "0.72rem", md: "0.82rem" },
+                fontWeight: 700,
+                color: "#00B4FF",
+                letterSpacing: "0.1em",
+                mt: 0.8,
+              }}
+            >
+              {item.label}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+/** Componente Carrusel de Workshops Anteriores en 16:9 */
+const WorkshopCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % WORKSHOP_IMAGES.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? WORKSHOP_IMAGES.length - 1 : prevIndex - 1
+    );
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleNext();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <Box
+      sx={{
+        mt: { xs: 6, sm: 8, md: 10 },
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        sx={{
+          fontFamily: "'Omega Pixel BIFORM', monospace",
+          fontSize: { xs: "0.85rem", sm: "1.1rem" },
+          color: "#D500BA",
+          letterSpacing: "0.12em",
+          mb: 2,
+          textTransform: "uppercase",
+        }}
+      >
+        Workshops Anteriores
+      </Typography>
+
+      {/* Contenedor Principal del Carrusel en 16:9 */}
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          maxWidth: "800px",
+          aspectRatio: "16 / 9",
+          bgcolor: "#03083B",
+          border: "2px solid #00B4FF",
+          boxShadow: {
+            xs: "5px 5px 0px #D500BA",
+            sm: "8px 8px 0px #D500BA",
+          },
+          overflow: "hidden",
+        }}
+      >
+        <CornerDots size={8} offset={-4} color="#00B4FF" />
+
+        {/* Imagen actual */}
+        <Box
+          component="img"
+          src={WORKSHOP_IMAGES[currentIndex].src}
+          alt={WORKSHOP_IMAGES[currentIndex].title}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+            transition: "opacity 0.4s ease-in-out",
+          }}
+        />
+
+        {/* Overlay con Título */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: "rgba(3, 8, 59, 0.85)",
+            borderTop: "1px solid #00B4FF",
+            px: 2,
+            py: 1,
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "'Neue Haas Grotesk', sans-serif",
+              fontSize: { xs: "0.75rem", sm: "0.95rem" },
+              color: "#FFFFFF",
+              fontWeight: 600,
+            }}
+          >
+            {WORKSHOP_IMAGES[currentIndex].title}
+          </Typography>
+        </Box>
+
+        {/* Botón Anterior */}
+        <IconButton
+          onClick={handlePrev}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: 10,
+            transform: "translateY(-50%)",
+            bgcolor: "#03083B",
+            color: "#00B4FF",
+            border: "1.5px solid #00B4FF",
+            borderRadius: 0,
+            boxShadow: "2px 2px 0px #D500BA",
+            "&:hover": {
+              bgcolor: "#00B4FF",
+              color: "#03083B",
+            },
+          }}
+        >
+          ◄
+        </IconButton>
+
+        {/* Botón Siguiente */}
+        <IconButton
+          onClick={handleNext}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 10,
+            transform: "translateY(-50%)",
+            bgcolor: "#03083B",
+            color: "#00B4FF",
+            border: "1.5px solid #00B4FF",
+            borderRadius: 0,
+            boxShadow: "2px 2px 0px #D500BA",
+            "&:hover": {
+              bgcolor: "#00B4FF",
+              color: "#03083B",
+            },
+          }}
+        >
+          ►
+        </IconButton>
+      </Box>
+
+      {/* Indicadores (Dots) */}
+      <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
+        {WORKSHOP_IMAGES.map((_, idx) => (
+          <Box
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            sx={{
+              width: 10,
+              height: 10,
+              cursor: "pointer",
+              bgcolor: idx === currentIndex ? "#D500BA" : "#03083B",
+              border: "1.5px solid #00B4FF",
+              boxShadow: idx === currentIndex ? "0 0 6px #D500BA" : "none",
+              transition: "all 0.2s ease",
+            }}
+          />
+        ))}
+      </Box>
+    </Box>
+  );
 };
 
 // =====================================================================
@@ -289,7 +617,7 @@ const HomePage = () => {
         {/* ─── BOTONES DE ACCIÓN ───────────────────────────────────── */}
         <Box
           sx={{
-            mb: { xs: 4, sm: 6 },
+            mb: { xs: 3, sm: 4 },
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
             justifyContent: "center",
@@ -330,7 +658,7 @@ const HomePage = () => {
               width: { xs: "100%", sm: "auto" },
             }}
           >
-            Inscripcion al Evento
+            Inscripción al Evento
           </Button>
 
           {/* BOTÓN PREINSCRIPCIÓN */}
@@ -370,6 +698,9 @@ const HomePage = () => {
           </Button>
         </Box>
 
+        {/* ─── CONTADOR REGRESIVO (TIMER UTC-3) ───────────────────── */}
+        <CountdownTimer />
+
         {/* ─── PANEL DE CRONOGRAMA ─────────────────────────────────── */}
         <Box
           sx={{
@@ -380,6 +711,9 @@ const HomePage = () => {
         >
           <SchedulePanel />
         </Box>
+
+        {/* ─── CARRUSEL WORKSHOPS ANTERIORES ───────────────────────── */}
+        <WorkshopCarousel />
       </Container>
     </Box>
   );
