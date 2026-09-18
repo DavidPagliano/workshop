@@ -16,8 +16,7 @@ const app = express();
 
 const isDev = config.nodeEnv === 'development';
 
-const whitelist = [config.url_web_dev,'http://localhost:5173',
-  'https://localhost:5173'];
+const whitelist = [config.url_web_dev,config.url_web_preview];
 
 const corsOptions = {
   origin: function (origin, callback) {
