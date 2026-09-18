@@ -4,6 +4,7 @@ const EventRegistration = require('../models/EventRegistration');
 const PreCycleRegistration = require('../models/preCycleRegistration');
 const User = require('../models/User');
 const Audit = require('../models/Audit');
+const Counter = require('../models/Counter');
 
 const connectDB = async () => {
   try {
@@ -25,6 +26,7 @@ const connectDB = async () => {
       { name: 'precycleregistrations', model: PreCycleRegistration },
       { name: 'users', model: User },
       { name: 'audits', model: Audit },
+      { name: 'counters', model: Counter },
     ];
 
     // 3. Crear e inicializar colecciones e índices que no existan

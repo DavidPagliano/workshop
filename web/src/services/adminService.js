@@ -49,3 +49,12 @@ export const getAuditLogs = async ({ page = 1, limit = 10, search = "" } = {}) =
     throw getError(error, "Error al obtener la auditoría");
   }
 };
+
+export const resetUserPassword = async (id, newPassword) => {
+  try {
+    const response = await api.patch(`/workshop/auth/users/${id}/reset-password`, { newPassword });
+    return response.data;
+  } catch (error) {
+    throw getError(error, "Error al resetear la contraseña");
+  }
+};

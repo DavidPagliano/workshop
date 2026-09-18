@@ -37,6 +37,7 @@ router.post(
 
 router.get('/users', authenticateToken, authorizeRoles('admin'), authController.listUsers);
 router.patch('/users/:id/status', authenticateToken, authorizeRoles('admin'), authController.updateUserStatus);
+router.patch('/users/:id/reset-password', authenticateToken, authorizeRoles('admin'), authController.resetPassword);
 router.delete('/users/:id', authenticateToken, authorizeRoles('admin'), authController.deleteUser);
 
 module.exports = router;

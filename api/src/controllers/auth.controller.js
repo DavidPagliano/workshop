@@ -94,3 +94,23 @@ exports.deleteUser = async (req, res) => {
     return res.status(500).json({ message: 'Error al eliminar el usuario' });
   }
 };
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'La nueva contraseña debe tener al menos 6 caracteres' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    user.password = newPassword; // El pre-save hook de bcrypt lo hashea automáticamente
+    await user.save();
+
+    await logAction(req, 'RESET_PASSWORD', `Contraseña reseteada para: ${user.username}`);
+    return res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al resetear la contraseña' });
+  }
+};
