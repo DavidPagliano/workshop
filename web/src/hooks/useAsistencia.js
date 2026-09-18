@@ -30,6 +30,7 @@ export const useAsistencia = () => {
   const participantesFiltrados = participantes.filter((p) => {
     const term = busqueda.toLowerCase();
     return (
+      (p.registrarId && p.registrarId.toLowerCase().includes(term)) ||
       (p.dni && p.dni.includes(term)) ||
       (p.nombre && p.nombre.toLowerCase().includes(term)) ||
       (p.apellido && p.apellido.toLowerCase().includes(term))

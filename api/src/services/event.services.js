@@ -1,12 +1,31 @@
+const Counter = require('../models/Counter');
 const EventRegistration = require('../models/EventRegistration');
 
 // Genera el próximo registrarId secuencial (W-001, W-002, ...)
 const generateRegistrarId = async () => {
-  const lastDoc = await EventRegistration.findOne().sort({ creado: -1 }).select('registrarId').lean();
-  if (!lastDoc || !lastDoc.registrarId) return 'W-001';
-  const num = parseInt(lastDoc.registrarId.split('-').pop(), 10);
-  const nextNum = isNaN(num) ? 1 : num + 1;
-  return `W-${String(nextNum).padStart(3, '0')}`;
+  // Si el contador no existe aún, inicializarlo con el máximo actual de la colección
+  const existing = await Counter.findById('event_seq');
+  if (!existing) {
+    const lastDoc = await EventRegistration.findOne()
+      .sort({ registrarId: -1 })
+      .select('registrarId')
+      .lean();
+    const currentMax = lastDoc?.registrarId
+      ? parseInt(lastDoc.registrarId.split('-').pop(), 10) || 0
+      : 0;
+    await Counter.findByIdAndUpdate(
+      'event_seq',
+      { $setOnInsert: { seq: currentMax } },
+      { upsert: true }
+    );
+  }
+
+  const counter = await Counter.findByIdAndUpdate(
+    'event_seq',
+    { $inc: { seq: 1 } },
+    { new: true }
+  );
+  return `W-${String(counter.seq).padStart(3, '0')}`;
 };
 
 exports.registerParticipant = async (data) => {
@@ -15,7 +34,7 @@ exports.registerParticipant = async (data) => {
 
   // Validación de negocio: Verificar si el DNI ya está registrado
   const existingUser = await EventRegistration.findOne({ dni: data.dni });
-  
+
   if (existingUser) {
     throw new Error('El documento ya se encuentra registrado en el evento');
   }

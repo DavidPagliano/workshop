@@ -1,12 +1,31 @@
+const Counter = require('../models/Counter');
 const coPreCycleRegistration = require('../models/preCycleRegistration');
 
 // Genera el próximo registrarId secuencial (pcr-001, pcr-002, ...)
 const generateRegistrarId = async () => {
-  const lastDoc = await coPreCycleRegistration.findOne().sort({ creado: -1 }).select('registrarId').lean();
-  if (!lastDoc || !lastDoc.registrarId) return 'pcr-001';
-  const num = parseInt(lastDoc.registrarId.split('-').pop(), 10);
-  const nextNum = isNaN(num) ? 1 : num + 1;
-  return `pcr-${String(nextNum).padStart(3, '0')}`;
+  // Si el contador no existe aún, inicializarlo con el máximo actual de la colección
+  const existing = await Counter.findById('cycle_seq');
+  if (!existing) {
+    const lastDoc = await coPreCycleRegistration.findOne()
+      .sort({ registrarId: -1 })
+      .select('registrarId')
+      .lean();
+    const currentMax = lastDoc?.registrarId
+      ? parseInt(lastDoc.registrarId.split('-').pop(), 10) || 0
+      : 0;
+    await Counter.findByIdAndUpdate(
+      'cycle_seq',
+      { $setOnInsert: { seq: currentMax } },
+      { upsert: true }
+    );
+  }
+
+  const counter = await Counter.findByIdAndUpdate(
+    'cycle_seq',
+    { $inc: { seq: 1 } },
+    { new: true }
+  );
+  return `pcr-${String(counter.seq).padStart(3, '0')}`;
 };
 
 exports.registerAspirant = async (data) => {

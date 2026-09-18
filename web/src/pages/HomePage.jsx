@@ -74,30 +74,39 @@ const CornerDots = ({ size = 8, offset = -5, color = "#00B4FF" }) => {
 };
 
 /** Componente Contador Regresivo ajustado a UTC-3 (Argentina) */
+const TARGET_DATE = new Date("2026-10-06T19:00:00-03:00").getTime();
+
 const CountdownTimer = () => {
-  const TARGET_DATE = new Date("2026-10-06T19:00:00-03:00").getTime();
 
-  const calculateTimeLeft = () => {
-    const now = Date.now();
-    const difference = TARGET_DATE - now;
-
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const difference = TARGET_DATE - Date.now();
     if (difference <= 0) {
       return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     }
-
     return {
       days: Math.floor(difference / (1000 * 60 * 60 * 24)),
       hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
       minutes: Math.floor((difference / 1000 / 60) % 60),
       seconds: Math.floor((difference / 1000) % 60),
     };
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  });
 
   useEffect(() => {
+    const calculateTimeLeft = (now) => {
+      const difference = TARGET_DATE - now;
+      if (difference <= 0) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    };
+
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      setTimeLeft(calculateTimeLeft(Date.now()));
     }, 1000);
 
     return () => clearInterval(timer);

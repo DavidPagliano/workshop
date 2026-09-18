@@ -110,7 +110,7 @@ const AsistenciaPage = () => {
       <Fade in timeout={600} style={{ transitionDelay: "100ms" }}>
         <TextField
           fullWidth
-          label="Buscar por DNI, Nombre o Apellido..."
+          label="Buscar por ID (ej: W-001), DNI, Nombre o Apellido..."
           variant="outlined"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
