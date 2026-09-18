@@ -18,11 +18,16 @@ import CategoryIcon from "@mui/icons-material/Category";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { generateTicketPDF } from "../../utils/generateTicketPDF";
 
-/** Mapa de temas internos → etiquetas legibles */
+// ── TRADUCCIÓN DE TEMAS PARA EL TICKET ──
 const TOPIC_LABELS = {
-  AI: "Inteligencia Artificial",
-  Audio: "Audio",
-  video: "Video",
+  Fotografía: "Fotografía",
+  "Marketing Digital": "Marketing Digital",
+  Diseño: "Diseño",
+  "Conexión satelital": "Conexión satelital",
+  Iluminación: "Iluminación",
+  "Diseño web": "Diseño web",
+  "Animación con IA": "Animación con IA",
+  Otros: "Otros",
   "sin temas": "Sin definir",
 };
 
@@ -37,54 +42,50 @@ function CheckCircleIcon(props) {
   );
 }
 
-/**
- * Fila de dato del ticket con ícono, label y valor.
- */
 const TicketRow = ({ icon, label, value }) => {
   const theme = useTheme();
 
   return (
     <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 1.5,
-      py: 1,
-      px: 1.5,
-      "&:hover": { bgcolor: "rgba(0, 180, 255, 0.04)" },
-    }}
-  >
-    <Box sx={{ color: "primary.main", display: "flex", fontSize: 18 }}>
-      {icon}
-    </Box>
-    <Box sx={{ flex: 1, minWidth: 0 }}>
-      <Typography
-        variant="caption"
-        sx={{
-          color: "primary.main",
-          fontFamily: theme.typography.button.fontFamily,
-          fontWeight: 500,
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-          fontSize: "0.55rem",
-        }}
-      >
-        {label}
-      </Typography>
-      <Typography
-        variant="body2"
-        sx={{ fontWeight: 600, fontFamily: theme.typography.fontFamily, wordBreak: "break-word" }}
-      >
-        {value}
-      </Typography>
-    </Box>
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.5,
+        py: 1,
+        px: 1.5,
+        "&:hover": { bgcolor: "rgba(0, 180, 255, 0.04)" },
+      }}
+    >
+      <Box sx={{ color: "primary.main", display: "flex", fontSize: 18 }}>
+        {icon}
+      </Box>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "primary.main",
+            fontFamily: theme.typography.button.fontFamily,
+            fontWeight: 500,
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+            fontSize: "0.55rem",
+          }}
+        >
+          {label}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: 600, fontFamily: theme.typography.fontFamily, wordBreak: "break-word" }}
+        >
+          {value}
+        </Typography>
+      </Box>
     </Box>
   );
 };
 
 const RegistrationSuccess = ({ registration, onReset }) => {
   const theme = useTheme();
-  //const navigate = useNavigate();
 
   const handleDownload = () => {
     generateTicketPDF(registration);
@@ -101,7 +102,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
         py: { xs: 2, sm: 4 },
       }}
     >
-      {/* ── Ícono de check con glow ── */}
       <CheckCircleIcon
         sx={{
           fontSize: { xs: 70, sm: 90 },
@@ -111,7 +111,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
         }}
       />
 
-      {/* ── Título con fuente pixel ── */}
       <Typography
         component="h2"
         sx={{
@@ -126,7 +125,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
         ¡Registro Exitoso!
       </Typography>
 
-      {/* ── Mensaje con email ── */}
       <Typography
         sx={{
           color: "#FFFFFF",
@@ -140,9 +138,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
         ¡Te esperamos en el Multimedia Day 2026!
       </Typography>
 
-      {/* ══════════════════════════════════════════════════════════════
-          PREVISUALIZACIÓN DEL TICKET
-          ══════════════════════════════════════════════════════════════ */}
       <Box
         sx={{
           width: "100%",
@@ -155,7 +150,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
           textAlign: "left",
         }}
       >
-        {/* Encabezado del ticket */}
         <Box
           sx={{
             px: { xs: 2, sm: 3 },
@@ -196,7 +190,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
             </Typography>
           </Box>
 
-          {/* N° de inscripción */}
           <Box
             sx={{
               px: 2,
@@ -232,7 +225,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
           </Box>
         </Box>
 
-        {/* Cuerpo — datos del inscripto */}
         <Box sx={{ px: { xs: 1, sm: 1.5 }, py: 1.5 }}>
           <TicketRow
             icon={<PersonIcon fontSize="small" />}
@@ -263,7 +255,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
 
         <Divider sx={{ borderColor: "divider" }} />
 
-        {/* Pie — fecha, lugar y horario */}
         <Box
           sx={{
             px: { xs: 2, sm: 3 },
@@ -327,7 +318,6 @@ const RegistrationSuccess = ({ registration, onReset }) => {
         </Box>
       </Box>
 
-      {/* ── Botones ── */}
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2} width="100%">
         <Button
           fullWidth
@@ -369,5 +359,4 @@ const RegistrationSuccess = ({ registration, onReset }) => {
     </Box>
   );
 };
-
 export default RegistrationSuccess;
