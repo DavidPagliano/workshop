@@ -69,11 +69,26 @@ const validateField = (name, value) => {
       }
       return "";
     }
-    case "temas":
-      if (!["AI", "Audio", "video", "sin temas"].includes(value)) {
+    case "temas": {
+      const validTopics = [
+        "Fotografía",
+        "Marketing Digital",
+        "Diseño",
+        "Conexión satelital",
+        "Iluminación",
+        "Diseño web",
+        "Animación con IA",
+        "Otros",
+        "sin temas",
+        "AI",
+        "Audio",
+        "video",
+      ];
+      if (!validTopics.includes(value)) {
         return "Seleccioná un tema de interés.";
       }
       return "";
+    }
     default:
       return "";
   }

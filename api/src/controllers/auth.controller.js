@@ -114,3 +114,27 @@ exports.resetPassword = async (req, res) => {
     return res.status(500).json({ message: 'Error al resetear la contraseña' });
   }
 };
+
+exports.importUsers = async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ message: 'No se recibió ningún archivo Excel' });
+    }
+
+    const { message, results } = await authService.importUsersFromExcel(req.file.buffer);
+
+    await logAction(
+      req,
+      'IMPORT_USERS',
+      `Importación Excel: ${results.created.length} creados, ${results.skipped.length} omitidos, ${results.errors.length} errores`
+    );
+
+    return res.status(200).json({
+      message,
+      results,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ message: error.message || 'Error al procesar el archivo Excel' });
+  }
+};

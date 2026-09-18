@@ -81,7 +81,14 @@ const AdminPage = () => {
           <AdminOverview users={users} registrations={registrations} auditTotal={auditTotal} />
           <Divider sx={{ my: 5 }} />
           <Paper sx={{ p: { xs: 2, sm: 3 }, border: "1.5px solid", borderColor: "primary.main", borderRadius: 0 }}>
-            <UserManagement users={users} loading={loadingUsers} onCreate={handleCreate} onToggle={handleToggle} onDelete={handleDelete} />
+            <UserManagement
+              users={users}
+              loading={loadingUsers}
+              onCreate={handleCreate}
+              onToggle={handleToggle}
+              onDelete={handleDelete}
+              onRefresh={loadAdminData}
+            />
           </Paper>
           <Box sx={{ mt: 5 }}><AuditLog onTotalChange={setAuditTotal} /></Box>
           <Divider sx={{ my: 5 }} />

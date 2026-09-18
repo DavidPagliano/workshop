@@ -41,9 +41,28 @@ export const AuditLog = ({ onTotalChange }) => {
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, gap: 2, flexWrap: "wrap" }}>
         <Box><Typography variant="h6" sx={{ fontWeight: 700 }}>Historial de auditoría</Typography><Typography variant="body2" color="text.secondary">Actividad reciente de usuarios y navegación.</Typography></Box>
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <TextField size="small" placeholder="Buscar y presionar Enter" value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={handleSearch} InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }} />
-          <Tooltip title="Refrescar"><IconButton onClick={() => load()} disabled={loading}><RefreshIcon /></IconButton></Tooltip>
+        <Box sx={{ display: "flex", gap: 1, width: { xs: "100%", sm: "auto" }, alignItems: "center" }}>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Buscar y presionar Enter"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleSearch}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ flex: { xs: 1, sm: "initial" }, minWidth: { sm: 260 } }}
+          />
+          <Tooltip title="Refrescar">
+            <IconButton onClick={() => load()} disabled={loading}>
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
       <TableContainer component={Paper} sx={{ border: "1.5px solid", borderColor: "secondary.main", borderRadius: 0, overflowX: "auto" }}>

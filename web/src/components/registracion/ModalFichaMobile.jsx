@@ -34,7 +34,8 @@ const ModalFichaMobile = ({
             boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
             borderRadius: 0,
             bgcolor: "background.paper",
-            m: 2,
+            m: { xs: 1, sm: 2 },
+            maxHeight: { xs: "96vh", sm: "90vh" },
           },
         },
       }}

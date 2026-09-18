@@ -23,7 +23,7 @@ const generateRegistrarId = async () => {
   const counter = await Counter.findByIdAndUpdate(
     'event_seq',
     { $inc: { seq: 1 } },
-    { new: true }
+    { returnDocument: 'after' }
   );
   return `W-${String(counter.seq).padStart(3, '0')}`;
 };

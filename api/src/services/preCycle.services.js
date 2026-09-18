@@ -23,7 +23,7 @@ const generateRegistrarId = async () => {
   const counter = await Counter.findByIdAndUpdate(
     'cycle_seq',
     { $inc: { seq: 1 } },
-    { new: true }
+    { returnDocument: 'after' }
   );
   return `pcr-${String(counter.seq).padStart(3, '0')}`;
 };

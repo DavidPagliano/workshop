@@ -4,10 +4,18 @@ import { jsPDF } from "jspdf";
  * Mapa de valores internos → etiquetas legibles para el campo "temas".
  */
 const TOPIC_LABELS = {
+  Fotografía: "Fotografía",
+  "Marketing Digital": "Marketing Digital",
+  Diseño: "Diseño",
+  "Conexión satelital": "Conexión satelital",
+  Iluminación: "Iluminación",
+  "Diseño web": "Diseño web",
+  "Animación con IA": "Animación con IA",
+  Otros: "Otros",
+  "sin temas": "Sin definir",
   AI: "Inteligencia Artificial",
   Audio: "Audio",
   video: "Video",
-  "sin temas": "Sin definir",
 };
 
 /**
@@ -199,7 +207,7 @@ export const generateTicketPDF = (registration) => {
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...COLORS.white);
-  doc.text("TSM", rightCenterX, 92, { align: "center" });
+  doc.text("BALCARCE 2640, ROSARIO", rightCenterX, 92, { align: "center" });
 
   // ── Hora ───────────────────────────────────────────────────────────
   doc.setFontSize(6);

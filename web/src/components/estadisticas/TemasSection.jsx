@@ -112,20 +112,23 @@ export const TemasSection = ({ metricasTemas }) => {
           >
             VOLUMEN POR TEMA
           </Typography>
-          <Box sx={{ width: "100%", height: { xs: 180, sm: 220 } }}>
+          <Box sx={{ width: "100%", height: { xs: 240, sm: 270 } }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={metricasTemas.chartData}>
+              <BarChart
+                data={metricasTemas.chartData}
+                margin={{ top: 10, right: 10, left: -15, bottom: 25 }}
+              >
                 <XAxis
                   dataKey="name"
                   stroke="#FFFFFF"
-                  fontSize={10}
+                  fontSize={9}
                   tickLine={false}
                   interval={0}
-                  angle={-25}
+                  angle={-28}
                   textAnchor="end"
-                  height={50}
+                  height={65}
                 />
-                <YAxis stroke="#FFFFFF" fontSize={11} width={30} />
+                <YAxis stroke="#FFFFFF" fontSize={11} width={32} />
                 <RechartsTooltip content={<CustomChartTooltip />} />
                 <Bar dataKey="value" fill="#00B4FF" />
               </BarChart>

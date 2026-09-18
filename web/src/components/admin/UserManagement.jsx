@@ -3,7 +3,7 @@ import {
   Alert, Box, Button, Chip, CircularProgress, Collapse, Dialog, DialogActions,
   DialogContent, DialogTitle, Divider, IconButton, MenuItem, Paper, Select,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  TextField, Tooltip, Typography, useMediaQuery, useTheme,
+  TextField, Tooltip, Typography, useMediaQuery, useTheme, Card, CardContent,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -11,9 +11,11 @@ import PersonOffIcon from "@mui/icons-material/PersonOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LockResetIcon from "@mui/icons-material/LockReset";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { resetUserPassword } from "../../services/adminService";
+import { ImportUsersDialog } from "./ImportUsersDialog";
 
 const initialForm = { username: "", email: "", password: "", role: "staff_registracion" };
 const roles = ["admin", "director", "staff_registracion", "staff_bedele"];
@@ -25,11 +27,12 @@ const roleLabels = {
   staff_bedele: "Staff Bedele",
 };
 
-export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete }) => {
+export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete, onRefresh }) => {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("md"));
   const { user: currentUser } = useAuth();
   const [open, setOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [form, setForm] = useState(initialForm);
   const [formError, setFormError] = useState("");
   const [viewUser, setViewUser] = useState(null);
@@ -93,10 +96,159 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete })
           <Typography variant="h6" sx={{ fontWeight: 700 }}>Usuarios y permisos</Typography>
           <Typography variant="body2" color="text.secondary">Aprobá solicitudes y administrá el acceso al sistema.</Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>Nuevo usuario</Button>
+        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+          <Button
+            variant="outlined"
+            startIcon={<UploadFileIcon />}
+            onClick={() => setImportOpen(true)}
+          >
+            Importar Excel
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setOpen(true)}
+          >
+            Nuevo usuario
+          </Button>
+        </Box>
       </Box>
 
-      {loading ? <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}><CircularProgress /></Box> : (
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : mobile ? (
+        /* ── Vista Mobile: Tarjetas ── */
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          {sortedUsers.map((item) => {
+            const own = String(item._id) === String(currentUser?.id);
+            return (
+              <Card
+                key={item._id}
+                variant="outlined"
+                sx={{
+                  border: "1.5px solid",
+                  borderColor: item.activo ? "primary.main" : "warning.main",
+                  borderRadius: 0,
+                  bgcolor: "background.paper",
+                  boxShadow: item.activo
+                    ? "3px 3px 0px rgba(0, 180, 255, 0.3)"
+                    : "3px 3px 0px rgba(255, 170, 0, 0.3)",
+                }}
+              >
+                <CardContent sx={{ p: 2, "&:last-child": { pb: 1.5 } }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mb: 1,
+                      gap: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: 700, wordBreak: "break-word" }}
+                    >
+                      {item.username}
+                    </Typography>
+                    <Chip
+                      label={item.activo ? "Activo" : "Pendiente"}
+                      color={item.activo ? "success" : "warning"}
+                      size="small"
+                      sx={{ borderRadius: 0, fontWeight: 600 }}
+                    />
+                  </Box>
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 1.5, wordBreak: "break-all" }}
+                  >
+                    {item.email}
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: 1,
+                      pt: 1,
+                      borderTop: "1px solid",
+                      borderColor: "divider",
+                    }}
+                  >
+                    <Chip
+                      label={roleLabels[item.role] || item.role}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                    />
+
+                    <Box sx={{ display: "flex", gap: 0.5 }}>
+                      <Tooltip title="Ver detalles">
+                        <IconButton
+                          size="small"
+                          color="info"
+                          onClick={() => setViewUser(item)}
+                        >
+                          <VisibilityIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={item.activo ? "Desactivar" : "Activar"}>
+                        <span>
+                          <IconButton
+                            size="small"
+                            color={item.activo ? "warning" : "success"}
+                            disabled={own}
+                            onClick={() => onToggle(item)}
+                          >
+                            {item.activo ? (
+                              <PersonOffIcon fontSize="small" />
+                            ) : (
+                              <PersonAddIcon fontSize="small" />
+                            )}
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                      <Tooltip title={own ? "No puedes eliminarte" : "Eliminar"}>
+                        <span>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            disabled={own}
+                            onClick={() => onDelete(item)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            );
+          })}
+          {!sortedUsers.length && (
+            <Paper
+              sx={{
+                p: 3,
+                textAlign: "center",
+                border: "1px dashed",
+                borderColor: "divider",
+              }}
+            >
+              <Typography color="text.secondary">
+                No hay usuarios registrados.
+              </Typography>
+            </Paper>
+          )}
+        </Box>
+      ) : (
+        /* ── Vista Desktop: Tabla ── */
         <TableContainer component={Paper} sx={{ border: "1.5px solid", borderColor: "primary.main", borderRadius: 0, overflowX: "auto" }}>
           <Table sx={{ minWidth: 680 }}>
             <TableHead><TableRow sx={{ bgcolor: "rgba(0, 180, 255, 0.08)" }}>
@@ -147,7 +299,7 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete })
       </Dialog>
 
       {/* Modal Ver Detalles de Usuario */}
-      <Dialog open={Boolean(viewUser)} onClose={closeViewUser} fullWidth maxWidth="xs">
+      <Dialog open={Boolean(viewUser)} onClose={closeViewUser} fullWidth maxWidth="xs" fullScreen={mobile}>
         <DialogTitle sx={{ fontWeight: 700, display: "flex", alignItems: "center", gap: 1 }}>
           <VisibilityIcon color="info" /> Detalles del usuario
         </DialogTitle>
@@ -238,6 +390,13 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete })
           <Button onClick={closeViewUser} variant="contained">Cerrar</Button>
         </DialogActions>
       </Dialog>
+
+      {/* Modal Importar Usuarios desde Excel */}
+      <ImportUsersDialog
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={onRefresh}
+      />
     </Box>
   );
 };

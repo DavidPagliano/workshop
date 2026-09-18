@@ -22,10 +22,7 @@ const RegisterPage = () => {
     setMensaje({ tipo: "", texto: "" });
     setLoading(true);
     try {
-      await api.post("/workshop/auth/register", {
-        ...form,
-        role: "staff_registracion",
-      });
+      await api.post("/workshop/auth/register", form);
       setMensaje({
         tipo: "success",
         texto:
@@ -33,9 +30,14 @@ const RegisterPage = () => {
       });
       setTimeout(() => navigate("/login"), 2500);
     } catch (err) {
+      const errorData = err.response?.data;
+      const errorMsg =
+        errorData?.errors?.[0]?.message ||
+        errorData?.message ||
+        "Error al procesar el registro.";
       setMensaje({
         tipo: "error",
-        texto: err.response?.data?.message || "Error al procesar el registro.",
+        texto: errorMsg,
       });
     } finally {
       setLoading(false);

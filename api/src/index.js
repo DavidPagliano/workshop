@@ -16,7 +16,20 @@ const app = express();
 
 const isDev = config.nodeEnv === 'development';
 
-const whitelist = [config.url_web_dev,config.url_web_preview];
+// Genera variantes http y https de cada URL para cubrir ambos protocolos sin trailing slashes
+const buildWhitelist = (...urls) => {
+  const set = new Set();
+  for (const url of urls) {
+    if (!url) continue;
+    const cleanUrl = url.trim().replace(/\/+$/, '');
+    set.add(cleanUrl);
+    if (cleanUrl.startsWith('http://')) set.add(cleanUrl.replace('http://', 'https://'));
+    else if (cleanUrl.startsWith('https://')) set.add(cleanUrl.replace('https://', 'http://'));
+  }
+  return [...set];
+};
+
+const whitelist = buildWhitelist(config.url_web_dev, config.url_web_preview);
 
 const corsOptions = {
   origin: function (origin, callback) {

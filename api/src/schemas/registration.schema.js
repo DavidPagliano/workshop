@@ -7,7 +7,20 @@ const eventSchema = z.object({
   email: z.string().trim().email('Debe ser un correo válido').max(254),
   dni: z.string().trim().min(6, 'DNI/Pasaporte inválido').max(30),
   telefono: z.string().trim().min(8, 'Número de teléfono inválido').max(25),
-  temas: z.enum(['AI', 'Audio', 'video', 'sin temas']),
+  temas: z.enum([
+    'Fotografía',
+    'Marketing Digital',
+    'Diseño',
+    'Conexión satelital',
+    'Iluminación',
+    'Diseño web',
+    'Animación con IA',
+    'Otros',
+    'sin temas',
+    'AI',
+    'Audio',
+    'video',
+  ]),
 }).strict();
 
 // Esquema para el Pre-Ciclo 2027

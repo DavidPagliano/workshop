@@ -75,7 +75,11 @@ const TicketRow = ({ icon, label, value }) => {
         </Typography>
         <Typography
           variant="body2"
-          sx={{ fontWeight: 600, fontFamily: theme.typography.fontFamily, wordBreak: "break-word" }}
+          sx={{
+            fontWeight: 600,
+            fontFamily: theme.typography.fontFamily,
+            wordBreak: "break-word",
+          }}
         >
           {value}
         </Typography>
@@ -274,7 +278,7 @@ const RegistrationSuccess = ({ registration, onReset }) => {
             {
               icon: <PlaceIcon sx={{ fontSize: 16 }} />,
               label: "LUGAR",
-              value: "TSM",
+              value: "BALCARCE 2640, ROSARIO",
             },
             {
               icon: <AccessTimeIcon sx={{ fontSize: 16 }} />,

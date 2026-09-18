@@ -182,7 +182,8 @@ const PrivateLayout = () => {
         slotProps={{
           paper: {
             sx: {
-              width: 280,
+              width: { xs: "82vw", sm: 280 },
+              maxWidth: 300,
               bgcolor: "#03083B",
               borderLeft: "1.5px solid #00B4FF",
             },

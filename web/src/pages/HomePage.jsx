@@ -133,15 +133,17 @@ const CountdownTimer = () => {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: { xs: 1.5, sm: 3, md: 4 },
+          gap: { xs: 1, sm: 3, md: 4 },
           bgcolor: "#03083B",
           border: "2px solid #00B4FF",
           boxShadow: {
             xs: "4px 4px 0px #D500BA",
             sm: "5px 5px 0px #D500BA",
           },
-          px: { xs: 2, sm: 3, md: 4 },
-          py: { xs: 1.5, sm: 2 },
+          px: { xs: 1.2, sm: 3, md: 4 },
+          py: { xs: 1.2, sm: 2 },
+          maxWidth: "100%",
+          boxSizing: "border-box",
           position: "relative",
         }}
       >
@@ -154,13 +156,13 @@ const CountdownTimer = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              minWidth: { xs: "45px", sm: "65px", md: "80px" },
+              minWidth: { xs: "38px", sm: "65px", md: "80px" },
             }}
           >
             <Typography
               sx={{
                 fontFamily: "'Omega Pixel BIFORM', monospace",
-                fontSize: { xs: "1.5rem", sm: "2.3rem", md: "3rem" },
+                fontSize: { xs: "1.35rem", sm: "2.3rem", md: "3rem" },
                 fontWeight: 800,
                 color: "#FFFFFF",
                 lineHeight: 1,
@@ -172,7 +174,7 @@ const CountdownTimer = () => {
             <Typography
               sx={{
                 fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: { xs: "0.6rem", sm: "0.72rem", md: "0.82rem" },
+                fontSize: { xs: "0.55rem", sm: "0.72rem", md: "0.82rem" },
                 fontWeight: 700,
                 color: "#00B4FF",
                 letterSpacing: "0.1em",
@@ -212,7 +214,7 @@ const WorkshopCarousel = () => {
   return (
     <Box
       sx={{
-        mt: { xs: 6, sm: 8, md: 10 },
+        my: { xs: 4, sm: 5, md: 6 },
         width: "100%",
         display: "flex",
         flexDirection: "column",
@@ -484,7 +486,7 @@ const HomePage = () => {
               bgcolor: "#03083B",
               border: "2px solid #00B4FF",
               boxShadow: "6px 6px 0px #D500BA",
-              px: { xs: 3, sm: 6, md: 8 },
+              px: { xs: 1.5, sm: 6, md: 8 },
               py: { xs: 2, sm: 3 },
               position: "relative",
               width: "100%",
@@ -497,7 +499,11 @@ const HomePage = () => {
             <Typography
               sx={{
                 fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: { xs: "2.8rem", sm: "4.5rem", md: "5.8rem" },
+                fontSize: {
+                  xs: "clamp(1.9rem, 8.5vw, 2.8rem)",
+                  sm: "4.5rem",
+                  md: "5.8rem",
+                },
                 fontWeight: 900,
                 color: "#FFFFFF",
                 lineHeight: 0.9,
@@ -595,7 +601,10 @@ const HomePage = () => {
           </Typography>
         </Box>
 
-        {/* 6b. TRES CAJAS TARJETAS */}
+        {/* 6b. CARRUSEL WORKSHOPS ANTERIORES (Entre Una jornada para encontrarnos y las 3 tarjetas) */}
+        <WorkshopCarousel />
+
+        {/* 6c. TRES CAJAS TARJETAS */}
         <Box
           sx={{
             display: "grid",
@@ -885,9 +894,6 @@ const HomePage = () => {
             </Box>
           </Box>
         </Box>
-
-        {/* 7. CARRUSEL ABAJO DE TODO */}
-        <WorkshopCarousel />
 
       </Container>
     </Box>
