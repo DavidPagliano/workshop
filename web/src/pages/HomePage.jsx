@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import GroupsIcon from "@mui/icons-material/Groups";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import SchoolIcon from "@mui/icons-material/School";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import PlaceIcon from "@mui/icons-material/Place";
-import AllInclusiveIcon from "@mui/icons-material/AllInclusive";
+import BuildIcon from "@mui/icons-material/Build";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 // ─── Assets ──────────────────────────────────────────────────────────
 import bgGrid from "../assets/images/fondo/FONDO3.png";
@@ -16,6 +18,8 @@ import cursorImg from "../assets/images/CURSOR.png";
 import masImg from "../assets/images/MAS.png";
 import playImg from "../assets/images/PLAY.png";
 import pixeladoImg from "../assets/images/pixelado.png";
+import logoMD from "../assets/images/LOGOMD2026.png"; // logo del evento
+import recuadroImg from "../assets/images/RECUADRO.png"; // ← NUEVO: recuadro (cambiar nombre si es otro)
 
 // Imágenes de Workshops Anteriores
 import ws1 from "../assets/images/workshops/ws1.jpeg";
@@ -32,6 +36,272 @@ const WORKSHOP_IMAGES = [
   { id: 4, title: "Workshop 2019", src: ws4 },
   { id: 5, title: "Workshop 2025", src: ws5 },
 ];
+
+// ═════════════════════════════════════════════════════════════════════
+// ANIMACIONES DE ÍCONOS Y PNG (estética neón retro)
+// Cada constante es un fragmento de `sx` que se "esparce" (...) en el
+// elemento. Todas respetan prefers-reduced-motion.
+// ═════════════════════════════════════════════════════════════════════
+
+/** Helper: arma un fragmento sx con animación infinita + su @keyframes */
+const motion = (
+  name,
+  frames,
+  {
+    duration = "4s",
+    timing = "ease-in-out",
+    delay = "0s",
+    origin = "center",
+  } = {}
+) => ({
+  animation: `${name} ${duration} ${timing} ${delay} infinite`,
+  transformOrigin: origin,
+  willChange: "transform",
+  [`@keyframes ${name}`]: frames,
+  "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+});
+
+// ─── PNG decorativos ─────────────────────────────────────────────────
+
+/** Cursor 3D: flota, se inclina y "hace click" */
+const CURSOR_MOTION = motion(
+  "mdCursorClick",
+  {
+    "0%, 100%": { transform: "translate(0, 0) rotate(0deg) scale(1)" },
+    "40%, 70%": { transform: "translate(-6px, -14px) rotate(-4deg) scale(1)" },
+    "78%": { transform: "translate(-6px, -14px) rotate(-4deg) scale(0.88)" },
+    "88%": { transform: "translate(-6px, -14px) rotate(-4deg) scale(1)" },
+  },
+  { duration: "5s" }
+);
+
+/** Play 3D: late y el glow magenta se intensifica */
+const PLAY_MOTION = motion(
+  "mdPlayPulse",
+  {
+    "0%, 100%": {
+      transform: "scale(1)",
+      filter: "drop-shadow(0 10px 20px rgba(213, 0, 186, 0.3))",
+    },
+    "50%": {
+      transform: "scale(1.1)",
+      filter: "drop-shadow(0 10px 32px rgba(213, 0, 186, 0.9))",
+    },
+  },
+  { duration: "2.6s", delay: "-1s" }
+);
+
+/** Más 3D: gira de a 90° con rebote (snap) */
+const MAS_MOTION = motion(
+  "mdMasSnap",
+  {
+    "0%, 20%": { transform: "rotate(0deg)" },
+    "25%, 45%": { transform: "rotate(90deg)" },
+    "50%, 70%": { transform: "rotate(180deg)" },
+    "75%, 95%": { transform: "rotate(270deg)" },
+    "100%": { transform: "rotate(360deg)" },
+  },
+  { duration: "9s", timing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)" }
+);
+
+/** Recuadro 3D: flota y se balancea */
+const RECUADRO_MOTION = motion(
+  "mdFrameFloat",
+  {
+    "0%, 100%": { transform: "translateY(0) rotate(-2deg)" },
+    "50%": { transform: "translateY(-14px) rotate(2deg)" },
+  },
+  { duration: "6s", delay: "-3s" }
+);
+
+/** Rastro pixelado: glitch por saltos (steps) */
+const PIXELADO_MOTION = motion(
+  "mdPixelGlitch",
+  {
+    "0%, 100%": { transform: "translateX(0)", opacity: 0.85 },
+    "10%": { transform: "translateX(-8px)", opacity: 0.6 },
+    "12%": { transform: "translateX(0)", opacity: 0.85 },
+    "48%": { transform: "translateX(6px)", opacity: 0.95 },
+    "50%": { transform: "translateX(0)", opacity: 0.85 },
+    "80%": { transform: "translateX(0)", opacity: 0.45 },
+    "82%": { transform: "translateX(-4px)", opacity: 0.85 },
+  },
+  { duration: "5s", timing: "steps(1, end)" }
+);
+
+// ─── Íconos MUI (el glow usa currentColor: toma el color del ícono) ──
+
+/** Lamparita: glow que respira + parpadeo de tubo */
+const BULB_MOTION = motion(
+  "mdBulbGlow",
+  {
+    "0%, 100%": { filter: "drop-shadow(0 0 2px currentColor)", opacity: 1 },
+    "50%": { filter: "drop-shadow(0 0 14px currentColor)" },
+    "91%": { opacity: 1 },
+    "92%": { opacity: 0.35 },
+    "94%": { opacity: 1 },
+    "96%": { opacity: 0.55 },
+    "98%": { opacity: 1 },
+  },
+  { duration: "5s" }
+);
+
+/** Llave: se sacude como ajustando una tuerca */
+const WRENCH_MOTION = motion(
+  "mdWrenchTurn",
+  {
+    "0%, 55%, 100%": { transform: "rotate(0deg)" },
+    "10%": { transform: "rotate(-18deg)" },
+    "20%": { transform: "rotate(14deg)" },
+    "30%": { transform: "rotate(-10deg)" },
+    "40%": { transform: "rotate(6deg)" },
+    "50%": { transform: "rotate(0deg)" },
+  },
+  { duration: "4s", origin: "50% 80%" }
+);
+
+/** Tendencia: sube en diagonal con glow */
+const TREND_MOTION = motion(
+  "mdTrendRise",
+  {
+    "0%, 100%": {
+      transform: "translate(0, 0)",
+      filter: "drop-shadow(0 0 2px currentColor)",
+    },
+    "50%": {
+      transform: "translate(5px, -5px)",
+      filter: "drop-shadow(0 0 12px currentColor)",
+    },
+  },
+  { duration: "3s" }
+);
+
+/** Comunidad: latido doble */
+const GROUPS_MOTION = motion(
+  "mdGroupsBeat",
+  {
+    "0%, 60%, 100%": { transform: "scale(1)" },
+    "15%": { transform: "scale(1.14)" },
+    "30%": { transform: "scale(1)" },
+    "45%": { transform: "scale(1.14)" },
+  },
+  { duration: "3.2s" }
+);
+
+/** Birrete: saltito y giro */
+const SCHOOL_MOTION = motion(
+  "mdCapHop",
+  {
+    "0%, 65%, 100%": { transform: "translateY(0) rotate(0deg)" },
+    "20%": { transform: "translateY(-9px) rotate(-8deg)" },
+    "40%": { transform: "translateY(0) rotate(0deg)" },
+    "52%": { transform: "translateY(-4px) rotate(6deg)" },
+  },
+  { duration: "4.5s" }
+);
+
+// ─── Logo del evento ─────────────────────────────────────────────────
+
+/**
+ * Imagen del logo (3 efectos que no se pisan entre sí):
+ *  1. Encendido: parpadea como un neón al prender (una sola vez, al cargar)
+ *  2. Glow: el resplandor pasa de celeste a magenta y vuelve
+ *  3. Glitch: cada 7s "salta" un instante, como una señal con interferencia
+ */
+const LOGO_FX = {
+  animation:
+    "mdLogoBoot 1.2s steps(1, end) 1, mdLogoGlow 4s ease-in-out infinite, mdLogoGlitch 7s steps(1, end) infinite",
+  "@keyframes mdLogoBoot": {
+    "0%": { opacity: 0 },
+    "10%": { opacity: 1 },
+    "20%": { opacity: 0.2 },
+    "30%": { opacity: 1 },
+    "45%": { opacity: 0.4 },
+    "55%, 100%": { opacity: 1 },
+  },
+  "@keyframes mdLogoGlow": {
+    "0%, 100%": {
+      filter:
+        "drop-shadow(0 0 4px rgba(0, 180, 255, 0.6)) drop-shadow(0 0 14px rgba(0, 180, 255, 0.3))",
+    },
+    "50%": {
+      filter:
+        "drop-shadow(0 0 8px rgba(213, 0, 186, 0.7)) drop-shadow(0 0 26px rgba(213, 0, 186, 0.45))",
+    },
+  },
+  "@keyframes mdLogoGlitch": {
+    "0%, 100%": { transform: "translate(0, 0) skewX(0deg)" },
+    "90%": { transform: "translate(-4px, 0) skewX(-4deg)" },
+    "91%": { transform: "translate(5px, 1px) skewX(3deg)" },
+    "92%": { transform: "translate(-2px, -1px) skewX(0deg)" },
+    "93%": { transform: "translate(0, 0) skewX(0deg)" },
+  },
+  "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+};
+
+// ─── Efectos neón para el bloque "Seguinos en redes" ─────────────────
+// (mismos que el bloque de fecha, con delays distintos para que no
+//  respiren exactamente al mismo tiempo)
+
+/** Caja: brillo celeste que sube y baja */
+const NEON_BOX_MOTION = {
+  animation: "mdNeonBreathe 3s ease-in-out -1.5s infinite",
+  "@keyframes mdNeonBreathe": {
+    "0%, 100%": {
+      boxShadow: "5px 5px 0px #D500BA, 0 0 6px rgba(0, 180, 255, 0.25)",
+    },
+    "50%": {
+      boxShadow: "5px 5px 0px #D500BA, 0 0 22px rgba(0, 180, 255, 0.75)",
+    },
+  },
+  "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+};
+
+/** Título: parpadeo de tubo fluorescente */
+const TUBE_FLICKER = {
+  animation: "mdTubeFlicker 6s linear -2.5s infinite",
+  "@keyframes mdTubeFlicker": {
+    "0%, 90%, 100%": { opacity: 1 },
+    "92%": { opacity: 0.35 },
+    "94%": { opacity: 1 },
+    "96%": { opacity: 0.5 },
+    "98%": { opacity: 1 },
+  },
+  "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+};
+
+/** Textos: el glow celeste respira */
+const TEXT_BREATHE = {
+  textShadow: "0 0 8px rgba(0, 180, 255, 0.6)",
+  animation: "mdTextBreathe 3s ease-in-out -1.5s infinite",
+  "@keyframes mdTextBreathe": {
+    "0%, 100%": { textShadow: "0 0 4px rgba(0, 180, 255, 0.4)" },
+    "50%": {
+      textShadow:
+        "0 0 12px rgba(0, 180, 255, 0.95), 0 0 22px rgba(0, 180, 255, 0.5)",
+    },
+  },
+  "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+};
+
+// ─── Redes sociales (solo hover) ─────────────────────────────────────
+const SOCIAL_HOVER = {
+  "&:hover .social-icon": {
+    bgcolor: "#00B4FF",
+    color: "#03083B",
+    transform: "translate(-2px, -2px)",
+    boxShadow: "5px 5px 0px #D500BA",
+  },
+  "&:hover .social-icon svg": {
+    animation: "mdIconPop 0.5s steps(5) 1",
+    "@keyframes mdIconPop": {
+      "0%": { transform: "scale(1) rotate(0deg)" },
+      "50%": { transform: "scale(1.25) rotate(-8deg)" },
+      "100%": { transform: "scale(1) rotate(0deg)" },
+    },
+    "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+  },
+};
 
 // ─── Helpers reutilizables ───────────────────────────────────────────
 
@@ -57,6 +327,84 @@ const CornerDots = ({ size = 6, offset = -4, color = "#00B4FF" }) => {
     />
   ));
 };
+
+/** Relojito con manecilla que gira (para el "FALTAN...") */
+const ClockLoader = () => (
+  <Box
+    aria-hidden="true"
+    sx={{
+      width: { xs: 24, sm: 30, md: 36 },
+      height: { xs: 24, sm: 30, md: 36 },
+      flexShrink: 0,
+      "& .clock-hand": {
+        transformOrigin: "12px 12px",
+        transformBox: "view-box",
+        animation: "mdClockSpin 4s linear infinite",
+      },
+      "@keyframes mdClockSpin": {
+        from: { transform: "rotate(0deg)" },
+        to: { transform: "rotate(360deg)" },
+      },
+      "@media (prefers-reduced-motion: reduce)": {
+        "& .clock-hand": { animation: "none" },
+      },
+    }}
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#00B4FF"
+      strokeWidth="2"
+      strokeLinecap="square"
+      style={{ display: "block", width: "100%", height: "100%" }}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="12" x2="16" y2="12" />
+      <line className="clock-hand" x1="12" y1="12" x2="12" y2="5" />
+    </svg>
+  </Box>
+);
+
+/** Indicador REC parpadeando (esquina superior izquierda de una caja) */
+const RecIndicator = () => (
+  <Box
+    aria-hidden="true"
+    sx={{
+      position: "absolute",
+      top: { xs: 10, sm: 12 },
+      left: { xs: 14, sm: 18 },
+      display: "flex",
+      alignItems: "center",
+      gap: 0.8,
+    }}
+  >
+    <Box
+      sx={{
+        width: { xs: 8, sm: 10 },
+        height: { xs: 8, sm: 10 },
+        bgcolor: "#D500BA",
+        boxShadow: "0 0 8px rgba(213, 0, 186, 0.9)",
+        animation: "mdRecBlink 1.2s linear infinite",
+        "@keyframes mdRecBlink": {
+          "0%, 55%": { opacity: 1 },
+          "56%, 100%": { opacity: 0.15 },
+        },
+        "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+      }}
+    />
+    <Typography
+      sx={{
+        fontFamily: "'Omega Pixel BIFORM', monospace",
+        fontSize: { xs: "0.65rem", sm: "0.8rem" },
+        color: "#D500BA",
+        letterSpacing: "0.15em",
+        lineHeight: 1,
+      }}
+    >
+      REC
+    </Typography>
+  </Box>
+);
 
 /** Componente Contador Regresivo (Estética Neon Retro) */
 const TARGET_DATE = new Date("2026-10-07T19:00:00-03:00").getTime();
@@ -115,18 +463,47 @@ const CountdownTimer = () => {
         width: "100%",
       }}
     >
-      <Typography
+      <Box
         sx={{
-          fontFamily: "'Omega Pixel BIFORM', monospace",
-          fontSize: { xs: "0.75rem", sm: "0.9rem" },
-          color: "#D500BA",
-          letterSpacing: "0.15em",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: { xs: 1, sm: 1.5 },
           mb: 1.5,
-          textTransform: "uppercase",
         }}
       >
-        TIEMPO RESTANTE PARA EL EVENTO...
-      </Typography>
+        <ClockLoader />
+        <Typography
+          sx={{
+            fontFamily: "'Omega Pixel BIFORM', monospace",
+            fontSize: { xs: "1rem", sm: "1.4rem", md: "1.7rem" },
+            color: "#00B4FF",
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+          }}
+        >
+          FALTAN
+          {[0, 1, 2].map((i) => (
+            <Box
+              key={i}
+              component="span"
+              sx={{
+                animation: "mdLoadingDots 1.4s linear infinite",
+                animationDelay: `${i * 0.2}s`,
+                "@keyframes mdLoadingDots": {
+                  "0%, 20%": { opacity: 0.15 },
+                  "40%, 100%": { opacity: 1 },
+                },
+                "@media (prefers-reduced-motion: reduce)": {
+                  animation: "none",
+                },
+              }}
+            >
+              .
+            </Box>
+          ))}
+        </Typography>
+      </Box>
 
       <Box
         sx={{
@@ -136,10 +513,8 @@ const CountdownTimer = () => {
           gap: { xs: 1, sm: 3, md: 4 },
           bgcolor: "#03083B",
           border: "2px solid #00B4FF",
-          boxShadow: {
-            xs: "4px 4px 0px #D500BA",
-            sm: "5px 5px 0px #D500BA",
-          },
+          boxShadow: "4px 4px 0px #D500BA",
+          borderRadius: 0,
           px: { xs: 1.2, sm: 3, md: 4 },
           py: { xs: 1.2, sm: 2 },
           maxWidth: "100%",
@@ -358,6 +733,126 @@ const WorkshopCarousel = () => {
   );
 };
 
+// ─── Tarjetas de la sección Jornada (íconos SVG de MUI) ──────────────
+const JORNADA_FEATURES = [
+  {
+    label: "IDEAS",
+    Icon: LightbulbIcon,
+    accent: "#00B4FF",
+    shadow: "#D500BA",
+    captionColor: "#03083B",
+    motionSx: BULB_MOTION,
+  },
+  {
+    label: "HERRAMIENTAS",
+    Icon: BuildIcon,
+    accent: "#D500BA",
+    shadow: "#00B4FF",
+    captionColor: "#FFFFFF",
+    motionSx: WRENCH_MOTION,
+  },
+  {
+    label: "POTENCIAR TU FUTURO",
+    Icon: TrendingUpIcon,
+    accent: "#00B4FF",
+    shadow: "#D500BA",
+    captionColor: "#03083B",
+    motionSx: TREND_MOTION,
+  },
+];
+
+/** Tarjeta con ícono arriba y barra de título abajo */
+const FeatureTile = ({
+  label,
+  Icon,
+  accent,
+  shadow,
+  captionColor,
+  motionSx,
+}) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      bgcolor: "#03083B",
+      border: `2px solid ${accent}`,
+      boxShadow: `4px 4px 0px ${shadow}`,
+    }}
+  >
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        py: { xs: 3, sm: 4 },
+      }}
+    >
+      <Icon
+        sx={{
+          color: accent,
+          fontSize: { xs: 60, sm: 68, md: 88 },
+          ...motionSx,
+        }}
+      />
+    </Box>
+    <Box
+      sx={{
+        bgcolor: accent,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: { sm: "3.5rem" },
+        px: 1,
+        py: 1,
+      }}
+    >
+      <Typography
+        sx={{
+          fontFamily: "'Omega Pixel BIFORM', monospace",
+          fontSize: { xs: "1rem", sm: "0.8rem", md: "1rem" },
+          color: captionColor,
+          letterSpacing: "0.05em",
+          textTransform: "uppercase",
+          lineHeight: 1.2,
+          textAlign: "center",
+        }}
+      >
+        {label}
+      </Typography>
+    </Box>
+  </Box>
+);
+
+// ─── Redes sociales ──────────────────────────────────────────────────
+const FACEBOOK_URL =
+  "https://www.facebook.com/TECNICOSUPERIORENMULTIMEDIA?locale=es_LA";
+
+const SOCIAL_LINKS = [
+  {
+    name: "Instagram",
+    label: "TECNICOSUPERIORENMULTIMEDIA",
+    href: "https://www.instagram.com/tecnicosuperiorenmultimedia",
+    Icon: InstagramIcon,
+  },
+  {
+    name: "WhatsApp",
+    label: "341 - 6611509",
+    href: "https://wa.me/5493416611509",
+    Icon: WhatsAppIcon,
+    labelSx: {
+      fontSize: { xs: "1.25rem", sm: "1.5rem" },
+      letterSpacing: "0.12em",
+    },
+  },
+  {
+    name: "Facebook",
+    label: "TECNICO SUPERIOR EN MULTIMEDIA",
+    href: FACEBOOK_URL,
+    Icon: FacebookIcon,
+  },
+];
+
 // =====================================================================
 // COMPONENTE PRINCIPAL
 // =====================================================================
@@ -394,6 +889,7 @@ const HomePage = () => {
           opacity: 0.85,
           pointerEvents: "none",
           zIndex: 1,
+          ...PIXELADO_MOTION,
         }}
       />
 
@@ -410,6 +906,7 @@ const HomePage = () => {
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 10px 20px rgba(0, 180, 255, 0.35))",
+          ...CURSOR_MOTION,
         }}
       />
 
@@ -426,14 +923,32 @@ const HomePage = () => {
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 10px 20px rgba(213, 0, 186, 0.3))",
+          ...PLAY_MOTION,
         }}
       />
 
-      {/* Cruz / Más 3D — desplazado más hacia la derecha exterior */}
+      {/* Cruz / Más 3D — margen izquierdo del logo (simétrico al cursor) */}
       <Box
         component="img"
         src={masImg}
         alt="3D Cross Decoration"
+        sx={{
+          position: "absolute",
+          top: { xs: "2%", md: "8%" },
+          left: { xs: "0%", md: "1%" },
+          width: { xs: "70px", sm: "110px", md: "160px" },
+          pointerEvents: "none",
+          zIndex: 3,
+          filter: "drop-shadow(0 12px 25px rgba(3, 8, 59, 0.8))",
+          ...MAS_MOTION,
+        }}
+      />
+
+      {/* Recuadro 3D — abajo a la derecha (donde estaba la cruz) */}
+      <Box
+        component="img"
+        src={recuadroImg}
+        alt="3D Frame Decoration"
         sx={{
           position: "absolute",
           bottom: { xs: "1%", md: "4%" },
@@ -442,6 +957,7 @@ const HomePage = () => {
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 12px 25px rgba(3, 8, 59, 0.8))",
+          ...RECUADRO_MOTION,
         }}
       />
 
@@ -455,81 +971,26 @@ const HomePage = () => {
           px: { xs: 2, sm: 4 },
         }}
       >
-        {/* 1. CAJA SUPERIOR: JORNADA INSTITUCIONAL */}
+        {/* 1. LOGO MULTIMEDIA DAY 2026 */}
         <Box
           sx={{
-            display: "inline-block",
-            bgcolor: "#03083B",
-            border: "1.5px solid #00B4FF",
-            px: { xs: 2, sm: 3 },
-            py: 0.6,
-            mb: 2.5,
+            display: "flex",
+            justifyContent: "center",
+            mb: 4,
           }}
         >
-          <Typography
-            sx={{
-              fontFamily: "'Omega Pixel BIFORM', monospace",
-              fontSize: { xs: "0.7rem", sm: "0.85rem" },
-              color: "#00B4FF",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-            }}
-          >
-            JORNADA INSTITUCIONAL • 2026
-          </Typography>
-        </Box>
-
-        {/* 2. TÍTULO PRINCIPAL: MULTIDAY 2026 */}
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
           <Box
+            component="img"
+            src={logoMD}
+            alt="Multimedia Day 2026"
             sx={{
-              bgcolor: "#03083B",
-              border: "2px solid #00B4FF",
-              boxShadow: "6px 6px 0px #D500BA",
-              px: { xs: 1.5, sm: 6, md: 8 },
-              py: { xs: 2, sm: 3 },
-              position: "relative",
               width: "100%",
-              maxWidth: "680px",
+              maxWidth: { xs: "85%", sm: "520px", md: "620px" },
+              height: "auto",
+              display: "block",
+              ...LOGO_FX,
             }}
-          >
-            <CornerDots size={7} offset={-4} color="#00B4FF" />
-
-            {/* MULTIDAY Centrado */}
-            <Typography
-              sx={{
-                fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: {
-                  xs: "clamp(1.9rem, 8.5vw, 2.8rem)",
-                  sm: "4.5rem",
-                  md: "5.8rem",
-                },
-                fontWeight: 900,
-                color: "#FFFFFF",
-                lineHeight: 0.9,
-                textAlign: "center",
-                textTransform: "uppercase",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              MULTIDAY
-            </Typography>
-
-            {/* 2026 Alineado a la derecha */}
-            <Typography
-              sx={{
-                fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: { xs: "1.8rem", sm: "3rem", md: "3.8rem" },
-                fontWeight: 800,
-                color: "#00B4FF",
-                lineHeight: 1,
-                textAlign: "right",
-                mt: 0.5,
-              }}
-            >
-              2026
-            </Typography>
-          </Box>
+          />
         </Box>
 
         {/* 4. BOTÓN ÚNICO DE ACCIÓN */}
@@ -559,46 +1020,216 @@ const HomePage = () => {
           </Button>
         </Box>
 
-        {/* 5. CONTADOR REGRESIVO (7 DE OCTUBRE) */}
-        <CountdownTimer />
-
-        {/* 6a. CAJA ANCHA: UNA JORNADA PARA ENCONTRARNOS */}
+        {/* 5. NO TE QUEDES AFUERA: FECHA, HORA Y LUGAR */}
         <Box
           sx={{
+            position: "relative",
+            maxWidth: "840px",
+            width: "100%",
+            mx: "auto",
+            mb: { xs: 5, sm: 6 },
+            px: { xs: 2, sm: 4 },
+            pt: { xs: 4.5, sm: 4 },
+            pb: { xs: 2.5, sm: 3.5 },
             bgcolor: "#03083B",
             border: "2px solid #00B4FF",
             boxShadow: "5px 5px 0px #D500BA",
-            p: { xs: 2.5, sm: 4 },
-            mb: 4,
-            position: "relative",
-            maxWidth: "840px",
-            mx: "auto",
+            boxSizing: "border-box",
+            // Neón que respira (brillo celeste que sube y baja)
+            animation: "mdNeonBreathe 3s ease-in-out infinite",
+            "@keyframes mdNeonBreathe": {
+              "0%, 100%": {
+                boxShadow:
+                  "5px 5px 0px #D500BA, 0 0 6px rgba(0, 180, 255, 0.25)",
+              },
+              "50%": {
+                boxShadow:
+                  "5px 5px 0px #D500BA, 0 0 22px rgba(0, 180, 255, 0.75)",
+              },
+            },
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
           <CornerDots size={6} offset={-4} color="#00B4FF" />
+
+          {/* Indicador REC parpadeando */}
+          <Box
+            aria-hidden="true"
+            sx={{
+              position: "absolute",
+              top: { xs: 10, sm: 12 },
+              left: { xs: 14, sm: 18 },
+              display: "flex",
+              alignItems: "center",
+              gap: 0.8,
+            }}
+          >
+            <Box
+              sx={{
+                width: { xs: 8, sm: 10 },
+                height: { xs: 8, sm: 10 },
+                bgcolor: "#D500BA",
+                boxShadow: "0 0 8px rgba(213, 0, 186, 0.9)",
+                animation: "mdRecBlink 1.2s linear infinite",
+                "@keyframes mdRecBlink": {
+                  "0%, 55%": { opacity: 1 },
+                  "56%, 100%": { opacity: 0.15 },
+                },
+                "@media (prefers-reduced-motion: reduce)": {
+                  animation: "none",
+                },
+              }}
+            />
+            <Typography
+              sx={{
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: "0.65rem", sm: "0.8rem" },
+                color: "#D500BA",
+                letterSpacing: "0.15em",
+                lineHeight: 1,
+              }}
+            >
+              REC
+            </Typography>
+          </Box>
+
           <Typography
             sx={{
-              fontFamily: "'Neue Haas Grotesk', sans-serif",
-              fontSize: { xs: "1.2rem", sm: "1.6rem", md: "1.8rem" },
-              fontWeight: 800,
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              fontSize: { xs: "1rem", sm: "1.4rem", md: "1.7rem" },
+              color: "#D500BA",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              mb: { xs: 2.5, sm: 3 },
+              animation: "mdTubeFlicker 6s linear infinite",
+              "@keyframes mdTubeFlicker": {
+                "0%, 90%, 100%": { opacity: 1 },
+                "92%": { opacity: 0.35 },
+                "94%": { opacity: 1 },
+                "96%": { opacity: 0.5 },
+                "98%": { opacity: 1 },
+              },
+              "@media (prefers-reduced-motion: reduce)": {
+                animation: "none",
+              },
+            }}
+          >
+            NO TE QUEDES AFUERA
+          </Typography>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-around",
+              alignItems: "center",
+              gap: { xs: 2.5, sm: 2 },
+            }}
+          >
+            {[
+              { value: "7 DE OCTUBRE", label: "FECHA" },
+              { value: "19HS", label: "HORA" },
+              { value: "BALCARCE 2640", label: "LUGAR" },
+            ].map((item, idx) => (
+              <Box
+                key={idx}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "'Omega Pixel BIFORM', monospace",
+                    fontSize: { xs: "1.2rem", sm: "1.4rem", md: "1.7rem" },
+                    fontWeight: 800,
+                    color: "#FFFFFF",
+                    lineHeight: 1,
+                    textShadow: "0 0 8px rgba(0, 180, 255, 0.6)",
+                    animation: "mdTextBreathe 3s ease-in-out infinite",
+                    "@keyframes mdTextBreathe": {
+                      "0%, 100%": {
+                        textShadow: "0 0 4px rgba(0, 180, 255, 0.4)",
+                      },
+                      "50%": {
+                        textShadow:
+                          "0 0 12px rgba(0, 180, 255, 0.95), 0 0 22px rgba(0, 180, 255, 0.5)",
+                      },
+                    },
+                    "@media (prefers-reduced-motion: reduce)": {
+                      animation: "none",
+                    },
+                  }}
+                >
+                  {item.value}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "'Neue Haas Grotesk', sans-serif",
+                    fontSize: { xs: "0.65rem", sm: "0.72rem", md: "0.82rem" },
+                    fontWeight: 700,
+                    color: "#D500BA",
+                    letterSpacing: "0.1em",
+                    mt: 0.8,
+                  }}
+                >
+                  {item.label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+
+        {/* 5b. CONTADOR REGRESIVO (7 DE OCTUBRE) */}
+        <CountdownTimer />
+
+        {/* 6a. JORNADA INSTITUCIONAL (sin caja de fondo) */}
+        <Box
+          sx={{
+            maxWidth: "840px",
+            mx: "auto",
+            mb: 4,
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              fontSize: { xs: "1.3rem", sm: "1.8rem", md: "2.2rem" },
               color: "#00B4FF",
+              letterSpacing: "0.06em",
+              // Sombra dura magenta (mismo recurso que las cajas), sin movimiento
+              textShadow: "3px 3px 0px #D500BA",
               mb: 1,
               textAlign: "center",
             }}
           >
-            Una jornada para encontrarnos
+            MULTIMEDIA WORKSHOP DAY
           </Typography>
           <Typography
             sx={{
               fontFamily: "'Neue Haas Grotesk', sans-serif",
-              fontSize: { xs: "0.85rem", sm: "0.95rem" },
-              color: "#FFFFFF",
+              fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem" },
+              color: "#03083B",
               fontWeight: 400,
               textAlign: "center",
             }}
           >
-            Ideas, herramientas y experiencias para potenciar lo que hacemos.
+            Un lugar para conectar...
           </Typography>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+              gap: { xs: 3, sm: 2.5 },
+              mt: { xs: 3.5, sm: 4.5 },
+            }}
+          >
+            {JORNADA_FEATURES.map((feature) => (
+              <FeatureTile key={feature.label} {...feature} />
+            ))}
+          </Box>
         </Box>
 
         {/* 6b. CARRUSEL WORKSHOPS ANTERIORES (Entre Una jornada para encontrarnos y las 3 tarjetas) */}
@@ -622,7 +1253,7 @@ const HomePage = () => {
               bgcolor: "#03083B",
               border: "2px solid #00B4FF",
               boxShadow: "4px 4px 0px #D500BA",
-              p: { xs: 2.5, sm: 2.5 },
+              p: { xs: 3, sm: 2.5, md: 3 },
               textAlign: "left",
               position: "relative",
               display: "flex",
@@ -630,28 +1261,31 @@ const HomePage = () => {
             }}
           >
             <CornerDots size={6} offset={-4} color="#00B4FF" />
-            <GroupsIcon sx={{ color: "#00B4FF", fontSize: 34, mb: 1.5 }} />
+            <GroupsIcon
+              sx={{ color: "#00B4FF", fontSize: 52, mb: 2, ...GROUPS_MOTION }}
+            />
             <Typography
               sx={{
-                fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "1.05rem",
-                fontWeight: 700,
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: "1.3rem", sm: "0.8rem", md: "1.15rem" },
                 color: "#FFFFFF",
-                mb: 1,
+                letterSpacing: "0.05em",
+                lineHeight: 1.2,
+                overflowWrap: "anywhere",
+                mb: 1.5,
               }}
             >
-              Comunidad
+              COMUNIDAD
             </Typography>
             <Typography
               sx={{
                 fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "0.8rem",
-                color: "#B0B8C4",
-                lineHeight: 1.4,
+                fontSize: { xs: "1rem", sm: "0.85rem", md: "1rem" },
+                color: "#DDE3EC",
+                lineHeight: 1.5,
               }}
             >
-              Conectá con estudiantes, docentes, profesionales y personas
-              curiosas que comparten tus intereses.
+              Conectá con estudiantes, docentes, profesionales y personas innovadoras. Llévate nuevos contactos e intercambia experiencias que sumen a tus intereses.
             </Typography>
           </Box>
 
@@ -661,7 +1295,7 @@ const HomePage = () => {
               bgcolor: "#03083B",
               border: "2px solid #D500BA",
               boxShadow: "4px 4px 0px #00B4FF",
-              p: { xs: 2.5, sm: 2.5 },
+              p: { xs: 3, sm: 2.5, md: 3 },
               textAlign: "left",
               position: "relative",
               display: "flex",
@@ -669,28 +1303,31 @@ const HomePage = () => {
             }}
           >
             <CornerDots size={6} offset={-4} color="#D500BA" />
-            <LightbulbIcon sx={{ color: "#D500BA", fontSize: 34, mb: 1.5 }} />
+            <LightbulbIcon
+              sx={{ color: "#D500BA", fontSize: 52, mb: 2, ...BULB_MOTION }}
+            />
             <Typography
               sx={{
-                fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "1.05rem",
-                fontWeight: 700,
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: "1.3rem", sm: "0.8rem", md: "1.15rem" },
                 color: "#FFFFFF",
-                mb: 1,
+                letterSpacing: "0.05em",
+                lineHeight: 1.2,
+                overflowWrap: "anywhere",
+                mb: 1.5,
               }}
             >
-              Inspiración
+              INSPIRACIÓN
             </Typography>
             <Typography
               sx={{
                 fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "0.8rem",
-                color: "#B0B8C4",
-                lineHeight: 1.4,
+                fontSize: { xs: "1rem", sm: "0.85rem", md: "1rem" },
+                color: "#DDE3EC",
+                lineHeight: 1.5,
               }}
             >
-              Participá de charlas, talleres y actividades pensadas para abrir
-              nuevas perspectivas.
+              Vení a descubrir nuevas formas de ver y hacer las cosas. Súmate a charlas y talleres pensados para despertar tu creatividad.
             </Typography>
           </Box>
 
@@ -700,7 +1337,7 @@ const HomePage = () => {
               bgcolor: "#03083B",
               border: "2px solid #00B4FF",
               boxShadow: "4px 4px 0px #D500BA",
-              p: { xs: 2.5, sm: 2.5 },
+              p: { xs: 3, sm: 2.5, md: 3 },
               textAlign: "left",
               position: "relative",
               display: "flex",
@@ -708,193 +1345,179 @@ const HomePage = () => {
             }}
           >
             <CornerDots size={6} offset={-4} color="#00B4FF" />
-            <SchoolIcon sx={{ color: "#00B4FF", fontSize: 34, mb: 1.5 }} />
+            <SchoolIcon
+              sx={{ color: "#00B4FF", fontSize: 52, mb: 2, ...SCHOOL_MOTION }}
+            />
             <Typography
               sx={{
-                fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "1.05rem",
-                fontWeight: 700,
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: "1.3rem", sm: "0.8rem", md: "1.15rem" },
                 color: "#FFFFFF",
-                mb: 1,
+                letterSpacing: "0.05em",
+                lineHeight: 1.2,
+                overflowWrap: "anywhere",
+                mb: 1.5,
               }}
             >
-              Aprendizaje
+              APRENDIZAJE
             </Typography>
             <Typography
               sx={{
                 fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "0.8rem",
-                color: "#B0B8C4",
-                lineHeight: 1.4,
+                fontSize: { xs: "1rem", sm: "0.85rem", md: "1rem" },
+                color: "#DDE3EC",
+                lineHeight: 1.5,
               }}
             >
-              Llevate ideas aplicables, experiencias reales y nuevas
-              herramientas para seguir creciendo.
+              Adquirí conocimientos prácticos, historias reales y herramientas que te van a ayudar a sumergirte en la comunicación audiovisual.
             </Typography>
           </Box>
         </Box>
 
-        {/* 6c. CAJA GUARDÁ LA FECHA */}
+        {/* 7. SEGUINOS EN REDES (mismo estilo que "No te quedes afuera") */}
         <Box
           sx={{
+            bgcolor: "#03083B",
+            border: "2px solid #00B4FF",
+            boxShadow: "5px 5px 0px #D500BA",
+            p: { xs: 3, sm: 4 },
+            pt: { xs: 5.5, sm: 5.5 },
+            ...NEON_BOX_MOTION,
+            maxWidth: "840px",
+            mx: "auto",
+            position: "relative",
+            boxSizing: "border-box",
             display: "flex",
-            justifyContent: "center",
-            width: "100%",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "flex-start", md: "center" },
+            justifyContent: "space-between",
+            gap: { xs: 3, md: 5 },
+            textAlign: "left",
           }}
         >
-          <Box
-            sx={{
-              bgcolor: "#03083B",
-              border: "2px solid #00B4FF",
-              boxShadow: "5px 5px 0px #D500BA",
-              p: { xs: 3, sm: 4 },
-              maxWidth: "750px",
-              width: "100%",
-              position: "relative",
-              boxSizing: "border-box",
-            }}
-          >
-            <CornerDots size={6} offset={-4} color="#00B4FF" />
+          <CornerDots size={6} offset={-4} color="#00B4FF" />
 
+          <RecIndicator />
+
+          <Box sx={{ flex: 1 }}>
+            <Typography
+              sx={{
+                fontFamily: "'Omega Pixel BIFORM', monospace",
+                fontSize: { xs: "1.4rem", sm: "1.8rem" },
+                color: "#D500BA",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                lineHeight: 1.2,
+                mb: 1.5,
+                ...TUBE_FLICKER,
+              }}
+            >
+              SEGUINOS EN REDES
+            </Typography>
             <Typography
               sx={{
                 fontFamily: "'Neue Haas Grotesk', sans-serif",
-                fontSize: "1.2rem",
-                fontWeight: 800,
-                color: "#FFFFFF",
-                textAlign: "center",
-                mb: 3,
-                width: "100%",
+                fontSize: { xs: "1rem", sm: "1.05rem" },
+                color: "#DDE3EC",
+                lineHeight: 1.5,
               }}
             >
-              Guardá la fecha
+              Conocé todo nuestro trabajo, proyectos, actividades y
+              experiencias de alumnos y profesionales.
             </Typography>
+          </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                justifyContent: "space-around",
-                alignItems: "center",
-                gap: { xs: 3, sm: 2 },
-                width: "100%",
-              }}
-            >
-              {/* Bloque 1: Fecha */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              minWidth: 0,
+            }}
+          >
+            {SOCIAL_LINKS.map(({ name, label, href, Icon, labelSx }) => (
               <Box
+                key={name}
+                component="a"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={name}
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
-                  textAlign: "center",
-                  flex: 1,
+                  gap: 2,
+                  textDecoration: "none",
+                  ...SOCIAL_HOVER,
                 }}
               >
-                <CalendarMonthIcon
-                  sx={{ color: "#00B4FF", fontSize: 28, mb: 1 }}
-                />
+                <Box
+                  className="social-icon"
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "2px solid #00B4FF",
+                    boxShadow: "3px 3px 0px #D500BA",
+                    color: "#00B4FF",
+                    transition:
+                      "background-color 0.2s ease, color 0.2s ease, transform 0.15s steps(3), box-shadow 0.15s steps(3)",
+                  }}
+                >
+                  <Icon sx={{ fontSize: 32 }} />
+                </Box>
                 <Typography
                   sx={{
                     fontFamily: "'Neue Haas Grotesk', sans-serif",
-                    fontSize: "0.9rem",
-                    fontWeight: 800,
+                    fontSize: { xs: "0.95rem", sm: "1.05rem" },
+                    fontWeight: 700,
                     color: "#FFFFFF",
-                    textTransform: "uppercase",
-                    textAlign: "center",
+                    minWidth: 0,
+                    overflowWrap: "anywhere",
+                    ...TEXT_BREATHE,
+                    ...labelSx,
                   }}
                 >
-                  7 DE OCTUBRE
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "'Neue Haas Grotesk', sans-serif",
-                    fontSize: "0.75rem",
-                    color: "#B0B8C4",
-                    mt: 0.3,
-                    textAlign: "center",
-                  }}
-                >
-                  Fecha del evento
+                  {label}
                 </Typography>
               </Box>
-
-              {/* Bloque 2: Lugar */}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  flex: 1,
-                }}
-              >
-                <PlaceIcon sx={{ color: "#00B4FF", fontSize: 28, mb: 1 }} />
-                <Typography
-                  sx={{
-                    fontFamily: "'Neue Haas Grotesk', sans-serif",
-                    fontSize: "0.9rem",
-                    fontWeight: 800,
-                    color: "#FFFFFF",
-                    textTransform: "uppercase",
-                    textAlign: "center",
-                  }}
-                >
-                  BALCARCE 2640, ROSARIO
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "'Neue Haas Grotesk', sans-serif",
-                    fontSize: "0.75rem",
-                    color: "#B0B8C4",
-                    mt: 0.3,
-                    textAlign: "center",
-                  }}
-                >
-                  Lugar de encuentro
-                </Typography>
-              </Box>
-
-              {/* Bloque 3: Experiencias */}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  flex: 1,
-                }}
-              >
-                <AllInclusiveIcon
-                  sx={{ color: "#00B4FF", fontSize: 28, mb: 1 }}
-                />
-                <Typography
-                  sx={{
-                    fontFamily: "'Neue Haas Grotesk', sans-serif",
-                    fontSize: "0.9rem",
-                    fontWeight: 800,
-                    color: "#FFFFFF",
-                    textTransform: "uppercase",
-                    textAlign: "center",
-                  }}
-                >
-                  EXPERIENCIAS
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "'Neue Haas Grotesk', sans-serif",
-                    fontSize: "0.75rem",
-                    color: "#B0B8C4",
-                    mt: 0.3,
-                    textAlign: "center",
-                  }}
-                >
-                  Charlas y talleres
-                </Typography>
-              </Box>
-            </Box>
+            ))}
           </Box>
         </Box>
 
+        {/* 8. FOOTER */}
+        <Box
+          component="footer"
+          sx={{
+            mt: { xs: 6, sm: 8 },
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              fontSize: { xs: "0.7rem", sm: "1rem", md: "1.15rem" },
+              color: "#03083B",
+              letterSpacing: "0.08em",
+              overflowWrap: "anywhere",
+            }}
+          >
+            {/* La @ va en otra tipografía porque en la pixelada no se ve bien */}
+            <Box
+              component="span"
+              sx={{
+                fontFamily: "'Neue Haas Grotesk', sans-serif",
+                fontWeight: 700,
+              }}
+            >
+              @
+            </Box>
+            institutosuperiortecnicoenmultimedia2026
+          </Typography>
+        </Box>
       </Container>
     </Box>
   );
