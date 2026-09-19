@@ -22,34 +22,34 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repositorio
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
           cache-dependency-path: "web/package-lock.json"
 
-      - name: Install dependencies
+      - name: Instalar dependencias del frontend
         run: npm ci
         working-directory: web
 
-      - name: Build
+      - name: Compilar Frontend con URL de Render
         run: npm run build
         working-directory: web
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }} # 👈 Aquí se inyecta la URL de Render
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-      - name: Setup Pages
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Subir artefacto compilado
         uses: actions/upload-pages-artifact@v3
         with:
           path: "web/dist"
 
-      - name: Deploy to GitHub Pages
+      - name: Desplegar en GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
