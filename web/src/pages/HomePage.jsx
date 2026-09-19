@@ -52,7 +52,7 @@ const motion = (
     timing = "ease-in-out",
     delay = "0s",
     origin = "center",
-  } = {}
+  } = {},
 ) => ({
   animation: `${name} ${duration} ${timing} ${delay} infinite`,
   transformOrigin: origin,
@@ -72,7 +72,7 @@ const CURSOR_MOTION = motion(
     "78%": { transform: "translate(-6px, -14px) rotate(-4deg) scale(0.88)" },
     "88%": { transform: "translate(-6px, -14px) rotate(-4deg) scale(1)" },
   },
-  { duration: "5s" }
+  { duration: "5s" },
 );
 
 /** Play 3D: late y el glow magenta se intensifica */
@@ -88,7 +88,7 @@ const PLAY_MOTION = motion(
       filter: "drop-shadow(0 10px 32px rgba(213, 0, 186, 0.9))",
     },
   },
-  { duration: "2.6s", delay: "-1s" }
+  { duration: "2.6s", delay: "-1s" },
 );
 
 /** Más 3D: gira de a 90° con rebote (snap) */
@@ -101,7 +101,7 @@ const MAS_MOTION = motion(
     "75%, 95%": { transform: "rotate(270deg)" },
     "100%": { transform: "rotate(360deg)" },
   },
-  { duration: "9s", timing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)" }
+  { duration: "9s", timing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)" },
 );
 
 /** Recuadro 3D: flota y se balancea */
@@ -111,7 +111,7 @@ const RECUADRO_MOTION = motion(
     "0%, 100%": { transform: "translateY(0) rotate(-2deg)" },
     "50%": { transform: "translateY(-14px) rotate(2deg)" },
   },
-  { duration: "6s", delay: "-3s" }
+  { duration: "6s", delay: "-3s" },
 );
 
 /** Rastro pixelado: glitch por saltos (steps) */
@@ -126,7 +126,7 @@ const PIXELADO_MOTION = motion(
     "80%": { transform: "translateX(0)", opacity: 0.45 },
     "82%": { transform: "translateX(-4px)", opacity: 0.85 },
   },
-  { duration: "5s", timing: "steps(1, end)" }
+  { duration: "5s", timing: "steps(1, end)" },
 );
 
 // ─── Íconos MUI (el glow usa currentColor: toma el color del ícono) ──
@@ -143,7 +143,7 @@ const BULB_MOTION = motion(
     "96%": { opacity: 0.55 },
     "98%": { opacity: 1 },
   },
-  { duration: "5s" }
+  { duration: "5s" },
 );
 
 /** Llave: se sacude como ajustando una tuerca */
@@ -157,7 +157,7 @@ const WRENCH_MOTION = motion(
     "40%": { transform: "rotate(6deg)" },
     "50%": { transform: "rotate(0deg)" },
   },
-  { duration: "4s", origin: "50% 80%" }
+  { duration: "4s", origin: "50% 80%" },
 );
 
 /** Tendencia: sube en diagonal con glow */
@@ -173,7 +173,7 @@ const TREND_MOTION = motion(
       filter: "drop-shadow(0 0 12px currentColor)",
     },
   },
-  { duration: "3s" }
+  { duration: "3s" },
 );
 
 /** Comunidad: latido doble */
@@ -185,7 +185,7 @@ const GROUPS_MOTION = motion(
     "30%": { transform: "scale(1)" },
     "45%": { transform: "scale(1.14)" },
   },
-  { duration: "3.2s" }
+  { duration: "3.2s" },
 );
 
 /** Birrete: saltito y giro */
@@ -197,7 +197,7 @@ const SCHOOL_MOTION = motion(
     "40%": { transform: "translateY(0) rotate(0deg)" },
     "52%": { transform: "translateY(-4px) rotate(6deg)" },
   },
-  { duration: "4.5s" }
+  { duration: "4.5s" },
 );
 
 // ─── Logo del evento ─────────────────────────────────────────────────
@@ -575,7 +575,7 @@ const WorkshopCarousel = () => {
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? WORKSHOP_IMAGES.length - 1 : prevIndex - 1
+      prevIndex === 0 ? WORKSHOP_IMAGES.length - 1 : prevIndex - 1,
     );
   };
 
@@ -837,7 +837,7 @@ const FACEBOOK_URL =
 const SOCIAL_LINKS = [
   {
     name: "Instagram",
-    label: "TECNICOSUPERIORENMULTIMEDIA",
+    label: "/TECNICOSUPERIORENMULTIMEDIA",
     href: "https://www.instagram.com/tecnicosuperiorenmultimedia",
     Icon: InstagramIcon,
   },
@@ -1291,7 +1291,9 @@ const HomePage = () => {
                 lineHeight: 1.5,
               }}
             >
-              Conectá con estudiantes, docentes, profesionales y personas innovadoras. Llévate nuevos contactos e intercambia experiencias que sumen a tus intereses.
+              Conectá con estudiantes, docentes, profesionales y personas
+              innovadoras. Llévate nuevos contactos e intercambia experiencias
+              que sumen a tus intereses.
             </Typography>
           </Box>
 
@@ -1333,7 +1335,8 @@ const HomePage = () => {
                 lineHeight: 1.5,
               }}
             >
-              Vení a descubrir nuevas formas de ver y hacer las cosas. Súmate a charlas y talleres pensados para despertar tu creatividad.
+              Vení a descubrir nuevas formas de ver y hacer las cosas. Súmate a
+              charlas y talleres pensados para despertar tu creatividad.
             </Typography>
           </Box>
 
@@ -1375,7 +1378,8 @@ const HomePage = () => {
                 lineHeight: 1.5,
               }}
             >
-              Adquirí conocimientos prácticos, historias reales y herramientas que te van a ayudar a sumergirte en la comunicación audiovisual.
+              Adquirí conocimientos prácticos, historias reales y herramientas
+              que te van a ayudar a sumergirte en la comunicación audiovisual.
             </Typography>
           </Box>
         </Box>
@@ -1428,8 +1432,8 @@ const HomePage = () => {
                 lineHeight: 1.5,
               }}
             >
-              Conocé todo nuestro trabajo, proyectos, actividades y
-              experiencias de alumnos y profesionales.
+              Conocé todo nuestro trabajo, proyectos, actividades y experiencias
+              de alumnos y profesionales.
             </Typography>
           </Box>
 
