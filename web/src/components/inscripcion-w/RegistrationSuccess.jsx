@@ -273,7 +273,7 @@ const RegistrationSuccess = ({ registration, onReset }) => {
             {
               icon: <EventIcon sx={{ fontSize: 16 }} />,
               label: "FECHA",
-              value: "6 de Octubre, 2026",
+              value: "7 de Octubre, 2026",
             },
             {
               icon: <PlaceIcon sx={{ fontSize: 16 }} />,
@@ -283,7 +283,7 @@ const RegistrationSuccess = ({ registration, onReset }) => {
             {
               icon: <AccessTimeIcon sx={{ fontSize: 16 }} />,
               label: "HORARIO",
-              value: "9:00 hs",
+              value: "19:00 hs",
             },
           ].map((item) => (
             <Box

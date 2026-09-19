@@ -510,12 +510,12 @@ const CountdownTimer = () => {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: { xs: 1, sm: 3, md: 4 },
+          gap: { xs: 0.8, sm: 3, md: 4 },
           bgcolor: "#03083B",
           border: "2px solid #00B4FF",
           boxShadow: "4px 4px 0px #D500BA",
           borderRadius: 0,
-          px: { xs: 1.2, sm: 3, md: 4 },
+          px: { xs: 1, sm: 3, md: 4 },
           py: { xs: 1.2, sm: 2 },
           maxWidth: "100%",
           boxSizing: "border-box",
@@ -531,7 +531,7 @@ const CountdownTimer = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              minWidth: { xs: "38px", sm: "65px", md: "80px" },
+              minWidth: { xs: "auto", sm: "65px", md: "80px" },
             }}
           >
             <Typography
@@ -670,16 +670,19 @@ const WorkshopCarousel = () => {
         {/* Botón Anterior */}
         <IconButton
           onClick={handlePrev}
+          size="small"
           sx={{
             position: "absolute",
             top: "50%",
-            left: 10,
+            left: { xs: 4, sm: 10 },
             transform: "translateY(-50%)",
             bgcolor: "#03083B",
             color: "#00B4FF",
             border: "1.5px solid #00B4FF",
             borderRadius: 0,
             boxShadow: "2px 2px 0px #D500BA",
+            p: { xs: 0.5, sm: 1 },
+            fontSize: { xs: "0.85rem", sm: "1.1rem" },
             "&:hover": {
               bgcolor: "#00B4FF",
               color: "#03083B",
@@ -692,16 +695,19 @@ const WorkshopCarousel = () => {
         {/* Botón Siguiente */}
         <IconButton
           onClick={handleNext}
+          size="small"
           sx={{
             position: "absolute",
             top: "50%",
-            right: 10,
+            right: { xs: 4, sm: 10 },
             transform: "translateY(-50%)",
             bgcolor: "#03083B",
             color: "#00B4FF",
             border: "1.5px solid #00B4FF",
             borderRadius: 0,
             boxShadow: "2px 2px 0px #D500BA",
+            p: { xs: 0.5, sm: 1 },
+            fontSize: { xs: "0.85rem", sm: "1.1rem" },
             "&:hover": {
               bgcolor: "#00B4FF",
               color: "#03083B",
@@ -1210,7 +1216,7 @@ const HomePage = () => {
             sx={{
               fontFamily: "'Neue Haas Grotesk', sans-serif",
               fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem" },
-              color: "#03083B",
+              color: "#DDE3EC",
               fontWeight: 400,
               textAlign: "center",
             }}
@@ -1388,10 +1394,10 @@ const HomePage = () => {
             position: "relative",
             boxSizing: "border-box",
             display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: { xs: "flex-start", md: "center" },
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "flex-start", sm: "center" },
             justifyContent: "space-between",
-            gap: { xs: 3, md: 5 },
+            gap: { xs: 3, sm: 4, md: 5 },
             textAlign: "left",
           }}
         >
@@ -1454,8 +1460,8 @@ const HomePage = () => {
                 <Box
                   className="social-icon"
                   sx={{
-                    width: 56,
-                    height: 56,
+                    width: { xs: 44, sm: 56 },
+                    height: { xs: 44, sm: 56 },
                     flexShrink: 0,
                     display: "flex",
                     alignItems: "center",
@@ -1467,7 +1473,7 @@ const HomePage = () => {
                       "background-color 0.2s ease, color 0.2s ease, transform 0.15s steps(3), box-shadow 0.15s steps(3)",
                   }}
                 >
-                  <Icon sx={{ fontSize: 32 }} />
+                  <Icon sx={{ fontSize: { xs: 26, sm: 32 } }} />
                 </Box>
                 <Typography
                   sx={{
@@ -1499,10 +1505,11 @@ const HomePage = () => {
           <Typography
             sx={{
               fontFamily: "'Omega Pixel BIFORM', monospace",
-              fontSize: { xs: "0.7rem", sm: "1rem", md: "1.15rem" },
+              fontSize: { xs: "0.75rem", sm: "1rem", md: "1.15rem" },
               color: "#03083B",
               letterSpacing: "0.08em",
               overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {/* La @ va en otra tipografía porque en la pixelada no se ve bien */}

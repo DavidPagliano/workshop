@@ -26,10 +26,12 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/PreInscriptionFormModal";
 import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreInscriptionViewModal";
 import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreinscriptionDeleteModal";
 import { usePreCycleRegistrations } from "../../hooks/usePreCycleRegistrations";
+import { exportPreInscripcionesXLSX } from "../../utils/exportPreInscripcionesXLSX";
 
 export const CyclePreinscriptionPage = () => {
   const theme = useTheme();
@@ -106,6 +108,32 @@ export const CyclePreinscriptionPage = () => {
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
+            <Button
+              variant="outlined"
+              startIcon={<FileDownloadIcon />}
+              onClick={() => exportPreInscripcionesXLSX(registrations)}
+              disabled={tableLoading || registrations.length === 0}
+              sx={{
+                bgcolor: "rgba(7, 16, 82, 0.95)",
+                color: "#FFFFFF",
+                borderColor: "#D500BA",
+                boxShadow: "4px 4px 0px rgba(0, 180, 255, 0.5)",
+                "&:hover": {
+                  bgcolor: "#D500BA",
+                  borderColor: "#D500BA",
+                  color: "#FFFFFF",
+                  boxShadow: "6px 6px 0px rgba(0, 180, 255, 0.5)",
+                },
+                "&.Mui-disabled": {
+                  bgcolor: "rgba(7, 16, 82, 0.5)",
+                  borderColor: "rgba(213, 0, 186, 0.3)",
+                  color: "rgba(255, 255, 255, 0.3)",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              Exportar Excel
+            </Button>
             <Button
               variant="contained"
               startIcon={<AddIcon />}

@@ -192,7 +192,7 @@ export const generateTicketPDF = (registration) => {
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...COLORS.white);
-  doc.text("6 DE OCTUBRE", rightCenterX, 67, { align: "center" });
+  doc.text("7 DE OCTUBRE", rightCenterX, 67, { align: "center" });
 
   doc.setFontSize(8);
   doc.setTextColor(...COLORS.cyan);
@@ -218,7 +218,7 @@ export const generateTicketPDF = (registration) => {
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...COLORS.white);
-  doc.text("9:00 HS", rightCenterX, 111, { align: "center" });
+  doc.text("19:00 HS", rightCenterX, 111, { align: "center" });
 
   // ── Texto inferior derecho ─────────────────────────────────────────
   doc.setFontSize(5);
