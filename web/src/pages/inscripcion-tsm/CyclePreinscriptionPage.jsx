@@ -29,7 +29,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/PreInscriptionFormModal";
 import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreInscriptionViewModal";
-import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreinscriptionDeleteModal";
+import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreInscriptionDeleteModal";
 import { usePreCycleRegistrations } from "../../hooks/usePreCycleRegistrations";
 import { exportPreInscripcionesXLSX } from "../../utils/exportPreInscripcionesXLSX";
 
@@ -70,7 +70,10 @@ export const CyclePreinscriptionPage = () => {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ minHeight: "100vh", pt: { xs: 4, sm: 6 }, pb: { xs: 6, sm: 8 } }}>
+    <Container
+      maxWidth="lg"
+      sx={{ minHeight: "100vh", pt: { xs: 4, sm: 6 }, pb: { xs: 6, sm: 8 } }}
+    >
       {/* ── Header ── */}
       <Fade in timeout={500}>
         <Box
@@ -202,10 +205,7 @@ export const CyclePreinscriptionPage = () => {
                         mb: 1,
                       }}
                     >
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ fontWeight: 700 }}
-                      >
+                      <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                         {reg.nombre} {reg.apellido}
                       </Typography>
                       <Chip
@@ -220,10 +220,7 @@ export const CyclePreinscriptionPage = () => {
                         }}
                       />
                     </Box>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                    >
+                    <Typography variant="body2" color="textSecondary">
                       DNI: {reg.dni} · {reg.email || "—"}
                     </Typography>
                   </CardContent>
@@ -240,7 +237,9 @@ export const CyclePreinscriptionPage = () => {
                 >
                   <IconButton
                     size="small"
-                    onClick={() => handleOpenEdit(reg, { stopPropagation: () => {} })}
+                    onClick={() =>
+                      handleOpenEdit(reg, { stopPropagation: () => {} })
+                    }
                     sx={{
                       color: "primary.main",
                       "&:hover": { bgcolor: "rgba(0, 180, 255, 0.12)" },
@@ -250,7 +249,9 @@ export const CyclePreinscriptionPage = () => {
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={() => handleOpenDelete(reg, { stopPropagation: () => {} })}
+                    onClick={() =>
+                      handleOpenDelete(reg, { stopPropagation: () => {} })
+                    }
                     sx={{
                       color: "secondary.main",
                       "&:hover": { bgcolor: "rgba(213, 0, 186, 0.12)" },
@@ -321,16 +322,17 @@ export const CyclePreinscriptionPage = () => {
                         bgcolor: "rgba(0, 180, 255, 0.04) !important",
                       },
                       borderBottom:
-                        index < registrations.length - 1
-                          ? "1px solid"
-                          : "none",
+                        index < registrations.length - 1 ? "1px solid" : "none",
                       borderColor: "divider",
                     }}
                   >
                     {columns.map((col) => (
                       <TableCell
                         key={col.key}
-                        sx={{ borderBottom: "1px solid", borderColor: "divider" }}
+                        sx={{
+                          borderBottom: "1px solid",
+                          borderColor: "divider",
+                        }}
                       >
                         {col.key === "registrarId" ? (
                           <Chip
