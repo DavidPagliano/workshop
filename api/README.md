@@ -1,166 +1,215 @@
-# Backend - Event Registration API 🚀
+# API — Workshop Backend
 
-API REST del proyecto Workshop 2026. Permite administrar las inscripciones al evento, las pre-inscripciones al ciclo 2027, los usuarios internos y el historial de auditoría. Está construida con Node.js, Express y MongoDB, siguiendo una separación por rutas, controladores, servicios y modelos.
+API REST construida con **Express 5** y **MongoDB (Mongoose 9)** que gestiona las inscripciones al evento Multimedia Day 2026, las pre-inscripciones al ciclo lectivo TSM 2027, la autenticación con JWT y un sistema de auditoría.
 
-## Tecnologías
-
-- Node.js y Express 5
-- MongoDB con Mongoose
-- Zod para validar y sanear los cuerpos de las solicitudes
-- JWT y bcryptjs para autenticación y contraseñas
-- Helmet, CORS y `express-rate-limit` para protección básica de la API
-- Dotenv para configuración mediante variables de entorno
-
-## Estructura
-
-```text
-api/
-├── src/
-│   ├── config/           # Configuración, conexión y diagnóstico de MongoDB
-│   ├── controllers/      # Manejo de solicitudes y respuestas HTTP
-│   ├── middlewares/      # Validación, autenticación y autorización por rol
-│   ├── models/           # Modelos Mongoose: evento, pre-ciclo, usuarios y auditoría
-│   ├── routes/           # Rutas REST
-│   ├── schemas/          # Esquemas Zod
-│   ├── services/         # Lógica de negocio y acceso a datos
-│   └── utils/            # Registro de acciones de auditoría
-├── package.json
-└── README.md
-```
-
-## Configuración y ejecución
-
-Crear `api/.env` con, como mínimo, las siguientes variables:
-
-```env
-NODE_ENV=development
-PORT=3000
-FRONTEND_URL=http://localhost:5173
-MONGODB_URI=mongodb://127.0.0.1:27017/event_db
-JWT_SECRET=una-clave-local-segura
-```
-
-`MONGODB_URI` y `JWT_SECRET` son obligatorias. No versionar `.env` ni utilizar secretos reales en la demo.
-
-Desde la carpeta `api`:
+## Ejecución
 
 ```bash
 npm install
-npm run dev
+npm run dev      # Desarrollo con nodemon (hot-reload)
+npm start        # Producción
 ```
 
-La API queda disponible en `http://localhost:3000`. En desarrollo, `GET /` devuelve un resumen de los endpoints. Al iniciar, se conecta a MongoDB, inicializa las colecciones esperadas y muestra en consola su cantidad de registros.
+## Variables de entorno
 
-### Scripts
+Archivo `.env` en la raíz de `/api`:
 
-| Comando | Descripción |
-| --- | --- |
-| `npm run dev` | Inicia `src/index.js` con Nodemon. |
-| `npm start` | Intenta iniciar `build/index.js`; requiere que exista previamente ese build. |
-| `npm test` | Aún no hay pruebas automatizadas configuradas. |
-
-## Funcionalidades agregadas
-
-### Inscripciones al evento
-
-- Alta pública de participantes.
-- Generación server-side de `registrarId` (`W-001`, `W-002`, etc.).
-- Prevención de registros duplicados por DNI.
-- Consulta general, búsqueda por DNI y consulta individual.
-- Edición, eliminación y marcado/desmarcado de asistencia.
-- Validación de datos con Zod y respuestas de error consistentes.
-
-### Pre-inscripciones al ciclo 2027
-
-- Alta pública de aspirantes.
-- Generación server-side de `registrarId` (`pcr-001`, `pcr-002`, etc.).
-- Prevención de más de una pre-inscripción por DNI.
-- Consulta general, consulta individual, edición y eliminación.
-
-### Autenticación y usuarios
-
-- Inicio de sesión con JWT con vencimiento de dos horas.
-- Contraseñas almacenadas con hash mediante bcryptjs.
-- Creación pública del primer usuario como administrador.
-- Registro público posterior como `staff_registracion`, sujeto a activación.
-- Creación de usuarios por administradores con rol explícito.
-- Listado, activación/desactivación y eliminación de usuarios para administradores.
-- Roles disponibles: `admin`, `staff_registracion`, `staff_bedele` y `director`.
-
-### Auditoría y protección de la API
-
-- Registro de acciones de altas, modificaciones, eliminaciones, asistencias y cambios de usuarios.
-- Registro de navegación desde el frontend mediante `POST /workshop/audit/log`.
-- Consulta paginada y con búsqueda del historial para administradores.
-- `Helmet`, CORS configurable y límite global de 200 solicitudes cada 15 minutos por IP.
-- Límites específicos para login, registro de usuarios y creación de logs.
-- Límite de 25 KB para cuerpos JSON y manejo de errores de duplicados y payloads demasiado grandes.
-
-## Endpoints
-
-Todas las rutas utilizan el prefijo `/workshop`.
-
-### Autenticación: `/workshop/auth`
-
-| Método | Endpoint | Acceso | Descripción |
-| --- | --- | --- | --- |
-| `POST` | `/login` | Público | Inicia sesión y devuelve un JWT. |
-| `POST` | `/register` | Público | Solicita el registro de un usuario. |
-| `POST` | `/admin/create-user` | `admin` | Crea un usuario con rol definido. |
-| `GET` | `/users` | `admin` | Lista usuarios sin exponer contraseñas. |
-| `PATCH` | `/users/:id/status` | `admin` | Activa o desactiva un usuario. |
-| `DELETE` | `/users/:id` | `admin` | Elimina un usuario. |
-
-Para las rutas protegidas enviar `Authorization: Bearer <token>`.
-
-### Inscripciones al evento: `/workshop/event`
-
-| Método | Endpoint | Descripción |
-| --- | --- | --- |
-| `GET` | `/` | Lista inscripciones; admite `?dni=...`. |
-| `GET` | `/:registrarId` | Obtiene una inscripción. |
-| `POST` | `/` | Crea una inscripción. |
-| `PUT` | `/:registrarId` | Actualiza una inscripción. |
-| `PATCH` | `/:registrarId/registrado` | Actualiza `seRegistro`. |
-| `DELETE` | `/:registrarId` | Elimina una inscripción. |
-
-Ejemplo de cuerpo para asistencia:
-
-```json
-{ "seRegistro": true }
+```env
+MONGODB_URI=mongodb://localhost:27017/workshop   # Obligatoria
+JWT_SECRET=tu_clave_secreta                       # Obligatoria
+PORT=3000                                         # Opcional (default: 3000)
+NODE_ENV=development                              # Opcional (default: development)
+FRONTEND_URL=http://localhost:5173                # Opcional — URL del frontend en dev
+FRONTEND_PREVIEW_URL=https://localhost:4173       # Opcional — URL del frontend en preview
 ```
 
-### Pre-inscripciones: `/workshop/cycle`
+> El archivo `config/config.js` centraliza la lectura de todas las variables de entorno y valida que las obligatorias (`MONGODB_URI`, `JWT_SECRET`) existan antes de arrancar.
 
-| Método | Endpoint | Descripción |
-| --- | --- | --- |
-| `GET` | `/` | Lista pre-inscripciones. |
-| `GET` | `/:registrarId` | Obtiene una pre-inscripción. |
-| `POST` | `/` | Crea una pre-inscripción. |
-| `PUT` | `/:registrarId` | Actualiza una pre-inscripción. |
-| `DELETE` | `/:registrarId` | Elimina una pre-inscripción. |
+## Estructura de carpetas
 
-### Auditoría: `/workshop/audit`
+```
+api/src/
+├── config/
+│   ├── config.js         ← Lectura y validación de env vars
+│   └── db.js             ← Conexión a MongoDB + inicialización de colecciones
+├── controllers/          ← Lógica de manejo de request/response
+├── middlewares/          ← Funciones intermedias (auth, roles, validación)
+├── models/               ← Schemas de Mongoose (estructura de datos)
+├── routes/               ← Definición de endpoints y encadenamiento de middlewares
+├── schemas/              ← Schemas de validación con Zod
+├── services/             ← Lógica de negocio (separada del controller)
+└── index.js              ← Entry point: carga middlewares, rutas y arranca el server
+```
 
-| Método | Endpoint | Acceso | Descripción |
-| --- | --- | --- | --- |
-| `POST` | `/log` | Público o autenticado | Registra navegación o acciones del frontend. |
-| `GET` | `/` | `admin` | Consulta el historial; admite `?page=1&limit=10&search=...`. |
+## Principios de arquitectura
 
-## Pendiente para después de la demo
+### Separación en capas (Controller → Service → Model)
 
-- Revisar y aplicar autenticación y roles a las operaciones de gestión de `/event` y `/cycle`; actualmente sus rutas CRUD no exigen JWT.
-- Preparar el flujo de producción: build real para `npm start`, variables de entorno separadas, despliegue y monitoreo.
-- Revisar el manejo de errores y respuestas para unificar códigos y mensajes en todos los controladores.
-- Evaluar paginación, filtros e índices adicionales cuando aumente el volumen de inscripciones.
-- Revisar la generación secuencial de `registrarId` para evitar colisiones ante altas concurrentes.
-- Eliminar o integrar dependencias y código no utilizados, como el logging HTTP de Morgan si finalmente no se incorpora.
+La API sigue un patrón de tres capas para separar responsabilidades:
 
-## Flujo de una solicitud
+- **Routes** — Solo definen qué middlewares y controller se ejecutan para cada endpoint. No contienen lógica.
+- **Controllers** — Reciben `req/res`, extraen los datos y llaman al Service correspondiente. Formatean la respuesta HTTP.
+- **Services** — Contienen la lógica de negocio pura (queries a MongoDB, validaciones de reglas, generación de IDs). No conocen `req/res`.
+- **Models** — Definen la estructura de los documentos en MongoDB con Mongoose. No contienen lógica de negocio.
 
-1. Express recibe la petición y aplica CORS, Helmet, rate limiting y el límite de tamaño.
-2. La ruta ejecuta la autenticación/autorización correspondiente y valida el cuerpo con Zod.
-3. El controlador delega la operación al servicio.
-4. El servicio consulta o actualiza MongoDB mediante Mongoose.
-5. La acción relevante se registra en la colección `audits`.
-6. La API devuelve la respuesta JSON al frontend.
+Esto permite testear cada capa de forma independiente y reutilizar la lógica de negocio.
+
+### Validación con Zod (schemas/)
+
+Los schemas de Zod se ejecutan **antes** de que la petición llegue al controller (mediante el middleware `validateRequest`). Si los datos no cumplen el schema, se devuelve un 400 con los errores detallados. Esto garantiza que el controller siempre recibe datos válidos.
+
+### Middlewares encadenados
+
+Cada ruta encadena middlewares en orden:
+
+```
+Rate Limit → Auth (JWT) → Autorización (roles) → Validación (Zod) → Controller
+```
+
+---
+
+## Detalle de cada capa
+
+### `config/config.js`
+
+Centraliza **todas** las variables de entorno en un solo objeto exportable. Valida al arrancar que las obligatorias existan; si faltan, imprime un error y hace `process.exit(1)`.
+
+### `config/db.js`
+
+Se conecta a MongoDB y ejecuta una **inicialización automática**:
+
+1. Lista las colecciones existentes en la base.
+2. Compara contra las 5 colecciones esperadas (`eventregistrations`, `precycleregistrations`, `users`, `audits`, `counters`).
+3. Crea las que falten ejecutando `Model.init()` (que también crea los índices).
+4. Imprime un `console.table` con el estado de cada colección (existe/vacía/con datos/cantidad de registros) para diagnóstico visual al arrancar.
+
+### `models/` — Modelos de datos
+
+| Modelo | Colección | Propósito |
+| -------- | ----------- | ----------- |
+| `EventRegistration` | `eventregistrations` | Inscriptos al evento. Campos: nombre, apellido, DNI (único + índice), email, teléfono, tema elegido (enum), `seRegistro` (asistencia). |
+| `PreCycleRegistration` | `precycleregistrations` | Aspirantes al ciclo 2027. Campos: datos personales, edad, fecha de nacimiento, título secundario (si/no/incompleto), foto (base64), datos de iglesia opcionales. |
+| `User` | `users` | Usuarios del sistema con roles. Password hasheado con bcrypt en un hook `pre('save')`. Método `comparePassword` para login. |
+| `Audit` | `audits` | Log de auditoría: acción, página, detalles, dispositivo, IP, userId (opcional). |
+| `Counter` | `counters` | Secuencias auto-incrementales para generar IDs legibles (ej: `evt-001`, `pcr-001`). |
+
+Todos los modelos usan `timestamps` renombrados a español (`creado`, `actualizado`) y deshabilitan `versionKey` (__v).
+
+### `middlewares/`
+
+| Middleware | Archivo | Función |
+| ------------ | --------- | --------- |
+| **authMiddleware** | `authMiddleware.js` | Extrae el token JWT del header `Authorization: Bearer <token>`, lo verifica con `jwt.verify()` y adjunta `req.user = { id, username, role }`. Devuelve 401 si no hay token, 403 si es inválido. |
+| **roleMiddleware** | `roleMiddleware.js` | Recibe una lista de roles permitidos. Compara `req.user.role` contra esa lista. Devuelve 403 si el rol no está autorizado. |
+| **validateRequest** | `validateRequest.js` | Recibe un schema Zod, ejecuta `schema.parse(req.body)` y reemplaza `req.body` con los datos parseados (limpios). Si falla, devuelve 400 con array de errores `{ field, message }`. |
+
+### `schemas/` — Validación Zod
+
+| Schema | Archivo | Valida |
+| -------- | --------- | -------- |
+| `loginSchema` | `auth.schema.js` | Login: username + password |
+| `registerUserSchema` | `auth.schema.js` | Creación de usuario por admin: username, email, password, role |
+| `publicRegisterSchema` | `auth.schema.js` | Registro público: username, email, password |
+| `eventSchema` | `registration.schema.js` | Inscripción al evento: nombre, apellido, DNI, email, teléfono, tema |
+| `eventUpdateSchema` | `registration.schema.js` | Actualización parcial de inscripción al evento |
+| `preCycleSchema` | `registration.schema.js` | Pre-inscripción al ciclo: todos los campos del aspirante |
+| `preCycleUpdateSchema` | `registration.schema.js` | Actualización parcial de pre-inscripción |
+| `auditLogSchema` | `audit.schema.js` | Log de auditoría: acción (obligatoria), página, detalles |
+
+### `services/` — Lógica de negocio
+
+| Servicio | Archivo | Responsabilidades |
+| ---------- | --------- | ------------------- |
+| **auth** | `auth.services.js` | Login (compara password, genera JWT), registro (verifica duplicados, crea usuario), listado de usuarios, cambio de estado (activo/inactivo), reset de password, eliminación, importación masiva desde Excel. |
+| **event** | `event.services.js` | CRUD de inscripciones al evento. Genera `registrarId` auto-incremental con el modelo Counter (formato `evt-XXX`). Búsqueda por DNI. Marca de asistencia (toggle `seRegistro`). |
+| **preCycle** | `preCycle.services.js` | CRUD de pre-inscripciones al ciclo. Genera `registrarId` auto-incremental (formato `pcr-XXX`). |
+
+### `controllers/`
+
+| Controller | Archivo | Endpoints que maneja |
+| ------------ | --------- | --------------------- |
+| **auth** | `auth.controller.js` | `login`, `register`, `listUsers`, `updateUserStatus`, `resetPassword`, `deleteUser`, `importUsers` |
+| **eventRegistration** | `eventRegistration.controller.js` | `createEventRegistration`, `getAllEventRegistrations`, `getEventRegistrationByRegistrarId`, `updateEventRegistration`, `deleteEventRegistration`, `markAttendance` |
+| **preCycleRegistration** | `preCycleRegistration.controller.js` | `registerAspirant`, `getAllAspirants`, `getAspirantByRegistrarId`, `updateAspirant`, `deleteAspirant` |
+| **audit** | `audit.controller.js` | `createAuditLog`, `getAuditHistory` |
+
+---
+
+## Rutas (endpoints)
+
+### `/workshop/auth` — Autenticación y usuarios
+
+| Método | Ruta | Auth | Roles | Descripción |
+| -------- | ------ | ------ | ------- | ------------- |
+| `POST` | `/login` | ✗ | — | Inicia sesión. Rate limit: 10 intentos / 15 min. |
+| `POST` | `/register` | ✗ | — | Registro público. Rate limit: 5 / hora. |
+| `POST` | `/admin/create-user` | ✓ | `admin` | Crea usuario con rol específico. |
+| `GET` | `/users` | ✓ | `admin` | Lista todos los usuarios. |
+| `PATCH` | `/users/:id/status` | ✓ | `admin` | Activa/desactiva usuario. |
+| `PATCH` | `/users/:id/reset-password` | ✓ | `admin` | Resetea contraseña. |
+| `DELETE` | `/users/:id` | ✓ | `admin` | Elimina usuario. |
+| `POST` | `/admin/import-users` | ✓ | `admin` | Importa usuarios desde archivo Excel (.xlsx). Multer en memoria, máx 5MB. |
+
+### `/workshop/event` — Inscripciones al evento
+
+| Método | Ruta | Auth | Roles | Descripción |
+| -------- | ------ | ------ | ------- | ------------- |
+| `POST` | `/` | ✗ | — | Inscripción pública al evento. |
+| `GET` | `/` | ✓ | `admin`, `director`, `staff_registracion` | Lista todos los inscriptos. Acepta `?dni=` para búsqueda. |
+| `GET` | `/:registrarId` | ✓ | `admin`, `director`, `staff_registracion` | Obtiene un inscripto por su ID. |
+| `PUT` | `/:registrarId` | ✓ | `admin`, `director` | Actualiza datos de inscripción. |
+| `PATCH` | `/:registrarId/registrado` | ✓ | `admin`, `director`, `staff_registracion` | Marca asistencia (toggle). |
+| `DELETE` | `/:registrarId` | ✓ | `admin` | Elimina inscripción. |
+
+### `/workshop/cycle` — Pre-inscripciones al ciclo 2027
+
+| Método | Ruta | Auth | Roles | Descripción |
+| -------- | ------ | ------ | ------- | ------------- |
+| `POST` | `/` | ✗ | — | Pre-inscripción pública de aspirante. |
+| `GET` | `/` | ✓ | `admin`, `director`, `staff_bedele` | Lista todos los aspirantes. |
+| `GET` | `/:registrarId` | ✓ | `admin`, `director`, `staff_bedele` | Obtiene un aspirante por ID. |
+| `PUT` | `/:registrarId` | ✓ | `admin`, `director`, `staff_bedele` | Actualiza datos del aspirante. |
+| `DELETE` | `/:registrarId` | ✓ | `admin` | Elimina pre-inscripción. |
+
+### `/workshop/audit` — Auditoría
+
+| Método | Ruta | Auth | Roles | Descripción |
+|--------|------|------|-------|-------------|
+| `POST` | `/log` | Opcional | — | Registra una acción de auditoría. Si tiene token, lo valida; si no, registra como anónimo. Rate limit: 150/min. |
+| `GET` | `/` | ✓ | `admin` | Consulta historial de auditoría. |
+
+---
+
+## `index.js` — ¿Por qué está organizado así?
+
+El entry point sigue un orden intencional:
+
+1. **Imports y configuración** — Carga dotenv, config centralizado y conexión a DB.
+2. **Whitelist de CORS** — `buildWhitelist()` genera variantes http/https de las URLs del frontend para cubrir ambos protocolos automáticamente.
+3. **Middlewares globales** (en orden):
+   - `rateLimit` — Protección anti-DDoS global (200 req / 15 min por IP).
+   - `cors` — Solo acepta peticiones del frontend (whitelist). En dev permite peticiones sin Origin para facilitar pruebas con cURL/Postman.
+   - `helmet` — Añade headers de seguridad HTTP.
+   - `express.json({ limit: '500kb' })` — Parsea JSON con límite para evitar payloads enormes (fotos base64).
+4. **Enrutamiento modular** — Cada prefijo delega a su archivo de rutas.
+5. **Documentación dinámica** — `GET /` devuelve documentación de la API solo en desarrollo; en producción retorna solo el status.
+6. **Error handler global** — Captura errores no manejados. Maneja casos específicos (duplicados MongoDB 11000, body demasiado grande). En producción no filtra stack traces.
+7. **Arranque** — Primero conecta a MongoDB (`connectDB()`), y solo si la conexión es exitosa arranca el servidor HTTP.
+
+## Dependencias y su propósito
+
+| Paquete | Por qué se usa |
+| --------- | --------------- |
+| `express` | Framework HTTP principal |
+| `mongoose` | ODM para MongoDB — schemas, validación, hooks |
+| `bcryptjs` | Hashing de contraseñas (salt + hash en pre-save) |
+| `jsonwebtoken` | Generación y verificación de tokens JWT |
+| `cors` | Whitelist de orígenes permitidos |
+| `helmet` | Headers de seguridad HTTP automáticos |
+| `express-rate-limit` | Protección contra abuso (DoS, fuerza bruta) |
+| `zod` | Validación declarativa de schemas de entrada |
+| `dotenv` | Carga de variables de entorno desde `.env` |
+| `multer` | Manejo de uploads de archivos (importación Excel) |
+| `xlsx` | Parsing de archivos Excel para importación masiva de usuarios |
+| `morgan` | Logging de peticiones HTTP (desarrollo) |
+| `nodemon` | Hot-reload en desarrollo |

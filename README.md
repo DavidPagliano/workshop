@@ -1,218 +1,124 @@
+# Workshop — Multimedia Day 2026 & Pre-inscripción TSM
 
-# Workshop
+Sistema web completo para la gestión del evento **Multimedia Workshop Day 2026** y la **pre-inscripción al ciclo lectivo 2027** del Técnico Superior en Multimedia (TSM). Consta de una API REST y un cliente web SPA, ambos desplegables de forma independiente.
 
-Aplicación web para gestionar inscripciones a eventos, pre-inscripciones al ciclo 2027 y registro de asistencia.
+## Descripción
 
-El proyecto está dividido en dos aplicaciones independientes:
+La plataforma cubre dos flujos principales:
 
-- `api`: backend REST construido con Node.js, Express y MongoDB.
-- `web`: frontend construido con React y Vite.
-
-## Requisitos
-
-Antes de comenzar, instalar:
-
-- [Node.js](https://nodejs.org/) versión 18 o superior.
-- npm, incluido con Node.js.
-- MongoDB local o una URI de MongoDB Atlas.
-- Git, opcional para clonar el repositorio.
-
-Verificar las versiones instaladas:
-
-```bash
-node --version
-npm --version
-```
+1. **Inscripción al evento Multimedia Day 2026** — Formulario público para que cualquier persona se registre al evento, seleccione un tema de interés y reciba un ticket PDF. El staff del evento puede luego tomar asistencia y ver estadísticas en tiempo real.
+2. **Pre-inscripción al ciclo lectivo TSM 2027** — Formulario de aspirantes que recopila datos personales, foto, estado de secundario e información institucional. El equipo de bedelería gestiona el listado y puede exportarlo a Excel.
 
 ## Estructura del proyecto
 
-```text
+```
 workshop/
-├── api/
-│   ├── src/
-│   │   ├── config/          # Configuración y conexión a MongoDB
-│   │   ├── controllers/     # Manejo de solicitudes HTTP
-│   │   ├── middlewares/     # Middleware de validación
-│   │   ├── models/          # Modelos de Mongoose
-│   │   ├── routes/          # Rutas REST
-│   │   ├── schemas/         # Esquemas de validación Zod
-│   │   └── services/        # Lógica de negocio y acceso a datos
-│   ├── .env                 # Configuración local, no versionar
-│   └── package.json
-├── web/
-│   ├── src/
-│   │   ├── components/      # Componentes reutilizables
-│   │   ├── pages/            # Páginas de la aplicación
-│   │   ├── services/         # Cliente Axios y servicios de API
-│   │   ├── mock/             # Datos de prueba del frontend
-│   │   └── ...
-│   └── package.json
-└── README.md
+├── api/            ← Backend (Express + MongoDB)
+│   └── README.md   ← Documentación detallada de la API
+├── web/            ← Frontend (React + Vite + MUI)
+│   └── README.md   ← Documentación detallada del cliente
+└── README.md       ← Este archivo
 ```
 
-## Instalación
+## Tecnologías principales
 
-Instalar las dependencias de cada aplicación por separado:
+| Capa | Tecnología | Propósito |
+| ------ | ----------- | ----------- |
+| **Backend** | Express 5 + Node.js | Servidor HTTP y enrutamiento REST |
+| **Base de datos** | MongoDB + Mongoose 9 | Persistencia de datos con ODM |
+| **Autenticación** | JWT + bcryptjs | Tokens stateless y hashing de contraseñas |
+| **Validación** | Zod 4 | Validación de schemas en el servidor |
+| **Seguridad** | Helmet + CORS + Rate Limit | Headers seguros, whitelist de orígenes, protección anti-DDoS |
+| **Frontend** | React 19 + Vite 8 | SPA con HMR y build optimizado |
+| **UI** | Material UI 9 (MUI) | Componentes, responsive y theming |
+| **Ruteo** | React Router DOM 7 | Navegación SPA con lazy loading |
+| **HTTP Client** | Axios | Peticiones al backend con interceptors |
+| **Gráficos** | Recharts | Visualización de estadísticas |
+| **Exportaciones** | jsPDF + jspdf-autotable | Reportes PDF estilizados |
+| | xlsx-js-style | Exportación Excel .xlsx con formato |
+
+## Requisitos previos
+
+- **Node.js** ≥ 18
+- **MongoDB** (local o Atlas)
+- **npm** ≥ 9
+
+## Configuración
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/DavidPagliano/workshop.git
+cd workshop
+```
+
+### 2. Configurar la API
 
 ```bash
 cd api
 npm install
-
-cd ../web
-npm install
 ```
 
-## Configuración de la API
-
-En `api/`, crear un archivo llamado `.env` a partir de `.env.example`:
+Crear el archivo `api/.env`:
 
 ```env
+# Obligatorias
+MONGODB_URI=mongodb://localhost:27017/workshop
+JWT_SECRET=tu_clave_secreta_jwt
+
+# Opcionales (tienen valores por defecto)
 PORT=3000
+NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
-MONGODB_URI=mongodb://127.0.0.1:27017/event_db
-JWT_SECRET=una-clave-local
+FRONTEND_PREVIEW_URL=https://localhost:4173
 ```
 
-Para MongoDB Atlas, reemplazar `MONGODB_URI` por la cadena de conexión correspondiente. No publicar el archivo `.env` ni incluir credenciales reales en el repositorio.
+> `MONGODB_URI` y `JWT_SECRET` son obligatorias. Si faltan, el servidor no arranca.
 
-La API utiliza el puerto `3000` por defecto y acepta peticiones CORS desde `http://localhost:5173`.
-
-## Levantar el proyecto en desarrollo
-
-Abrir dos terminales desde la carpeta raíz.
-
-### Terminal 1: API
-
-```bash
-cd api
-npm run dev
-```
-
-La API quedará disponible en:
-
-- `http://localhost:3000`
-- Documentación resumida de endpoints: `http://localhost:3000/`
-
-### Terminal 2: aplicación web
+### 3. Configurar el Frontend
 
 ```bash
 cd web
-npm run dev
+npm install
 ```
 
-Vite mostrará en la terminal la URL de la aplicación, normalmente `http://localhost:5173`.
+Crear el archivo `web/.env`:
 
-## Scripts disponibles
-
-### API
-
-| Comando | Descripción |
-| --- | --- |
-| `npm run dev` | Inicia el backend con Nodemon y reinicio automático. |
-| `npm start` | Inicia el archivo compilado configurado en `build/index.js`. |
-| `npm test` | Placeholder; todavía no hay pruebas automatizadas configuradas. |
-
-### Web
-
-| Comando | Descripción |
-| --- | --- |
-| `npm run dev` | Inicia Vite en modo desarrollo con HMR. |
-| `npm run build` | Genera la versión de producción en `web/dist`. |
-| `npm run preview` | Sirve localmente la build de producción. |
-| `npm run lint` | Ejecuta ESLint sobre el frontend. |
-
-## Endpoints de la API
-
-La API utiliza el prefijo `/workshop` y `registrarId` como identificador público de cada registro.
-
-### Inscripciones a eventos
-
-Base URL: `/workshop/event`
-
-| Método | Endpoint | Descripción |
-| --- | --- | --- |
-| `GET` | `/workshop/event` | Obtiene todas las inscripciones. |
-| `GET` | `/workshop/event?dni=12345678` | Busca inscripciones por DNI. |
-| `GET` | `/workshop/event/:registrarId` | Obtiene una inscripción específica. |
-| `POST` | `/workshop/event` | Crea una inscripción. |
-| `PUT` | `/workshop/event/:registrarId` | Actualiza una inscripción. |
-| `PATCH` | `/workshop/event/:registrarId/registrado` | Actualiza `seRegistro`. |
-| `DELETE` | `/workshop/event/:registrarId` | Elimina una inscripción. |
-
-El cuerpo de `PATCH` debe tener esta forma:
-
-```json
-{
- "seRegistro": true
-}
+```env
+VITE_API_URL=http://localhost:3000
 ```
 
-### Pre-inscripciones al ciclo
+### 4. Ejecutar en desarrollo
 
-Base URL: `/workshop/cycle`
+En dos terminales separadas:
 
-| Método | Endpoint | Descripción |
-| --- | --- | --- |
-| `GET` | `/workshop/cycle` | Obtiene todas las pre-inscripciones. |
-| `GET` | `/workshop/cycle/:registrarId` | Obtiene una pre-inscripción específica. |
-| `POST` | `/workshop/cycle` | Crea una pre-inscripción. |
-| `PUT` | `/workshop/cycle/:registrarId` | Actualiza una pre-inscripción. |
-| `DELETE` | `/workshop/cycle/:registrarId` | Elimina una pre-inscripción. |
+```bash
+# Terminal 1 — API
+cd api
+npm run dev          # nodemon con hot-reload
 
-## Datos y convenciones
+# Terminal 2 — Web
+cd web
+npm run dev          # Vite dev server en http://localhost:5173
+```
 
-- `registrarId` es obligatorio y debe ser único.
-- Los endpoints de edición, eliminación y asistencia reciben `registrarId`, por ejemplo `W-001` o `PC-001`.
-- Los timestamps de MongoDB se exponen como `creado` y `actualizado`.
-- Las fechas enviadas a la API pueden utilizar formato ISO, por ejemplo `2004-03-15T00:00:00Z`.
-- Los archivos dentro de `web/src/mock/` son datos de prueba y se conservan para desarrollar el frontend sin depender de la API.
+### 5. Build de producción (web)
 
-## Librerías principales
+```bash
+cd web
+npm run build        # Genera /dist
+npm run preview      # Sirve /dist para verificar
+```
 
-### Backend
+## Roles del sistema
 
-| Librería | Uso |
-| --- | --- |
-| `express` | Servidor HTTP y definición de rutas REST. |
-| `mongoose` | Modelado de datos y conexión con MongoDB. |
-| `zod` | Validación de cuerpos de las solicitudes. |
-| `cors` | Configuración de acceso entre frontend y backend. |
-| `dotenv` | Carga de variables desde `.env`. |
-| `morgan` | Dependencia prevista para logging HTTP. |
-| `jsonwebtoken` | Soporte para tokens JWT. |
-| `bcryptjs` | Hash de contraseñas. |
-| `nodemon` | Reinicio automático durante el desarrollo. |
+| Rol | Descripción | Accesos |
+| ----- | ------------ | --------- |
+| `admin` | Administrador total | Todo: CRUD usuarios, importación Excel, estadísticas, auditoría |
+| `director` | Director académico | Gestión de inscripciones, pre-inscripciones, estadísticas |
+| `staff_registracion` | Staff del evento | Tomar asistencia en el evento |
+| `staff_bedele` | Staff de bedelería | Gestión de pre-inscripciones al ciclo TSM |
 
-### Frontend
+## Autor
 
-| Librería | Uso |
-| --- | --- |
-| `react` | Construcción de la interfaz mediante componentes. |
-| `react-dom` | Renderizado de React en el navegador. |
-| `vite` | Servidor de desarrollo y empaquetado de producción. |
-| `axios` | Cliente HTTP para consumir la API. |
-| `react-router-dom` | Navegación y rutas de la aplicación. |
-| `@mui/material` | Componentes visuales basados en Material UI. |
-| `@mui/icons-material` | Iconos para la interfaz. |
-| `@emotion/react` | Motor de estilos utilizado por Material UI. |
-| `@emotion/styled` | Creación de componentes estilizados. |
-| `react-hot-toast` | Notificaciones visuales. |
-| `jwt-decode` | Decodificación de payloads JWT en el cliente. |
-| `eslint` | Análisis estático y reglas de calidad del código. |
-
-## Flujo general
-
-1. El usuario interactúa con la aplicación React.
-2. Los servicios de `web/src/services/` realizan peticiones con Axios.
-3. Express recibe la solicitud mediante las rutas de `api/src/routes/`.
-4. Zod valida los datos de creación.
-5. Los controladores delegan la lógica a los servicios.
-6. Mongoose consulta o actualiza MongoDB.
-7. La API devuelve la respuesta JSON al frontend.
-
-## Estado actual
-
-- La estructura base de API y frontend está preparada.
-- Los servicios Axios están creados aunque algunas pantallas todavía utilizan mocks.
-- La autenticación JWT está contemplada como dependencia, pero no forma parte todavía del flujo principal.
-- Las pruebas automatizadas del backend aún están pendientes de agregar.
+**David Pagliano** — [GitHub](https://github.com/DavidPagliano)
