@@ -837,7 +837,7 @@ const FACEBOOK_URL =
 const SOCIAL_LINKS = [
   {
     name: "Instagram",
-    label: "/TECNICOSUPERIORENMULTIMEDIA",
+    label: "@TECNICOSUPERIORENMULTIMEDIA",
     href: "https://www.instagram.com/tecnicosuperiorenmultimedia",
     Icon: InstagramIcon,
   },
@@ -889,10 +889,10 @@ const HomePage = () => {
         alt="Pixel art decoration"
         sx={{
           position: "absolute",
-          top: { xs: "1%", md: "5%" },
-          right: { xs: "-40px", md: "1%" },
-          width: { xs: "160px", md: "320px" },
-          opacity: 0.85,
+          top: { xs: "-2%", md: "5%" },
+          right: { xs: "-60px", md: "1%" },
+          width: { xs: "120px", sm: "200px", md: "320px" },
+          opacity: { xs: 0.5, md: 0.85 },
           pointerEvents: "none",
           zIndex: 1,
           ...PIXELADO_MOTION,
@@ -906,9 +906,9 @@ const HomePage = () => {
         alt="3D Cursor"
         sx={{
           position: "absolute",
-          top: { xs: "2%", md: "8%" },
-          right: { xs: "0%", md: "1%" },
-          width: { xs: "70px", sm: "110px", md: "160px" },
+          top: { xs: "290px", sm: "3%", md: "8%" },
+          right: { xs: "3%", sm: "-5px", md: "1%" },
+          width: { xs: "50px", sm: "90px", md: "160px" },
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 10px 20px rgba(0, 180, 255, 0.35))",
@@ -923,9 +923,9 @@ const HomePage = () => {
         alt="3D Play Button"
         sx={{
           position: "absolute",
-          top: { xs: "20%", md: "35%" },
-          left: { xs: "0%", md: "1%" },
-          width: { xs: "65px", sm: "110px", md: "160px" },
+          top: { xs: "24%", md: "35%" },
+          left: { xs: "-15px", md: "1%" },
+          width: { xs: "45px", sm: "90px", md: "160px" },
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 10px 20px rgba(213, 0, 186, 0.3))",
@@ -940,9 +940,9 @@ const HomePage = () => {
         alt="3D Cross Decoration"
         sx={{
           position: "absolute",
-          top: { xs: "2%", md: "8%" },
-          left: { xs: "0%", md: "1%" },
-          width: { xs: "70px", sm: "110px", md: "160px" },
+          top: { xs: "280px", sm: "3%", md: "8%" },
+          left: { xs: "3%", sm: "-5px", md: "1%" },
+          width: { xs: "50px", sm: "90px", md: "160px" },
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 12px 25px rgba(3, 8, 59, 0.8))",
@@ -958,8 +958,8 @@ const HomePage = () => {
         sx={{
           position: "absolute",
           bottom: { xs: "1%", md: "4%" },
-          right: { xs: "-30px", sm: "-50px", md: "-70px" },
-          width: { xs: "80px", sm: "140px", md: "220px" },
+          right: { xs: "-40px", sm: "-50px", md: "-70px" },
+          width: { xs: "60px", sm: "140px", md: "220px" },
           pointerEvents: "none",
           zIndex: 3,
           filter: "drop-shadow(0 12px 25px rgba(3, 8, 59, 0.8))",
@@ -982,7 +982,7 @@ const HomePage = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            mb: 4,
+            mb: { xs: 5, sm: 6 },
           }}
         >
           <Box
@@ -1000,7 +1000,38 @@ const HomePage = () => {
         </Box>
 
         {/* 4. BOTÓN ÚNICO DE ACCIÓN */}
-        <Box sx={{ mb: 5 }}>
+        <Box
+          sx={{
+            mb: 5,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1.5,
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "'Omega Pixel BIFORM', monospace",
+              fontSize: { xs: "0.85rem", sm: "1.1rem", md: "1.3rem" },
+              color: "#D500BA",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              textShadow: "0 0 10px rgba(213, 0, 186, 0.5)",
+              animation: "mdInscribetePulse 2.5s ease-in-out infinite",
+              "@keyframes mdInscribetePulse": {
+                "0%, 100%": {
+                  textShadow: "0 0 6px rgba(213, 0, 186, 0.3)",
+                },
+                "50%": {
+                  textShadow:
+                    "0 0 14px rgba(213, 0, 186, 0.8), 0 0 28px rgba(213, 0, 186, 0.4)",
+                },
+              },
+              "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+            }}
+          >
+            ¡Entrada gratuita con inscripción previa!
+          </Typography>
           <Button
             variant="contained"
             onClick={() => navigate("/inscripcion")}
@@ -1022,7 +1053,7 @@ const HomePage = () => {
               },
             }}
           >
-            iNSCRiBiRME AL EVENTO ↓
+            REGISTRATE AQUI ↓
           </Button>
         </Box>
 
@@ -1212,17 +1243,33 @@ const HomePage = () => {
           >
             MULTIMEDIA WORKSHOP DAY
           </Typography>
-          <Typography
+          <Box
             sx={{
-              fontFamily: "'Neue Haas Grotesk', sans-serif",
-              fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem" },
-              color: "#DDE3EC",
-              fontWeight: 400,
-              textAlign: "center",
+              position: "relative",
+              bgcolor: "#03083B",
+              border: "2px solid #D500BA",
+              boxShadow: "4px 4px 0px #00B4FF",
+              px: { xs: 3, sm: 4 },
+              py: { xs: 2, sm: 2.5 },
+              mt: 1.5,
+              maxWidth: "600px",
+              mx: "auto",
             }}
           >
-            Un lugar para conectar...
-          </Typography>
+            <CornerDots size={6} offset={-4} color="#D500BA" />
+            <Typography
+              sx={{
+                fontFamily: "'Neue Haas Grotesk', sans-serif",
+                fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem" },
+                color: "#DDE3EC",
+                fontWeight: 400,
+                textAlign: "center",
+                textShadow: "0 0 8px rgba(213, 0, 186, 0.35)",
+              }}
+            >
+              Un lugar para conectar...
+            </Typography>
+          </Box>
 
           <Box
             sx={{
