@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     basicSsl()
   ],
-  base: '/',
+  base: '/workshop/',
   server: {
     https: true,
     port: 5173
