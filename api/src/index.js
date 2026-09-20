@@ -29,7 +29,7 @@ const buildWhitelist = (...urls) => {
   return [...set];
 };
 
-const whitelist = buildWhitelist(config.url_web_dev, config.url_web_preview);
+const whitelist = buildWhitelist(config.url_web_dev, config.url_web_preview, config.url_github, config.url_web_production);
 
 const corsOptions = {
   origin: function (origin, callback) {

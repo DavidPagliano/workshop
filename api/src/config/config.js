@@ -16,4 +16,6 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET,
   url_web_dev: process.env.FRONTEND_URL || 'http://localhost:5173',
   url_web_preview: process.env.FRONTEND_PREVIEW_URL || 'https://localhost:4173',
+  url_web_production: process.env.FRONTEND_PRODUCTION_URL || 'https://localhost:4173',
+  url_github: process.env.GITHUB_URL || 'https://localhost:4173',
 };
