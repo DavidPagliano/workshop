@@ -95,7 +95,7 @@ export const generateTicketPDF = (registration) => {
   doc.setFontSize(28);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...COLORS.white);
-  doc.text("MULTI DAY", 14, 32);
+  doc.text("MULTIMEDIA DAY", 14, 32);
 
   doc.setFontSize(18);
   doc.setTextColor(...COLORS.cyan);

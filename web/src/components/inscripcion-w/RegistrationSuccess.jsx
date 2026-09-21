@@ -177,7 +177,7 @@ const RegistrationSuccess = ({ registration, onReset }) => {
                 color: "#fff",
               }}
             >
-              MULTI DAY{" "}
+              MULTIMEDIA DAY{" "}
               <Box component="span" sx={{ color: "primary.main" }}>
                 2026
               </Box>

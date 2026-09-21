@@ -112,7 +112,7 @@ const PrivateLayout = () => {
                 color: "primary.main",
               }}
             >
-              MULTIDAY
+              MULTIMEDIA DAY
             </Typography>
             <Typography
               variant="caption"
