@@ -14,6 +14,7 @@ const CyclePreinscriptionPage = lazy(() => import("./pages/inscripcion-tsm/Cycle
 const EstadisticasPage = lazy(() => import("./pages/estadisticas/estadisticasPage"));
 const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
 const EventRegistrationPage = lazy(() => import("./pages/inscripcion-w/EventRegistrationPage"));
+const PreCyclePublicRegistrationPage = lazy(() => import("./pages/inscripcion-tsm/PreCyclePublicRegistrationPage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 
@@ -39,6 +40,7 @@ const App = () => {
         {/* ── Rutas Públicas ── */}
         <Route path="/" element={<HomePage />} />
         <Route path="/inscripcion" element={<EventRegistrationPage />} />
+        <Route path="/pre-inscripcion" element={<PreCyclePublicRegistrationPage />} />
         <Route
           path="/registro"
           element={

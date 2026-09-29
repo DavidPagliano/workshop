@@ -10,10 +10,13 @@ const {
 const validateRequest = require('../middlewares/validateRequest');
 const authenticateToken = require('../middlewares/authMiddleware');
 const authorizeRoles = require('../middlewares/roleMiddleware');
-const { preCycleSchema, preCycleUpdateSchema } = require('../schemas/registration.schema');
+const { preCyclePublicSchema, preCycleSchema, preCycleUpdateSchema } = require('../schemas/registration.schema');
 
-// Ruta pública: formulario de pre-inscripción del aspirante
-router.post('/', validateRequest(preCycleSchema), registerAspirant);
+// Ruta pública: formulario de pre-inscripción del aspirante (sin foto)
+router.post('/', validateRequest(preCyclePublicSchema), registerAspirant);
+
+// Ruta autenticada: registro con foto (uso interno admin/staff)
+router.post('/admin', authenticateToken, authorizeRoles('admin', 'director', 'staff_bedele'), validateRequest(preCycleSchema), registerAspirant);
 
 router.get('/', authenticateToken, authorizeRoles('admin', 'director', 'staff_bedele'), getAllAspirants);
 router.get('/:registrarId', authenticateToken, authorizeRoles('admin', 'director', 'staff_bedele'), getAspirantByRegistrarId);

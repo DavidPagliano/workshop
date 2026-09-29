@@ -29,7 +29,15 @@ const buildWhitelist = (...urls) => {
   return [...set];
 };
 
-const whitelist = buildWhitelist(config.url_web_dev, config.url_web_preview, config.url_github, config.url_web_production);
+const whitelist = buildWhitelist(
+  config.url_web_dev,
+  config.url_web_preview,
+  config.url_github,
+  config.url_web_production,
+  'http://localhost:4200',
+  'https://localhost:4200',
+  'http://localhost:5173'
+);
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -95,7 +103,8 @@ app.get('/', (req, res) => {
           base_url: '/workshop/cycle',
           methods: {
             GET: 'Obtiene lista de pre-inscriptos.',
-            POST: 'Crea pre-inscripción.',
+            POST: 'Crea pre-inscripción pública (sin foto).',
+            POST_admin: 'Crea pre-inscripción con foto (/workshop/cycle/admin). Requiere autenticación.',
             PUT: 'Actualiza por registrarId (/workshop/cycle/:registrarId).',
             DELETE: 'Elimina pre-inscripción por registrarId (/workshop/cycle/:registrarId).',
           },
