@@ -1,7 +1,9 @@
 const User = require('../models/User');
+const Counter = require('../models/Counter');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const XLSX = require('xlsx');
+const AppError = require('../utils/AppError');
 
 const VALID_ROLES = ['admin', 'director', 'staff_registracion', 'staff_bedele'];
 
@@ -48,21 +50,22 @@ exports.login = async ({ username, password }) => {
 
   const user = await User.findOne({ username, activo: true });
   if (!user) {
-    throw new Error('Credenciales inválidas');
+    throw new AppError('Credenciales inválidas', 401);
   }
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new Error('Credenciales inválidas');
+    throw new AppError('Credenciales inválidas', 401);
   }
 
   const payload = {
     id: user._id,
     username: user.username,
     role: user.role,
+    tokenVersion: user.tokenVersion || 0,
   };
 
-  const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '2h' });
+  const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '2h', algorithm: 'HS256' });
 
   return {
     token,
@@ -74,24 +77,124 @@ exports.login = async ({ username, password }) => {
   };
 };
 
-exports.registerUser = async (data) => {
+// Reclama de forma atómica el bootstrap del primer administrador. El marcador
+// único en `Counter` garantiza que, ante registros concurrentes con la BD
+// vacía, solo una petición se convierta en admin.
+const claimFirstAdmin = async () => {
+  if (await User.exists({})) return false;
+
+  try {
+    await Counter.create({ _id: 'admin_bootstrap' });
+    return true;
+  } catch (error) {
+    if (error.code === 11000) return false; // otra petición ganó la carrera
+    throw error;
+  }
+};
+
+/**
+ * Registra un usuario.
+ * - El primer usuario del sistema se crea como admin activo.
+ * - Un admin autenticado puede crear usuarios con rol explícito y activos.
+ * - Cualquier otro caso cae en staff_registracion pendiente de aprobación.
+ *
+ * @param {object} data
+ * @param {{ isAdmin?: boolean }} options
+ */
+exports.registerUser = async (data, { isAdmin = false } = {}) => {
+  const isFirstUser = isAdmin ? false : await claimFirstAdmin();
+  const requestedRole = isAdmin ? data.role : 'staff_registracion';
+
+  const payload = {
+    ...data,
+    role: isFirstUser ? 'admin' : requestedRole,
+    activo: isFirstUser || isAdmin,
+  };
+
   const existingUser = await User.findOne({
-    $or: [{ email: data.email }, { username: data.username }],
+    $or: [{ email: payload.email }, { username: payload.username }],
   });
 
   if (existingUser) {
-    throw new Error('El nombre de usuario o email ya se encuentra en uso');
+    throw new AppError('El nombre de usuario o email ya se encuentra en uso', 409);
   }
 
-  const newUser = new User(data);
+  const newUser = new User(payload);
   await newUser.save();
 
   return {
-    id: newUser._id,
-    username: newUser.username,
-    email: newUser.email,
-    role: newUser.role,
+    isFirstUser,
+    isAdminCreation: isAdmin,
+    user: {
+      id: newUser._id,
+      username: newUser.username,
+      email: newUser.email,
+      role: newUser.role,
+    },
   };
+};
+
+exports.listUsers = async () => {
+  return await User.find({}, '-password').sort({ creado: -1 }).lean();
+};
+
+exports.updateUserStatus = async (id, activo, currentUserId) => {
+  if (String(currentUserId) === String(id) && !activo) {
+    throw new AppError('No puedes desactivar tu propio usuario', 400);
+  }
+
+  const target = await User.findById(id).select('role');
+  if (!target) {
+    throw new AppError('Usuario no encontrado', 404);
+  }
+
+  // Las cuentas de administrador están protegidas: no se pueden desactivar.
+  if (target.role === 'admin') {
+    throw new AppError('No se puede desactivar a un administrador', 403);
+  }
+
+  return await User.findByIdAndUpdate(
+    id,
+    { activo },
+    { returnDocument: 'after', runValidators: true, projection: '-password' },
+  ).lean();
+};
+
+exports.deleteUser = async (id, currentUserId) => {
+  if (String(currentUserId) === String(id)) {
+    throw new AppError('No puedes eliminar tu propio usuario', 400);
+  }
+
+  const target = await User.findById(id).select('role');
+  if (!target) {
+    throw new AppError('Usuario no encontrado', 404);
+  }
+
+  // Las cuentas de administrador están protegidas: no se pueden eliminar.
+  if (target.role === 'admin') {
+    throw new AppError('No se puede eliminar a un administrador', 403);
+  }
+
+  return await User.findByIdAndDelete(id).select('-password').lean();
+};
+
+exports.resetPassword = async (id, newPassword) => {
+  if (!newPassword || newPassword.length < 6) {
+    throw new AppError('La nueva contraseña debe tener al menos 6 caracteres', 400);
+  }
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw new AppError('Usuario no encontrado', 404);
+  }
+
+  // El pre-save hook de bcrypt hashea la contraseña antes de guardar.
+  user.password = newPassword;
+  // Invalida cualquier JWT emitido antes del cambio de contraseña.
+  user.tokenVersion = (user.tokenVersion || 0) + 1;
+  await user.save();
+
+  return user;
 };
 
 exports.importUsersFromExcel = async (fileBuffer) => {

@@ -182,9 +182,12 @@ export const ImportUsersDialog = ({ open, onClose, onSuccess }) => {
           pb: 1.5,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
           <UploadFileIcon color="primary" sx={{ fontSize: 30 }} />
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 700, fontSize: { xs: "1rem", sm: "1.25rem" } }}
+          >
             Importar usuarios desde Excel
           </Typography>
         </Box>
@@ -551,7 +554,19 @@ export const ImportUsersDialog = ({ open, onClose, onSuccess }) => {
 
       <Divider />
 
-      <DialogActions sx={{ px: 3, py: 2 }}>
+      <DialogActions
+        sx={{
+          px: { xs: 2, sm: 3 },
+          py: 2,
+          gap: 1,
+          flexWrap: "wrap",
+          "& .MuiButton-root": {
+            flex: { xs: "1 1 auto", sm: "0 0 auto" },
+            minWidth: 0,
+            whiteSpace: "nowrap",
+          },
+        }}
+      >
         {importResult ? (
           <>
             <Button

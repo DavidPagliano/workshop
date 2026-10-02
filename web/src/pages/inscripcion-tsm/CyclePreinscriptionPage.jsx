@@ -31,7 +31,6 @@ import { PreinscriptionFormModal } from "../../components/inscripcion-tsm/PreIns
 import { PreinscriptionViewModal } from "../../components/inscripcion-tsm/PreInscriptionViewModal";
 import { PreinscriptionDeleteModal } from "../../components/inscripcion-tsm/PreInscriptionDeleteModal";
 import { usePreCycleRegistrations } from "../../hooks/usePreCycleRegistrations";
-import { exportPreInscripcionesXLSX } from "../../utils/exportPreInscripcionesXLSX";
 
 export const CyclePreinscriptionPage = () => {
   const theme = useTheme();
@@ -60,6 +59,14 @@ export const CyclePreinscriptionPage = () => {
     handleDeleteConfirm,
   } = usePreCycleRegistrations();
 
+  // Carga diferida de xlsx-js-style (~800KB) recién al exportar.
+  const handleExportExcel = async () => {
+    const { exportPreInscripcionesXLSX } = await import(
+      "../../utils/exportPreInscripcionesXLSX"
+    );
+    exportPreInscripcionesXLSX(registrations);
+  };
+
   // ── Columnas de la tabla ──
   const columns = [
     { key: "registrarId", label: "N° Reg." },
@@ -86,7 +93,7 @@ export const CyclePreinscriptionPage = () => {
             gap: 2,
           }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               variant={isMobile ? "h5" : "h4"}
               component="h1"
@@ -101,7 +108,24 @@ export const CyclePreinscriptionPage = () => {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 1 }}>
+          {/* Los botones se_centran y envuelven en pantallas chicas para
+              que "Exportar Excel" + "Agregar" no desborden el ancho. */}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: { xs: "center", sm: "flex-end" },
+              gap: 1,
+              width: { xs: "100%", sm: "auto" },
+              minWidth: 0,
+              "& > .MuiButton-root": {
+                flex: { xs: "1 1 auto", sm: "0 0 auto" },
+                minWidth: 0,
+                whiteSpace: "nowrap",
+              },
+            }}
+          >
             <Tooltip title="Refrescar">
               <IconButton
                 onClick={fetchRegistrations}
@@ -114,7 +138,7 @@ export const CyclePreinscriptionPage = () => {
             <Button
               variant="outlined"
               startIcon={<FileDownloadIcon />}
-              onClick={() => exportPreInscripcionesXLSX(registrations)}
+              onClick={handleExportExcel}
               disabled={tableLoading || registrations.length === 0}
               sx={{
                 bgcolor: "rgba(7, 16, 82, 0.95)",
@@ -157,7 +181,7 @@ export const CyclePreinscriptionPage = () => {
         <Fade in timeout={700}>
           <Paper
             sx={{
-              p: 5,
+              p: { xs: 2.5, sm: 5 },
               textAlign: "center",
               border: "1.5px solid",
               borderColor: "primary.main",
@@ -200,12 +224,17 @@ export const CyclePreinscriptionPage = () => {
                     <Box
                       sx={{
                         display: "flex",
+                        flexWrap: "wrap",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        gap: 1,
                         mb: 1,
                       }}
                     >
-                      <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 700, minWidth: 0, overflowWrap: "anywhere" }}
+                      >
                         {reg.nombre} {reg.apellido}
                       </Typography>
                       <Chip
@@ -217,10 +246,15 @@ export const CyclePreinscriptionPage = () => {
                           fontWeight: 600,
                           borderRadius: 0,
                           border: "1px solid rgba(0, 180, 255, 0.3)",
+                          flexShrink: 0,
                         }}
                       />
                     </Box>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      sx={{ overflowWrap: "anywhere" }}
+                    >
                       DNI: {reg.dni} · {reg.email || "—"}
                     </Typography>
                   </CardContent>

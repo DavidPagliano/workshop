@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { EventRegistrationForm } from "../../components/inscripcion-w/EventRegistrationForm";
 import RegistrationSuccess from "../../components/inscripcion-w/RegistrationSuccess";
 import { useEventRegistration } from "../../hooks/useEventRegistration";
-import bgGrid from "../../assets/images/fondo/FONDO3.png";
+import bgGrid from "../../assets/images/fondo/FONDO3.webp";
 
 const FloatingCursorBackground = () => (
   <Box

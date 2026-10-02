@@ -1,13 +1,16 @@
 const Counter = require('../models/Counter');
 const EventRegistration = require('../models/EventRegistration');
+const AppError = require('../utils/AppError');
 
 // Genera el próximo registrarId secuencial (W-001, W-002, ...)
 const generateRegistrarId = async () => {
   // Si el contador no existe aún, inicializarlo con el máximo actual de la colección
   const existing = await Counter.findById('event_seq');
   if (!existing) {
+    // Se ordena por fecha de creación (no por registrarId, cuyo orden
+    // lexicográfico se rompería pasando W-999) para tomar el mayor secuencial.
     const lastDoc = await EventRegistration.findOne()
-      .sort({ registrarId: -1 })
+      .sort({ creado: -1 })
       .select('registrarId')
       .lean();
     const currentMax = lastDoc?.registrarId
@@ -36,7 +39,7 @@ exports.registerParticipant = async (data) => {
   const existingUser = await EventRegistration.findOne({ dni: data.dni });
 
   if (existingUser) {
-    throw new Error('El documento ya se encuentra registrado en el evento');
+    throw new AppError('El documento ya se encuentra registrado en el evento', 409);
   }
 
   const newRegistration = new EventRegistration(data);
@@ -45,6 +48,19 @@ exports.registerParticipant = async (data) => {
 
 exports.getAllParticipants = async (filters = {}) => {
   return await EventRegistration.find(filters).sort({ creado: -1 });
+};
+
+exports.getParticipantsPage = async (filters = {}, { page = 1, limit = 10 } = {}) => {
+  const skip = (page - 1) * limit;
+  const [data, total] = await Promise.all([
+    EventRegistration.find(filters).sort({ creado: -1 }).skip(skip).limit(limit),
+    EventRegistration.countDocuments(filters),
+  ]);
+
+  return {
+    data,
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+  };
 };
 
 exports.getParticipantByRegistrarId = async (registrarId) => {
@@ -72,7 +88,7 @@ exports.updateAttendance = async (registrarId, seRegistro) => {
   );
 
   if (!updatedRegistration) {
-    throw new Error('Registro no encontrado');
+    throw new AppError('Registro no encontrado', 404);
   }
 
   return updatedRegistration;

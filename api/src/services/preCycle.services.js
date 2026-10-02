@@ -1,13 +1,16 @@
 const Counter = require('../models/Counter');
 const coPreCycleRegistration = require('../models/preCycleRegistration');
+const AppError = require('../utils/AppError');
 
 // Genera el próximo registrarId secuencial (pcr-001, pcr-002, ...)
 const generateRegistrarId = async () => {
   // Si el contador no existe aún, inicializarlo con el máximo actual de la colección
   const existing = await Counter.findById('cycle_seq');
   if (!existing) {
+    // Se ordena por fecha de creación (no por registrarId, cuyo orden
+    // lexicográfico se rompería pasando pcr-999) para tomar el mayor secuencial.
     const lastDoc = await coPreCycleRegistration.findOne()
-      .sort({ registrarId: -1 })
+      .sort({ creado: -1 })
       .select('registrarId')
       .lean();
     const currentMax = lastDoc?.registrarId
@@ -35,7 +38,7 @@ exports.registerAspirant = async (data) => {
   const existingAspirant = await coPreCycleRegistration.findOne({ dni: data.dni });
 
   if (existingAspirant) {
-    throw new Error('El aspirante ya tiene una pre-inscripción registrada');
+    throw new AppError('El aspirante ya tiene una pre-inscripción registrada', 409);
   }
 
   const newAspirant = new coPreCycleRegistration(data);
@@ -43,7 +46,20 @@ exports.registerAspirant = async (data) => {
 };
 
 exports.getAllAspirants = async () => {
-  return await coPreCycleRegistration.find();
+  return await coPreCycleRegistration.find().sort({ creado: -1 });
+};
+
+exports.getAspirantsPage = async ({ page = 1, limit = 10 } = {}) => {
+  const skip = (page - 1) * limit;
+  const [data, total] = await Promise.all([
+    coPreCycleRegistration.find().sort({ creado: -1 }).skip(skip).limit(limit),
+    coPreCycleRegistration.countDocuments(),
+  ]);
+
+  return {
+    data,
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+  };
 };
 
 exports.getAspirantByRegistrarId = async (registrarId) => {

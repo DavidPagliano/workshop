@@ -1,16 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const dotenv = require('dotenv');
-const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const mongoose = require('mongoose');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const config = require('./config/config');
 const cycle = require('./routes/preCycle.route');
 const event = require('./routes/event.route');
 const auth = require('./routes/auth.route');
 const audit = require('./routes/audit.route');
 const connectDB = require('./config/db');
-
-dotenv.config();
+const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
+const AppError = require('./utils/AppError');
 
 const app = express();
 
@@ -38,25 +39,33 @@ const corsOptions = {
     if (whitelist.indexOf(origin) !== -1 || (isDev && !origin)) {
       callback(null, true);
     } else {
-      callback(new Error('No permitido por CORS. Origen no autorizado.'));
+      callback(new AppError('No permitido por CORS. Origen no autorizado.', 403));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
 };
 
-// Rate limiter global: protección contra DoS en todos los endpoints
+// Rate limiter global: protección contra DoS en todos los endpoints.
+// Límites configurables (RL_GLOBAL_*) y agrupados por token cuando hay sesión,
+// para no bloquear entre sí a usuarios que comparten una misma IP (NAT/WiFi).
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 minutos
-  limit: 200,                 // 200 peticiones por ventana por IP
+  windowMs: config.rateLimits.global.windowMs,
+  limit: config.rateLimits.global.limit,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    const auth = req.headers.authorization;
+    if (auth && auth.startsWith('Bearer ')) return `u:${auth.slice(7)}`;
+    return ipKeyGenerator(req.ip);
+  },
   message: { message: 'Demasiadas solicitudes desde esta IP, intente nuevamente más tarde.' },
 });
-app.set('trust proxy', 1);
+app.set('trust proxy', config.trustProxy);
 app.use(globalLimiter);
 app.use(cors(corsOptions));
 app.use(helmet());
+app.use(compression());
 app.use(express.json({ limit: '500kb' }));
 
 // Enrutamiento modular
@@ -112,24 +121,48 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use((error, req, res, next) => {
-  if (res.headersSent) return next(error);
-  if (error.code === 11000) {
-    return res.status(409).json({ message: 'Ya existe un registro con esos datos' });
-  }
-  if (error.type === 'entity.too.large') {
-    return res.status(413).json({ message: 'El cuerpo de la petición es demasiado grande' });
-  }
-  // En producción no filtrar stack traces
-  if (isDev) {
-    console.error(error);
-  } else {
-    console.error(`[ERROR] ${error.message}`);
-  }
-  return res.status(500).json({ message: 'Error interno del servidor' });
+// Health check para monitoreo/despliegue (incluye estado de la conexión a Mongo)
+const DB_STATES = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+app.get('/health', (req, res) => {
+  const readyState = mongoose.connection.readyState;
+  const dbOk = readyState === 1;
+
+  res.status(dbOk ? 200 : 503).json({
+    status: dbOk ? 'ok' : 'degraded',
+    db: DB_STATES[readyState] || 'unknown',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
 });
+
+// 404 y manejador central de errores (siempre al final)
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Start server
 connectDB().then(() => {
-  app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
+  const server = app.listen(config.port, () =>
+    console.log(`Server running on port ${config.port}`),
+  );
+
+  // Cierre ordenado: dejar de aceptar peticiones y cerrar MongoDB.
+  const shutdown = (signal) => {
+    console.log(`\n${signal} recibido. Cerrando servidor...`);
+    server.close(async () => {
+      try {
+        await mongoose.connection.close();
+        console.log('MongoDB desconectado. Bye.');
+        process.exit(0);
+      } catch (error) {
+        console.error('Error al cerrar MongoDB:', error.message);
+        process.exit(1);
+      }
+    });
+
+    // Fuerza la salida si algo queda colgado.
+    setTimeout(() => process.exit(1), 10000).unref();
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 });

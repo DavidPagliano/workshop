@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Typography, Card, CardContent, Paper, Grid } from "@mui/material";
 import FichaUsuario from "./FichaUsuario";
 
@@ -51,4 +52,4 @@ const FichaDesktop = ({ usuarioSeleccionado, onConfirmar }) => {
   );
 };
 
-export default FichaDesktop;
+export default memo(FichaDesktop);

@@ -16,7 +16,6 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CategoryIcon from "@mui/icons-material/Category";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { generateTicketPDF } from "../../utils/generateTicketPDF";
 
 // ── TRADUCCIÓN DE TEMAS PARA EL TICKET ──
 const TOPIC_LABELS = {
@@ -91,7 +90,9 @@ const TicketRow = ({ icon, label, value }) => {
 const RegistrationSuccess = ({ registration, onReset }) => {
   const theme = useTheme();
 
-  const handleDownload = () => {
+  // Carga diferida de jspdf (~400KB) recién al descargar el ticket.
+  const handleDownload = async () => {
+    const { generateTicketPDF } = await import("../../utils/generateTicketPDF");
     generateTicketPDF(registration);
   };
 

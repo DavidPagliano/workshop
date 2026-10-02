@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Box, Typography, Chip, Divider, Button } from "@mui/material";
 
 const FichaUsuario = ({ usuario, onConfirmar }) => {
@@ -42,6 +43,7 @@ const FichaUsuario = ({ usuario, onConfirmar }) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              gap: 2,
               py: 1,
               px: 1.5,
               borderBottom: "1px solid",
@@ -50,11 +52,20 @@ const FichaUsuario = ({ usuario, onConfirmar }) => {
           >
             <Typography
               variant="body2"
-              sx={{ color: "text.secondary", fontWeight: 500 }}
+              sx={{ color: "text.secondary", fontWeight: 500, flexShrink: 0 }}
             >
               {item.label}
             </Typography>
-            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 500,
+                minWidth: 0,
+                textAlign: "right",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}
+            >
               {item.value}
             </Typography>
           </Box>
@@ -106,4 +117,4 @@ const FichaUsuario = ({ usuario, onConfirmar }) => {
   );
 };
 
-export default FichaUsuario;
+export default memo(FichaUsuario);

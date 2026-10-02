@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { PreCycleRegistrationForm } from "../../components/inscripcion-tsm/PreCycleRegistrationForm";
 import PreCycleRegistrationSuccess from "../../components/inscripcion-tsm/PreCycleRegistrationSuccess";
 import { usePreCyclePublicRegistration } from "../../hooks/usePreCyclePublicRegistration";
-import bgGrid from "../../assets/images/fondo/FONDO3.png";
+import bgGrid from "../../assets/images/fondo/FONDO3.webp";
 
 const FloatingBookBackground = () => (
   <Box

@@ -38,26 +38,32 @@ const AsistenciaPage = () => {
   // En mobile, al seleccionar un usuario se abre el modal
   const [mobileModalOpen, setMobileModalOpen] = React.useState(false);
 
-  const handleSelectUser = (p) => {
-    handleSeleccionarUsuario(p);
-    if (isMobile) {
-      setMobileModalOpen(true);
-    }
-  };
+  const handleSelectUser = React.useCallback(
+    (p) => {
+      handleSeleccionarUsuario(p);
+      if (isMobile) {
+        setMobileModalOpen(true);
+      }
+    },
+    [handleSeleccionarUsuario, isMobile],
+  );
 
-  const handleCloseMobileModal = () => {
+  const handleCloseMobileModal = React.useCallback(() => {
     setMobileModalOpen(false);
-  };
+  }, []);
 
-  const handleConfirmarYCerrar = async (id, estadoActual) => {
-    await handleConfirmarAsistencia(id, estadoActual);
-    if (isMobile) {
-      // Pequeño delay para que el usuario vea el feedback antes de cerrar
-      setTimeout(() => {
-        setMobileModalOpen(false);
-      }, 800);
-    }
-  };
+  const handleConfirmarYCerrar = React.useCallback(
+    async (id, estadoActual) => {
+      await handleConfirmarAsistencia(id, estadoActual);
+      if (isMobile) {
+        // Pequeño delay para que el usuario vea el feedback antes de cerrar
+        setTimeout(() => {
+          setMobileModalOpen(false);
+        }, 800);
+      }
+    },
+    [handleConfirmarAsistencia, isMobile],
+  );
 
   return (
     <Container
@@ -162,6 +168,7 @@ const AsistenciaPage = () => {
               participantesFiltrados={participantesFiltrados}
               usuarioSeleccionado={usuarioSeleccionado}
               onSeleccionar={handleSelectUser}
+              resetScrollKey={busqueda}
             />
 
             {/* ── Ficha Desktop (oculta en mobile) ── */}

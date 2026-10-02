@@ -92,7 +92,7 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
           pb: 1.5,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, fontWeight: 700 }}>
+        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1, minWidth: 0, pr: 1, fontWeight: 700 }}>
           <PersonIcon sx={{ color: "primary.main" }} />
           Detalle del Inscripto
         </Box>
@@ -172,8 +172,12 @@ export const PreinscriptionViewModal = ({ open, onClose, data }) => {
         ))}
       </DialogContent>
 
-      <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 2.5 }, pt: 1, flexShrink: 0, borderTop: "1px solid", borderColor: "divider" }}>
-        <Button onClick={onClose} variant="outlined" fullWidth={isMobile}>
+      <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 2.5 }, pt: 1.5, gap: 1, flexWrap: "wrap", flexShrink: 0, borderTop: "1px solid", borderColor: "divider" }}>
+        <Button
+          onClick={onClose}
+          variant="outlined"
+          sx={{ flex: { xs: "1 1 100%", sm: "0 0 auto" }, minWidth: 0 }}
+        >
           Cerrar
         </Button>
       </DialogActions>

@@ -5,7 +5,7 @@ const eventRegistrationSchema = new mongoose.Schema({
     apellido: { type: String, required: true },
     nombre: { type: String, required: true },
     email: { type: String, required: true },
-    dni: { type: String, required: true, unique: true, index: true },
+    dni: { type: String, required: true, unique: true },
     telefono: { type: String, required: true },
     temas: {
       type: String,
@@ -32,5 +32,7 @@ const eventRegistrationSchema = new mongoose.Schema({
     timestamps: { createdAt: 'creado', updatedAt: 'actualizado' },
     versionKey: false,
 })
+
+eventRegistrationSchema.index({ creado: -1 });
 
 module.exports = mongoose.model('EventRegistration', eventRegistrationSchema);

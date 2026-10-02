@@ -86,7 +86,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #03083B;
-  background-image: url('./assets/images/fondo/FONDO3.png');
+  background-image: url('./assets/images/fondo/FONDO3.webp');
   background-repeat: repeat;
   background-size: cover;
   background-position: center;
@@ -94,4 +94,12 @@ body {
   color: var(--white);
   font-family: 'Neue Haas Grotesk', -apple-system, sans-serif;
   overflow-x: hidden;
+}
+
+/* En mobile, `background-attachment: fixed` provoca jank y repintados
+   constantes al hacer scroll. Se usa scroll en pantallas chicas. */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
 }

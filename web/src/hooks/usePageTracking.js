@@ -2,10 +2,15 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 
+const hasSession = () => Boolean(localStorage.getItem('workshop_token'));
+
 export const usePageTracking = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // El endpoint de auditoría requiere autenticación; sin sesión no se envía.
+    if (!hasSession()) return undefined;
+
     const handle = window.requestIdleCallback 
       ? window.requestIdleCallback(() => sendLog(location.pathname))
       : setTimeout(() => sendLog(location.pathname), 250);

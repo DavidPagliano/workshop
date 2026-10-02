@@ -42,17 +42,17 @@ export const AsistenciaSection = ({ eventData, metricasAsistencia }) => {
         >
           1. Inscripciones al Evento (Fecha y Hora)
         </Typography>
-        <TableContainer
-          component={Paper}
+        <Paper
           sx={{
             border: "1.5px solid",
             borderColor: "primary.main",
             boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.4)",
             borderRadius: 0,
             bgcolor: "background.paper",
-            overflowX: "auto",
+            overflow: "hidden",
           }}
         >
+          <TableContainer sx={{ overflowX: "auto" }}>
           <Table size="small" sx={{ minWidth: 580 }}>
             <TableHead sx={{ bgcolor: "rgba(0, 180, 255, 0.08)" }}>
               <TableRow>
@@ -132,6 +132,7 @@ export const AsistenciaSection = ({ eventData, metricasAsistencia }) => {
               )}
             </TableBody>
           </Table>
+          </TableContainer>
           <TablePagination
             rowsPerPageOptions={[5, 10, 20]}
             component="div"
@@ -144,12 +145,18 @@ export const AsistenciaSection = ({ eventData, metricasAsistencia }) => {
               setPage(0);
             }}
             sx={{
-              ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
+              ".MuiTablePagination-toolbar": {
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+                rowGap: 0.5,
+                px: { xs: 0.5, sm: 2 },
+              },
+              ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows, .MuiTablePagination-select": {
                 fontSize: { xs: "0.7rem", sm: "0.875rem" },
               },
             }}
           />
-        </TableContainer>
+        </Paper>
       </Grid>
 
       <Grid size={{ xs: 12, lg: 4 }}>

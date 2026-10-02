@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { getInscritosAPI, updateAsistenciaAPI } from '../services/asistenciaService';
 
 export const useAsistencia = () => {
@@ -9,7 +9,7 @@ export const useAsistencia = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     setCargando(true);
     setError('');
     try {
@@ -21,28 +21,32 @@ export const useAsistencia = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     void Promise.resolve().then(cargarDatos);
-  }, []);
+  }, [cargarDatos]);
 
-  const participantesFiltrados = participantes.filter((p) => {
-    const term = busqueda.toLowerCase();
-    return (
+  // El input responde al instante; el filtrado se difiere para no bloquear
+  // el tipeo cuando la lista es grande.
+  const busquedaDiferida = useDeferredValue(busqueda);
+
+  const participantesFiltrados = useMemo(() => {
+    const term = busquedaDiferida.trim().toLowerCase();
+    if (!term) return participantes;
+    return participantes.filter((p) => (
       (p.registrarId && p.registrarId.toLowerCase().includes(term)) ||
       (p.dni && p.dni.includes(term)) ||
       (p.nombre && p.nombre.toLowerCase().includes(term)) ||
       (p.apellido && p.apellido.toLowerCase().includes(term))
-    );
-  });
+    ));
+  }, [participantes, busquedaDiferida]);
 
-  const handleSeleccionarUsuario = (p) => {
+  const handleSeleccionarUsuario = useCallback((p) => {
     setUsuarioSeleccionado(p);
-  };
+  }, []);
 
-  // ACÁ ESTÁ EL FIX DEL MENSAJE 
-  const handleConfirmarAsistencia = async (id, estadoActual) => {
+  const handleConfirmarAsistencia = useCallback(async (id, estadoActual) => {
     const nuevoEstado = !estadoActual;
 
     try {
@@ -56,9 +60,11 @@ export const useAsistencia = () => {
         )
       );
 
-      if (usuarioSeleccionado && (usuarioSeleccionado._id === id || usuarioSeleccionado.registrarId === id)) {
-        setUsuarioSeleccionado((prev) => ({ ...prev, ...participanteActualizado }));
-      }
+      setUsuarioSeleccionado((prev) =>
+        prev && (prev._id === id || prev.registrarId === id)
+          ? { ...prev, ...participanteActualizado }
+          : prev
+      );
 
       // Si nuevoEstado es TRUE -> Asistencia confirmada
       // Si nuevoEstado es FALSE -> Asistencia anulada
@@ -73,7 +79,7 @@ export const useAsistencia = () => {
     } catch (requestError) {
       setError(requestError.message || 'No se pudo actualizar la asistencia.');
     }
-  };
+  }, []);
 
   return {
     busqueda,

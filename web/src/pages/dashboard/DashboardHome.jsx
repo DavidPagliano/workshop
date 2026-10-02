@@ -74,7 +74,7 @@ const DashboardHome = () => {
 
       <Grid container spacing={3}>
         {sections.map((section, index) => (
-          <Grid size={{ xs: 12, sm: 6 }} key={section.path}>
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={section.path}>
             <Fade
               in
               timeout={600}

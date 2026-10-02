@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   Box,
   Button,
@@ -88,4 +89,4 @@ const ModalFichaMobile = ({
   );
 };
 
-export default ModalFichaMobile;
+export default memo(ModalFichaMobile);

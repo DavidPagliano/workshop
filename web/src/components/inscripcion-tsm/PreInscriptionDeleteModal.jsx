@@ -85,7 +85,7 @@ export const PreinscriptionDeleteModal = ({
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ pt: 3, textAlign: "center" }}>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 }, pt: 3, textAlign: "center" }}>
         <Typography variant="body1" sx={{ mb: 2 }}>
           ¿Estás seguro de que querés eliminar esta pre-inscripción?
         </Typography>
@@ -102,7 +102,7 @@ export const PreinscriptionDeleteModal = ({
             <Typography variant="body2" sx={{ color: "text.secondary", mb: 0.5 }}>
               Inscripto
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, overflowWrap: "anywhere" }}>
               {fullName}
             </Typography>
             {data.registrarId && (
@@ -121,7 +121,20 @@ export const PreinscriptionDeleteModal = ({
         </Typography>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, gap: 1 }}>
+      <DialogActions
+        sx={{
+          px: { xs: 2, sm: 3 },
+          pb: { xs: 2, sm: 2.5 },
+          pt: 1.5,
+          gap: 1,
+          flexWrap: "wrap",
+          "& .MuiButton-root": {
+            flex: { xs: "1 1 100%", sm: "1 1 auto" },
+            minWidth: 0,
+            whiteSpace: "normal",
+          },
+        }}
+      >
         <Button onClick={onClose} disabled={loading} variant="outlined">
           Cancelar
         </Button>

@@ -65,7 +65,8 @@ export const AuditLog = ({ onTotalChange }) => {
           </Tooltip>
         </Box>
       </Box>
-      <TableContainer component={Paper} sx={{ border: "1.5px solid", borderColor: "secondary.main", borderRadius: 0, overflowX: "auto" }}>
+      <Paper sx={{ border: "1.5px solid", borderColor: "secondary.main", borderRadius: 0, overflow: "hidden" }}>
+        <TableContainer sx={{ overflowX: "auto" }}>
         {loading ? <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}><CircularProgress /></Box> : <Table sx={{ minWidth: 680 }}>
           <TableHead><TableRow sx={{ bgcolor: "rgba(213, 0, 186, 0.08)" }}>{["Fecha", "Usuario", "Acción", "Detalle", "Página"].map((heading) => <TableCell key={heading} sx={{ fontWeight: 700, color: "secondary.main" }}>{heading}</TableCell>)}</TableRow></TableHead>
           <TableBody>{logs.map((log) => <TableRow key={log._id} hover>
@@ -76,8 +77,29 @@ export const AuditLog = ({ onTotalChange }) => {
             <TableCell>{log.pagina || "—"}</TableCell>
           </TableRow>)}{!logs.length && <TableRow><TableCell colSpan={5} align="center">No hay eventos para mostrar.</TableCell></TableRow>}</TableBody>
         </Table>}
-        <TablePagination component="div" count={pagination.total} page={pagination.page} rowsPerPage={pagination.limit} onPageChange={(_, page) => load(page, pagination.limit)} onRowsPerPageChange={(event) => load(0, Number(event.target.value))} rowsPerPageOptions={[10, 25, 50]} labelRowsPerPage="Filas" />
-      </TableContainer>
+        </TableContainer>
+        <TablePagination
+          component="div"
+          count={pagination.total}
+          page={pagination.page}
+          rowsPerPage={pagination.limit}
+          onPageChange={(_, page) => load(page, pagination.limit)}
+          onRowsPerPageChange={(event) => load(0, Number(event.target.value))}
+          rowsPerPageOptions={[10, 25, 50]}
+          labelRowsPerPage="Filas"
+          sx={{
+            ".MuiTablePagination-toolbar": {
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
+              rowGap: 0.5,
+              px: { xs: 0.5, sm: 2 },
+            },
+            ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows, .MuiTablePagination-select": {
+              fontSize: { xs: "0.72rem", sm: "0.875rem" },
+            },
+          }}
+        />
+      </Paper>
     </Box>
   );
 };

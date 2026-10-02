@@ -1,12 +1,14 @@
 const express = require('express');
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const multer = require('multer');
 const router = express.Router();
+const config = require('../config/config');
 const authController = require('../controllers/auth.controller');
 const validateRequest = require('../middlewares/validateRequest');
 const authenticateToken = require('../middlewares/authMiddleware');
 const authorizeRoles = require('../middlewares/roleMiddleware');
-const { loginSchema, registerUserSchema, publicRegisterSchema } = require('../schemas/auth.schema');
+const validateObjectId = require('../middlewares/validateObjectId');
+const { loginSchema, registerUserSchema, publicRegisterSchema, updateUserStatusSchema, resetPasswordSchema } = require('../schemas/auth.schema');
 
 // Multer en memoria para recibir archivos Excel (.xls, .xlsx)
 const upload = multer({
@@ -47,17 +49,21 @@ const handleUpload = (req, res, next) => {
   });
 };
 
+// Login: se agrupa por IP + usuario para que, si varios usuarios comparten
+// la misma IP (WiFi del evento), cada uno tenga su propio cupo de intentos.
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 10,
+  windowMs: config.rateLimits.login.windowMs,
+  limit: config.rateLimits.login.limit,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) =>
+    `${ipKeyGenerator(req.ip)}:${String(req.body?.username || '').toLowerCase()}`,
   message: { message: 'Demasiados intentos de inicio de sesión' }
 });
 
 const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  limit: 5,                  // 5 registros por hora por IP
+  windowMs: config.rateLimits.register.windowMs,
+  limit: config.rateLimits.register.limit,
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Demasiados intentos de registro. Intente nuevamente más tarde.' }
@@ -76,9 +82,9 @@ router.post(
 );
 
 router.get('/users', authenticateToken, authorizeRoles('admin'), authController.listUsers);
-router.patch('/users/:id/status', authenticateToken, authorizeRoles('admin'), authController.updateUserStatus);
-router.patch('/users/:id/reset-password', authenticateToken, authorizeRoles('admin'), authController.resetPassword);
-router.delete('/users/:id', authenticateToken, authorizeRoles('admin'), authController.deleteUser);
+router.patch('/users/:id/status', authenticateToken, authorizeRoles('admin'), validateObjectId('id'), validateRequest(updateUserStatusSchema), authController.updateUserStatus);
+router.patch('/users/:id/reset-password', authenticateToken, authorizeRoles('admin'), validateObjectId('id'), validateRequest(resetPasswordSchema), authController.resetPassword);
+router.delete('/users/:id', authenticateToken, authorizeRoles('admin'), validateObjectId('id'), authController.deleteUser);
 
 router.post(
   '/admin/import-users',

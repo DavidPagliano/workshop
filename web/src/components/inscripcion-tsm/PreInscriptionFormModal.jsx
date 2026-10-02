@@ -470,7 +470,7 @@ export const PreinscriptionFormModal = ({
           pb: 1.5,
         }}
       >
-        <Box sx={{ fontWeight: 700 }}>
+        <Box sx={{ fontWeight: 700, minWidth: 0, pr: 1 }}>
           {isEditMode ? "Editar Pre-inscripción" : "Nueva Pre-inscripción"}
         </Box>
         <IconButton
@@ -660,28 +660,31 @@ export const PreinscriptionFormModal = ({
           sx={{
             px: { xs: 2, sm: 3 },
             pb: { xs: 2, sm: 2.5 },
-            pt: 1,
+            pt: 1.5,
             gap: 1,
             flexShrink: 0,
+            flexWrap: "wrap",
             bgcolor: "background.paper",
             borderTop: "1px solid",
             borderColor: "divider",
-            "& .MuiButton-root": { flex: 1, minWidth: 0 },
+            // En mobile los botones se apilan a lo ancho completo: "Guardar
+            // Cambios" / "Guardando..." no entran en dos columnas y el
+            // `nowrap` anterior recortaba el texto dentro del botón.
+            "& .MuiButton-root": {
+              flex: { xs: "1 1 100%", sm: "1 1 auto" },
+              minWidth: 0,
+              whiteSpace: "normal",
+              overflowWrap: "anywhere",
+            },
           }}
         >
-          <Button
-            onClick={onClose}
-            disabled={loading}
-            variant="outlined"
-            sx={{ whiteSpace: "nowrap" }}
-          >
+          <Button onClick={onClose} disabled={loading} variant="outlined">
             Cancelar
           </Button>
           <Button
             type="submit"
             variant="contained"
             disabled={loading}
-            sx={{ whiteSpace: "nowrap" }}
             startIcon={
               loading ? <CircularProgress size={18} color="inherit" /> : null
             }

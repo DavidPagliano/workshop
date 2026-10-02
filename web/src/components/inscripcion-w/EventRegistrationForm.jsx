@@ -75,7 +75,7 @@ export const EventRegistrationForm = ({
       )}
 
       <Grid container spacing={{ xs: 1.8, sm: 2, md: 2.2, lg: 2.4 }}>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Nombre"
@@ -92,7 +92,7 @@ export const EventRegistrationForm = ({
           />
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Apellido"
@@ -109,7 +109,7 @@ export const EventRegistrationForm = ({
           />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
             label="DNI"
@@ -127,7 +127,7 @@ export const EventRegistrationForm = ({
           />
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Teléfono"
@@ -145,7 +145,7 @@ export const EventRegistrationForm = ({
           />
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             type="email"
@@ -163,7 +163,7 @@ export const EventRegistrationForm = ({
           />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
             select
@@ -215,7 +215,7 @@ export const EventRegistrationForm = ({
           </TextField>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Typography
             align="center"
             sx={{
@@ -232,7 +232,7 @@ export const EventRegistrationForm = ({
           </Typography>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Button
             type="submit"
             variant="contained"

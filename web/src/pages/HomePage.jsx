@@ -13,7 +13,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 // ─── Assets ──────────────────────────────────────────────────────────
-import bgGrid from "../assets/images/fondo/FONDO3.png";
+import bgGrid from "../assets/images/fondo/FONDO3.webp";
 import cursorImg from "../assets/images/CURSOR.png";
 import masImg from "../assets/images/MAS.png";
 import playImg from "../assets/images/PLAY.png";
@@ -26,7 +26,7 @@ import ws1 from "../assets/images/workshops/ws1.jpeg";
 import ws2 from "../assets/images/workshops/ws2.jpeg";
 import ws3 from "../assets/images/workshops/ws3.jpeg";
 import ws4 from "../assets/images/workshops/ws4.jpeg";
-import ws5 from "../assets/images/workshops/ws5.png";
+import ws5 from "../assets/images/workshops/ws5.webp";
 
 // Array de imágenes del carrusel
 const WORKSHOP_IMAGES = [
@@ -56,7 +56,6 @@ const motion = (
 ) => ({
   animation: `${name} ${duration} ${timing} ${delay} infinite`,
   transformOrigin: origin,
-  willChange: "transform",
   [`@keyframes ${name}`]: frames,
   "@media (prefers-reduced-motion: reduce)": { animation: "none" },
 });
@@ -632,6 +631,8 @@ const WorkshopCarousel = () => {
           component="img"
           src={WORKSHOP_IMAGES[currentIndex].src}
           alt={WORKSHOP_IMAGES[currentIndex].title}
+          loading="lazy"
+          decoding="async"
           sx={{
             width: "100%",
             height: "100%",
@@ -887,6 +888,8 @@ const HomePage = () => {
         component="img"
         src={pixeladoImg}
         alt="Pixel art decoration"
+        loading="lazy"
+        decoding="async"
         sx={{
           position: "absolute",
           top: { xs: "-2%", md: "5%" },
@@ -904,6 +907,8 @@ const HomePage = () => {
         component="img"
         src={cursorImg}
         alt="3D Cursor"
+        loading="lazy"
+        decoding="async"
         sx={{
           position: "absolute",
           top: { xs: "290px", sm: "3%", md: "8%" },
@@ -911,6 +916,7 @@ const HomePage = () => {
           width: { xs: "50px", sm: "90px", md: "160px" },
           pointerEvents: "none",
           zIndex: 3,
+          opacity: { xs: 0.4, sm: 1 },
           filter: "drop-shadow(0 10px 20px rgba(0, 180, 255, 0.35))",
           ...CURSOR_MOTION,
         }}
@@ -921,6 +927,8 @@ const HomePage = () => {
         component="img"
         src={playImg}
         alt="3D Play Button"
+        loading="lazy"
+        decoding="async"
         sx={{
           position: "absolute",
           top: { xs: "24%", md: "35%" },
@@ -928,6 +936,7 @@ const HomePage = () => {
           width: { xs: "45px", sm: "90px", md: "160px" },
           pointerEvents: "none",
           zIndex: 3,
+          opacity: { xs: 0.4, sm: 1 },
           filter: "drop-shadow(0 10px 20px rgba(213, 0, 186, 0.3))",
           ...PLAY_MOTION,
         }}
@@ -938,6 +947,8 @@ const HomePage = () => {
         component="img"
         src={masImg}
         alt="3D Cross Decoration"
+        loading="lazy"
+        decoding="async"
         sx={{
           position: "absolute",
           top: { xs: "280px", sm: "3%", md: "8%" },
@@ -945,6 +956,7 @@ const HomePage = () => {
           width: { xs: "50px", sm: "90px", md: "160px" },
           pointerEvents: "none",
           zIndex: 3,
+          opacity: { xs: 0.4, sm: 1 },
           filter: "drop-shadow(0 12px 25px rgba(3, 8, 59, 0.8))",
           ...MAS_MOTION,
         }}
@@ -955,6 +967,8 @@ const HomePage = () => {
         component="img"
         src={recuadroImg}
         alt="3D Frame Decoration"
+        loading="lazy"
+        decoding="async"
         sx={{
           position: "absolute",
           bottom: { xs: "1%", md: "4%" },
@@ -989,6 +1003,8 @@ const HomePage = () => {
             component="img"
             src={logoMD}
             alt="Multimedia Day 2026"
+            fetchPriority="high"
+            decoding="async"
             sx={{
               width: "100%",
               maxWidth: { xs: "85%", sm: "520px", md: "620px" },

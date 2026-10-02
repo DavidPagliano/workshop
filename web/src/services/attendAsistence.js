@@ -14,20 +14,6 @@ export const getAttendeesList = async () => {
 };
 
 /**
- * Busca un participante específico por su DNI o Pasaporte.
- * Muy útil para un buscador rápido en la entrada del evento.
- */
-export const searchAttendeeByDni = async (dni) => {
-  try {
-    // Asumimos que en el backend agregaremos un query param para filtrar
-    const response = await api.get(`/workshop/event?dni=${dni}`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: 'Error al buscar el participante' };
-  }
-};
-
-/**
  * Actualiza el estado de asistencia de un participante.
  * @param {string} registrarId - El identificador público del registro.
  * @param {boolean} seRegistro - true si está presente, false si está ausente.

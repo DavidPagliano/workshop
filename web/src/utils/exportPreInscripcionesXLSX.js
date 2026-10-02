@@ -48,6 +48,14 @@ const idStyle = (isAlt) => ({
   font: { bold: true, color: { rgb: COLORS.magenta }, sz: 10, name: "Calibri" },
 });
 
+// ── Seguridad: previene inyección de fórmulas ──
+// Si un valor de texto comienza con =, +, - o @, Excel/Sheets podrían
+// interpretarlo como fórmula al abrir el archivo. Se antepone un apóstrofo.
+const sanitizeCell = (value) => {
+  if (typeof value !== "string") return value;
+  return /^[=+\-@]/.test(value) ? `'${value}` : value;
+};
+
 // ── Columnas de la hoja ──
 const columns = [
   { header: "N°", width: 5 },
@@ -117,7 +125,12 @@ export const exportPreInscripcionesXLSX = (registrations) => {
 
     rowData.forEach((cell, c) => {
       const ref = XLSX.utils.encode_cell({ c, r });
-      ws[ref] = { v: cell.v, t: typeof cell.v === "number" ? "n" : "s", s: cell.style };
+      const isNumber = typeof cell.v === "number";
+      ws[ref] = {
+        v: isNumber ? cell.v : sanitizeCell(cell.v),
+        t: isNumber ? "n" : "s",
+        s: cell.style,
+      };
     });
   });
 

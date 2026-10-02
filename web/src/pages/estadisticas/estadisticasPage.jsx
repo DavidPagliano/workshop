@@ -13,7 +13,6 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { getAttendeesList } from "../../services/attendAsistence";
 import { getPreCycleRegistrations } from "../../services/preCycleService";
 import { CHART_COLORS } from "../../utils/estadisticasUtils";
-import { generateEstadisticasPDF } from "../../utils/exportPDF";
 
 // Importación de las Secciones
 import { MetricCards } from "../../components/estadisticas/MetricCards";
@@ -114,8 +113,9 @@ const EstadisticasPage = () => {
     return { total, counts, chartData };
   }, [cycleData]);
 
-  // ── Exportar PDF ──
-  const handleExportPDF = () => {
+  // ── Exportar PDF (jspdf + html2canvas se cargan recién al exportar) ──
+  const handleExportPDF = async () => {
+    const { generateEstadisticasPDF } = await import("../../utils/exportPDF");
     generateEstadisticasPDF({
       eventData,
       cycleData,

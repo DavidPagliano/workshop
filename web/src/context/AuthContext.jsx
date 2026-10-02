@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import api from "../services/api";
 
 const AuthContext = createContext(null);
@@ -7,11 +8,12 @@ const AuthContext = createContext(null);
  * Decodifica el payload de un JWT sin verificar la firma.
  * Solo se usa en el cliente para comprobar la expiración; la validación
  * real la hace el backend con jwt.verify().
+ * jwtDecode soporta base64url (a diferencia de atob), evitando fallos con
+ * los caracteres `-`/`_` del payload.
  */
 const decodeToken = (token) => {
   try {
-    const payload = token.split(".")[1];
-    return JSON.parse(atob(payload));
+    return jwtDecode(token);
   } catch {
     return null;
   }

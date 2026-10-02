@@ -123,6 +123,8 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete, o
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
           {sortedUsers.map((item) => {
             const own = String(item._id) === String(currentUser?.id);
+            const isAdmin = item.role === "admin";
+            const accionesBloqueadas = own || isAdmin;
             return (
               <Card
                 key={item._id}
@@ -198,12 +200,12 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete, o
                           <VisibilityIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title={item.activo ? "Desactivar" : "Activar"}>
+                      <Tooltip title={own ? "No puedes desactivar tu propio usuario" : isAdmin ? "No se puede desactivar a un administrador" : item.activo ? "Desactivar" : "Activar"}>
                         <span>
                           <IconButton
                             size="small"
                             color={item.activo ? "warning" : "success"}
-                            disabled={own}
+                            disabled={accionesBloqueadas}
                             onClick={() => onToggle(item)}
                           >
                             {item.activo ? (
@@ -214,12 +216,12 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete, o
                           </IconButton>
                         </span>
                       </Tooltip>
-                      <Tooltip title={own ? "No puedes eliminarte" : "Eliminar"}>
+                      <Tooltip title={own ? "No puedes eliminarte" : isAdmin ? "No se puede eliminar a un administrador" : "Eliminar"}>
                         <span>
                           <IconButton
                             size="small"
                             color="error"
-                            disabled={own}
+                            disabled={accionesBloqueadas}
                             onClick={() => onDelete(item)}
                           >
                             <DeleteIcon fontSize="small" />
@@ -257,6 +259,8 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete, o
             <TableBody>
               {sortedUsers.map((item) => {
                 const own = String(item._id) === String(currentUser?.id);
+                const isAdmin = item.role === "admin";
+                const accionesBloqueadas = own || isAdmin;
                 return <TableRow key={item._id} hover>
                   <TableCell sx={{ fontWeight: 600 }}>{item.username}</TableCell>
                   <TableCell>{item.email}</TableCell>
@@ -266,11 +270,11 @@ export const UserManagement = ({ users, loading, onCreate, onToggle, onDelete, o
                     <Tooltip title="Ver detalles">
                       <IconButton color="info" onClick={() => setViewUser(item)}><VisibilityIcon /></IconButton>
                     </Tooltip>
-                    <Tooltip title={item.activo ? "Desactivar" : "Activar"}>
-                      <span><IconButton color={item.activo ? "warning" : "success"} disabled={own} onClick={() => onToggle(item)}>{item.activo ? <PersonOffIcon /> : <PersonAddIcon />}</IconButton></span>
+                    <Tooltip title={own ? "No puedes desactivar tu propio usuario" : isAdmin ? "No se puede desactivar a un administrador" : item.activo ? "Desactivar" : "Activar"}>
+                      <span><IconButton color={item.activo ? "warning" : "success"} disabled={accionesBloqueadas} onClick={() => onToggle(item)}>{item.activo ? <PersonOffIcon /> : <PersonAddIcon />}</IconButton></span>
                     </Tooltip>
-                    <Tooltip title={own ? "No puedes eliminarte" : "Eliminar"}>
-                      <span><IconButton color="error" disabled={own} onClick={() => onDelete(item)}><DeleteIcon /></IconButton></span>
+                    <Tooltip title={own ? "No puedes eliminarte" : isAdmin ? "No se puede eliminar a un administrador" : "Eliminar"}>
+                      <span><IconButton color="error" disabled={accionesBloqueadas} onClick={() => onDelete(item)}><DeleteIcon /></IconButton></span>
                     </Tooltip>
                   </TableCell>
                 </TableRow>;

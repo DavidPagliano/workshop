@@ -1,89 +1,75 @@
 const eventService = require('../services/event.services');
-const { logAction } = require('../utils/auditLogger');
+const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/AppError');
+const parsePagination = require('../utils/pagination');
+const { logAction } = require('../services/audit.services');
 
-exports.createEventRegistration = async (req, res) => {
-  try {
-    const result = await eventService.registerParticipant(req.body);
-    await logAction(req, 'REGISTRO_EVENTO', `Inscripción creada: ${result.registrarId} (DNI: ${result.dni})`)
-    res.status(201).json(result);
-  } catch (error) {
-    if (error.code === 11000 || error.message.includes('ya se encuentra registrado')) {
-      return res.status(409).json({ message: error.message });
-    }
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: 'Datos de registro inválidos' });
-    }
-    res.status(400).json({ message: error.message });
+exports.createEventRegistration = asyncHandler(async (req, res) => {
+  const result = await eventService.registerParticipant(req.body);
+  await logAction(req, 'REGISTRO_EVENTO', `Inscripción creada: ${result.registrarId} (DNI: ${result.dni})`);
+  res.status(201).json(result);
+});
+
+exports.getAllEventRegistrations = asyncHandler(async (req, res) => {
+  const filters = req.query.dni ? { dni: String(req.query.dni) } : {};
+  const pagination = parsePagination(req.query);
+
+  if (pagination === undefined) {
+    throw new AppError('Parámetros de paginación inválidos', 400);
   }
-};
 
-exports.getAllEventRegistrations = async (req, res) => {
-  try {
-    const filters = req.query.dni ? { dni: String(req.query.dni) } : {};
-    const results = await eventService.getAllParticipants(filters);
-    res.status(200).json(results);
-  } catch (error) {
-    res.status(500).json({ message: 'Error interno del servidor' });
+  // Sin ?page/?limit se mantiene la respuesta como array (compatibilidad).
+  if (pagination) {
+    const result = await eventService.getParticipantsPage(filters, pagination);
+    return res.status(200).json(result);
   }
-};
 
-exports.getEventRegistrationByRegistrarId = async (req, res) => {
-  try {
-    const result = await eventService.getParticipantByRegistrarId(req.params.registrarId);
-    if (!result) {
-      return res.status(404).json({ message: 'Registro no encontrado' });
-    }
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: 'Error interno del servidor' });
+  const results = await eventService.getAllParticipants(filters);
+  res.status(200).json(results);
+});
+
+exports.getEventRegistrationByRegistrarId = asyncHandler(async (req, res) => {
+  const result = await eventService.getParticipantByRegistrarId(req.params.registrarId);
+  if (!result) {
+    throw new AppError('Registro no encontrado', 404);
   }
-};
+  res.status(200).json(result);
+});
 
-exports.updateEventRegistration = async (req, res) => {
-  try {
-    const result = await eventService.updateParticipant(req.params.registrarId, req.body);
-    if (!result) {
-        return res.status(404).json({ message: 'Registro no encontrado  para actualizar' });
-    }
-    await logAction(req, 'ACTUALIZACION_EVENTO', `Inscripción actualizada: ${result.registrarId} (DNI: ${result.dni})`)
-    res.status(200).json(result);
-  } catch(error) {
-    if (error.code === 11000) {
-        return res.status(409).json({ message: 'Ya existe un registro con esos datos' });
-    }
-    res.status(500).json({ message: 'Error interno del servidor' });
+exports.updateEventRegistration = asyncHandler(async (req, res) => {
+  const result = await eventService.updateParticipant(req.params.registrarId, req.body);
+  if (!result) {
+    throw new AppError('Registro no encontrado para actualizar', 404);
   }
-}   
+  await logAction(req, 'ACTUALIZACION_EVENTO', `Inscripción actualizada: ${result.registrarId} (DNI: ${result.dni})`);
+  res.status(200).json(result);
+});
 
-exports.deleteEventRegistration = async (req, res) => {
-  try {
-    const result = await eventService.deleteParticipant(req.params.registrarId);
-    if (!result) {
-      return res.status(404).json({ message: 'Registro no encontrado para eliminar' });
-    }
-    res.status(200).json({ message: 'Registro eliminado correctamente' });
-  } catch(error) {
-    res.status(500).json({ message: 'Error interno del servidor' });
+exports.deleteEventRegistration = asyncHandler(async (req, res) => {
+  const result = await eventService.deleteParticipant(req.params.registrarId);
+  if (!result) {
+    throw new AppError('Registro no encontrado para eliminar', 404);
   }
-}
+  res.status(200).json({ message: 'Registro eliminado correctamente' });
+});
 
-exports.markAttendance = async (req, res) => {
-  try {
-    const { registrarId } = req.params;
-    const { seRegistro } = req.body;
+exports.markAttendance = asyncHandler(async (req, res) => {
+  const { registrarId } = req.params;
+  const { seRegistro } = req.body;
 
-    if (typeof seRegistro !== 'boolean') {
-      return res.status(400).json({ message: 'El campo attended debe ser un booleano' });
-    }
-
-    const updated = await eventService.updateAttendance(registrarId, seRegistro);
-    if (seRegistro) {
-      await logAction(req, 'ASISTENCIA_EVENTO', `Asistencia marcada para ${registrarId}`);
-    } else {
-      await logAction(req, 'CANCELACION_EVENTO', `Asistencia desmarcada para ${registrarId}`);
-    }
-    res.status(200).json(updated);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
+  if (typeof seRegistro !== 'boolean') {
+    throw new AppError('El campo seRegistro debe ser un booleano', 400);
   }
-};
+
+  const updated = await eventService.updateAttendance(registrarId, seRegistro);
+
+  await logAction(
+    req,
+    seRegistro ? 'ASISTENCIA_EVENTO' : 'CANCELACION_EVENTO',
+    seRegistro
+      ? `Asistencia marcada para ${registrarId}`
+      : `Asistencia desmarcada para ${registrarId}`,
+  );
+
+  res.status(200).json(updated);
+});

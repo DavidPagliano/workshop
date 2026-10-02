@@ -187,9 +187,10 @@ El entry point sigue un orden intencional:
 1. **Imports y configuración** — Carga dotenv, config centralizado y conexión a DB.
 2. **Whitelist de CORS** — `buildWhitelist()` genera variantes http/https de las URLs del frontend para cubrir ambos protocolos automáticamente.
 3. **Middlewares globales** (en orden):
-   - `rateLimit` — Protección anti-DDoS global (200 req / 15 min por IP).
+   - `rateLimit` — Protección anti-DDoS global, por defecto 10000 req / 15 min, agrupado por token de usuario y, sin token, por IP (configurable con `RL_GLOBAL_*`), para no saturar el sistema sin bloquear entre sí a usuarios que comparten red.
    - `cors` — Solo acepta peticiones del frontend (whitelist). En dev permite peticiones sin Origin para facilitar pruebas con cURL/Postman.
    - `helmet` — Añade headers de seguridad HTTP.
+   - `compression` — Comprime las respuestas (gzip) para reducir el ancho de banda.
    - `express.json({ limit: '500kb' })` — Parsea JSON con límite para evitar payloads enormes (fotos base64).
 4. **Enrutamiento modular** — Cada prefijo delega a su archivo de rutas.
 5. **Documentación dinámica** — `GET /` devuelve documentación de la API solo en desarrollo; en producción retorna solo el status.

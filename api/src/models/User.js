@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema(
       default: 'staff_registracion',
     },
     activo: { type: Boolean, default: true },
+    // Se incrementa al resetear la contraseña para invalidar los JWT ya emitidos.
+    tokenVersion: { type: Number, default: 0 },
   },
   {
     timestamps: { createdAt: 'creado', updatedAt: 'actualizado' },
@@ -28,5 +30,13 @@ userSchema.pre('save', async function () {
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
+
+// Nunca serializar el hash de la contraseña.
+userSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model('User', userSchema);
