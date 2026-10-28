@@ -1,5 +1,16 @@
 import { useMemo } from "react";
-import { Box, Button, Card, CardContent, Container, Fade, LinearProgress, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Fade,
+  LinearProgress,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { PreCycleRegistrationForm } from "../../components/inscripcion-tsm/PreCycleRegistrationForm";
@@ -50,7 +61,13 @@ const CornerDots = ({ size = 8, offset = -5, color = "#00B4FF" }) => {
   return positions.map((position, index) => (
     <Box
       key={index}
-      sx={{ position: "absolute", width: size, height: size, bgcolor: color, ...position }}
+      sx={{
+        position: "absolute",
+        width: size,
+        height: size,
+        bgcolor: color,
+        ...position,
+      }}
     />
   ));
 };
@@ -71,7 +88,13 @@ const PreCyclePublicRegistrationPage = () => {
   } = usePreCyclePublicRegistration();
 
   const requiredFields = [
-    "nombre", "apellido", "dni", "edad", "telefono", "email", "fechaNacimiento",
+    "nombre",
+    "apellido",
+    "dni",
+    "edad",
+    "telefono",
+    "email",
+    "fechaNacimiento",
   ];
 
   const progress = useMemo(() => {
@@ -79,7 +102,7 @@ const PreCyclePublicRegistrationPage = () => {
       (field) => String(formData[field] || "").trim() && !errors[field],
     ).length;
     return Math.round((completed / requiredFields.length) * 100);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errors, formData]);
 
   return (
@@ -98,7 +121,10 @@ const PreCyclePublicRegistrationPage = () => {
         px: { xs: 1, sm: 2 },
       }}
     >
-      <Container maxWidth="sm" sx={{ position: "relative", zIndex: 2, px: { xs: 0.5, sm: 2 } }}>
+      <Container
+        maxWidth="sm"
+        sx={{ position: "relative", zIndex: 2, px: { xs: 0.5, sm: 2 } }}
+      >
         <Box sx={{ mb: { xs: 2, sm: 2.5 } }}>
           <Button
             variant="contained"
@@ -131,7 +157,10 @@ const PreCyclePublicRegistrationPage = () => {
             sx={{
               bgcolor: "#03083B",
               border: "2px solid #00B4FF",
-              boxShadow: { xs: "4px 4px 0px #D500BA", sm: "6px 6px 0px #D500BA" },
+              boxShadow: {
+                xs: "4px 4px 0px #D500BA",
+                sm: "6px 6px 0px #D500BA",
+              },
               borderRadius: 0,
               position: "relative",
               overflow: "hidden",
@@ -139,7 +168,13 @@ const PreCyclePublicRegistrationPage = () => {
           >
             <CornerDots />
             <FloatingBookBackground />
-            <CardContent sx={{ p: { xs: 2, sm: 3.5, md: 4.5 }, position: "relative", zIndex: 2 }}>
+            <CardContent
+              sx={{
+                p: { xs: 2, sm: 3.5, md: 4.5 },
+                position: "relative",
+                zIndex: 2,
+              }}
+            >
               {registration ? (
                 <PreCycleRegistrationSuccess
                   registration={registration}
@@ -148,23 +183,91 @@ const PreCyclePublicRegistrationPage = () => {
               ) : (
                 <Box>
                   <Box sx={{ mb: { xs: 2.5, sm: 3 } }}>
-                    <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1 }}>
-                      <Typography sx={{ fontFamily: theme.typography.button.fontFamily, fontSize: { xs: "0.55rem", sm: "0.68rem" }, color: "#00B4FF", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.5}
+                      sx={{ mb: 1 }}
+                    >
+                      <Typography
+                        sx={{
+                          fontFamily: theme.typography.button.fontFamily,
+                          fontSize: { xs: "0.55rem", sm: "0.68rem" },
+                          color: "#00B4FF",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
                         Progreso de inscripción
                       </Typography>
-                      <Typography sx={{ fontFamily: theme.typography.fontFamily, fontSize: { xs: "0.75rem", sm: "0.85rem" }, color: "#D500BA", fontWeight: 800, lineHeight: 1 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: theme.typography.fontFamily,
+                          fontSize: { xs: "0.75rem", sm: "0.85rem" },
+                          color: "#D500BA",
+                          fontWeight: 800,
+                          lineHeight: 1,
+                        }}
+                      >
                         {progress}%
                       </Typography>
                     </Stack>
-                    <LinearProgress variant="determinate" value={progress} sx={{ height: 10, borderRadius: 0, backgroundColor: "rgba(3, 8, 59, 0.6)", border: "1px solid #00B4FF", "& .MuiLinearProgress-bar": { background: "linear-gradient(90deg, #00B4FF 0%, #D500BA 100%)", transition: "transform 0.4s ease" } }} />
+                    <LinearProgress
+                      variant="determinate"
+                      value={progress}
+                      sx={{
+                        height: 10,
+                        borderRadius: 0,
+                        backgroundColor: "rgba(3, 8, 59, 0.6)",
+                        border: "1px solid #00B4FF",
+                        "& .MuiLinearProgress-bar": {
+                          background:
+                            "linear-gradient(90deg, #00B4FF 0%, #D500BA 100%)",
+                          transition: "transform 0.4s ease",
+                        },
+                      }}
+                    />
                   </Box>
-                  <Typography component="h1" align="left" sx={{ color: "#00B4FF", fontFamily: theme.typography.fontFamily, fontSize: { xs: "1.5rem", sm: "2.1rem", md: "2.45rem" }, fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.025em", mb: 1.2, wordBreak: "break-word" }}>
-                    Pre-inscripción Ciclo Electivo
+                  <Typography
+                    component="h1"
+                    align="left"
+                    sx={{
+                      color: "#00B4FF",
+                      fontFamily: theme.typography.fontFamily,
+                      fontSize: { xs: "1.5rem", sm: "2.1rem", md: "2.45rem" },
+                      fontWeight: 800,
+                      lineHeight: 1.1,
+                      letterSpacing: "-0.025em",
+                      mb: 1.2,
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    Pre-inscripción Ciclo lectivo
                   </Typography>
-                  <Typography align="left" sx={{ color: "#FFFFFF", opacity: 0.9, fontFamily: theme.typography.fontFamily, fontSize: { xs: "0.75rem", sm: "0.85rem" }, lineHeight: 1.5, maxWidth: 520, mb: { xs: 2.5, sm: 3.5 } }}>
-                    Completá tus datos para pre-inscribirte al Ciclo Electivo 2027 de TSM.
+                  <Typography
+                    align="left"
+                    sx={{
+                      color: "#FFFFFF",
+                      opacity: 0.9,
+                      fontFamily: theme.typography.fontFamily,
+                      fontSize: { xs: "0.75rem", sm: "0.85rem" },
+                      lineHeight: 1.5,
+                      maxWidth: 520,
+                      mb: { xs: 2.5, sm: 3.5 },
+                    }}
+                  >
+                    Completá tus datos para pre-inscribirte al Ciclo lectivo
+                    2027 de TSM.
                   </Typography>
-                  <PreCycleRegistrationForm formData={formData} error={error} errors={errors} loading={loading} handleChange={handleChange} handleBlur={handleBlur} onSubmit={submitRegistration} />
+                  <PreCycleRegistrationForm
+                    formData={formData}
+                    error={error}
+                    errors={errors}
+                    loading={loading}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    onSubmit={submitRegistration}
+                  />
                 </Box>
               )}
             </CardContent>

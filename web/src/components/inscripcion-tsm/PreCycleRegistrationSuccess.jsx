@@ -46,7 +46,15 @@ const TicketRow = ({ icon, label, value }) => {
         "&:hover": { bgcolor: "rgba(0, 180, 255, 0.04)" },
       }}
     >
-      <Box sx={{ color: "primary.main", display: "flex", fontSize: 18, mt: "2px", flexShrink: 0 }}>
+      <Box
+        sx={{
+          color: "primary.main",
+          display: "flex",
+          fontSize: 18,
+          mt: "2px",
+          flexShrink: 0,
+        }}
+      >
         {icon}
       </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -149,7 +157,7 @@ const PreCycleRegistrationSuccess = ({ registration }) => {
           mb: 4,
         }}
       >
-        Tu pre-inscripción al Ciclo Electivo 2027 fue registrada correctamente.
+        Tu pre-inscripción al Ciclo Lectivo 2027 fue registrada correctamente.
         Nos pondremos en contacto con vos pronto.
       </Typography>
 
@@ -188,7 +196,7 @@ const PreCycleRegistrationSuccess = ({ registration }) => {
                 color: "#fff",
               }}
             >
-              CICLO ELECTIVO{" "}
+              CICLO LECTIVO{" "}
               <Box component="span" sx={{ color: "primary.main" }}>
                 2027
               </Box>
@@ -271,7 +279,10 @@ const PreCycleRegistrationSuccess = ({ registration }) => {
           <TicketRow
             icon={<SchoolIcon fontSize="small" />}
             label="Título secundario"
-            value={TITULO_LABELS[registration.tituloSecundario] || registration.tituloSecundario}
+            value={
+              TITULO_LABELS[registration.tituloSecundario] ||
+              registration.tituloSecundario
+            }
           />
           {registration.concurreAlgunaIglesias && registration.cual && (
             <TicketRow
