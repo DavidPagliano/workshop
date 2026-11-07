@@ -15,6 +15,8 @@ const EstadisticasPage = lazy(() => import("./pages/estadisticas/estadisticasPag
 const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
 const EventRegistrationPage = lazy(() => import("./pages/inscripcion-w/EventRegistrationPage"));
 const PreCyclePublicRegistrationPage = lazy(() => import("./pages/inscripcion-tsm/PreCyclePublicRegistrationPage"));
+const TsmWelcomePage = lazy(() => import("./pages/inscripcion-tsm/TsmWelcomePage"));
+const InscriptionPage = lazy(() => import("./pages/inscripcion-tsm/InscriptionPage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 
@@ -41,6 +43,8 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/inscripcion" element={<EventRegistrationPage />} />
         <Route path="/pre-inscripcion" element={<PreCyclePublicRegistrationPage />} />
+        <Route path="/tsm" element={<TsmWelcomePage />} />
+        <Route path="/inscripcion-tsm" element={<InscriptionPage />} />
         <Route
           path="/registro"
           element={

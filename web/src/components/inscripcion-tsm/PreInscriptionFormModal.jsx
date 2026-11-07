@@ -516,6 +516,7 @@ export const PreinscriptionFormModal = ({
                 value={formData.foto}
                 onChange={(foto) => setFormData((prev) => ({ ...prev, foto }))}
                 disabled={loading}
+                allowUpload
               />
             </Grid>
 

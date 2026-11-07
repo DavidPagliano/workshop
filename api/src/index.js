@@ -9,6 +9,7 @@ const cycle = require('./routes/preCycle.route');
 const event = require('./routes/event.route');
 const auth = require('./routes/auth.route');
 const audit = require('./routes/audit.route');
+const inscription = require('./routes/inscription.route.js');
 const connectDB = require('./config/db');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 const AppError = require('./utils/AppError');
@@ -73,6 +74,7 @@ app.use('/workshop/auth', auth);
 app.use('/workshop/cycle', cycle);
 app.use('/workshop/event', event);
 app.use('/workshop/audit', audit);
+app.use('/tsm2027/inscription', inscription);
 
 app.get('/', (req, res) => {
   // Solo exponer documentación detallada en desarrollo

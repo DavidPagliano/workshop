@@ -105,7 +105,119 @@ let theme = createTheme({
     },
   },
 });
-
+export const institutionalTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#002E73', // Azul Marino Oscuro (de la base del logo)
+      light: '#1E468A',
+      dark: '#001A47',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: '#0073F7', // Azul Eléctrico (del cuadrante superior izquierdo)
+      light: '#338FF8',
+      dark: '#0053B5',
+      contrastText: '#ffffff',
+    },
+    info: {
+      main: '#00CEFC', // Celeste/Cian (del cuadrante superior derecho)
+    },
+    background: {
+      default: '#F5F7FA', // Fondo claro, suave y limpio para la interfaz
+      paper: '#ffffff',   // Blanco para la tarjeta del formulario
+    },
+    text: {
+      primary: '#0D1E36', // Azul muy oscuro para excelente legibilidad
+      secondary: '#4A5B73', // Gris azulado para etiquetas y textos secundarios
+    },
+  },
+  typography: {
+    // Tipografía profesional y educativa: Montserrat para títulos, Inter para el cuerpo
+    fontFamily: '"Inter", "Montserrat", "Helvetica", "Arial", sans-serif',
+    h3: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 700,
+      color: '#002E73',
+    },
+    h4: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 700,
+      color: '#002E73',
+      letterSpacing: '-0.02em',
+    },
+    h6: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 600,
+      color: '#002E73',
+    },
+    subtitle1: {
+      fontWeight: 500,
+      color: '#4A5B73',
+    },
+    body1: {
+      fontSize: '0.95rem',
+      lineHeight: 1.6,
+    },
+    button: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      textTransform: 'none', // Estilo más natural y profesional
+      fontWeight: 600,
+    },
+  },
+  shape: {
+    // Bordes más redondeados que acompañan las formas suaves del logo
+    borderRadius: 12, 
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#F5F7FA',
+          backgroundImage: 'none',
+          cursor: 'auto', // Resetea cualquier puntero personalizado
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          padding: '10px 24px',
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: '0px 4px 12px rgba(0, 115, 247, 0.15)', // Sombra sutil con el secundario
+          },
+        },
+      },
+      defaultProps: {
+        disableElevation: true,
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: 'outlined',
+        size: 'medium',
+      },
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 8, // Bordes algo más suaves para el formulario
+            backgroundColor: '#ffffff',
+          },
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+          boxShadow: '0px 8px 32px rgba(0, 46, 115, 0.04)', // Sombra muy sutil usando el color base oscuro
+          border: '1px solid rgba(0, 46, 115, 0.08)',
+        },
+      },
+    },
+  },
+})
 theme = responsiveFontSizes(theme);
 
 export default theme;
