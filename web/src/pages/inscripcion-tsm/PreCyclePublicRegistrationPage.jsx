@@ -128,7 +128,7 @@ const PreCyclePublicRegistrationPage = () => {
         <Box sx={{ mb: { xs: 2, sm: 2.5 } }}>
           <Button
             variant="contained"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/workshop")}
             sx={{
               backgroundColor: "#03083B",
               border: "2px solid #00B4FF",

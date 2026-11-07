@@ -20,8 +20,8 @@ api.interceptors.response.use(
       delete api.defaults.headers.common['Authorization'];
 
       // Redirigir al login si no estamos ya ahí
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      if (window.location.pathname !== '/workshop/login') {
+        window.location.href = '/workshop/login';
       }
     }
     return Promise.reject(error);

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { CircularProgress, Box, Typography } from "@mui/material";
 
 import PrivateLayout from "./components/layout/PrivateLayout";
@@ -8,13 +8,20 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 // Carga bajo demanda solo cuando se navega a la sección
+const HomeWorshop = lazy(() => import("./pages/HomeWorshop"));
 const AsistenciaPage = lazy(() => import("./pages/registracion/registrationPage"));
 const DashboardHome = lazy(() => import("./pages/dashboard/DashboardHome"));
-const CyclePreinscriptionPage = lazy(() => import("./pages/inscripcion-tsm/CyclePreinscriptionPage").then(m => ({ default: m.CyclePreinscriptionPage })));
+const CyclePreinscriptionPage = lazy(() =>
+  import("./pages/inscripcion-tsm/CyclePreinscriptionPage").then((m) => ({
+    default: m.CyclePreinscriptionPage,
+  }))
+);
 const EstadisticasPage = lazy(() => import("./pages/estadisticas/estadisticasPage"));
 const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
 const EventRegistrationPage = lazy(() => import("./pages/inscripcion-w/EventRegistrationPage"));
-const PreCyclePublicRegistrationPage = lazy(() => import("./pages/inscripcion-tsm/PreCyclePublicRegistrationPage"));
+const PreCyclePublicRegistrationPage = lazy(() =>
+  import("./pages/inscripcion-tsm/PreCyclePublicRegistrationPage")
+);
 const TsmWelcomePage = lazy(() => import("./pages/inscripcion-tsm/TsmWelcomePage"));
 const InscriptionPage = lazy(() => import("./pages/inscripcion-tsm/InscriptionPage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
@@ -39,77 +46,90 @@ const App = () => {
       }
     >
       <Routes>
-        {/* ── Rutas Públicas ── */}
+        {/* ── Landing e Inscripción TSM 2027 ── */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/inscripcion" element={<EventRegistrationPage />} />
-        <Route path="/pre-inscripcion" element={<PreCyclePublicRegistrationPage />} />
         <Route path="/tsm" element={<TsmWelcomePage />} />
         <Route path="/inscripcion-tsm" element={<InscriptionPage />} />
-        <Route
-          path="/registro"
-          element={
-            <ProtectedRoute
-              allowedRoles={["admin", "director", "staff_registracion"]}
-            />
-          }
-        >
-          <Route index element={<AsistenciaPage />} />
-        </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/registro-usuario" element={<RegisterPage />} />
 
-        {/* ── Rutas Protegidas (RBAC) ── */}
-        <Route
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "admin",
-                "director",
-                "staff_registracion",
-                "staff_bedele",
-              ]}
-            />
-          }
-        >
-          <Route path="/dashboard" element={<PrivateLayout />}>
-            {/* Dashboard General: Acceso a todos los roles */}
-            <Route index element={<DashboardHome />} />
+        {/* ── Rutas del Workshop (/workshop/*) ── */}
+        <Route path="/workshop">
+          <Route index element={<HomeWorshop />} />
+          <Route path="inscripcion" element={<EventRegistrationPage />} />
+          <Route path="pre-inscripcion" element={<PreCyclePublicRegistrationPage />} />
+          <Route
+            path="registro"
+            element={
+              <ProtectedRoute
+                allowedRoles={["admin", "director", "staff_registracion"]}
+              />
+            }
+          >
+            <Route index element={<AsistenciaPage />} />
+          </Route>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="registro-usuario" element={<RegisterPage />} />
 
-            {/* Pre-inscripción: admin, director y staff_bedele */}
-            <Route
-              element={
-                <ProtectedRoute
-                  allowedRoles={["admin", "director", "staff_bedele"]}
-                />
-              }
-            >
-              <Route path="pre-ciclo" element={<CyclePreinscriptionPage />} />
-            </Route>
+          {/* ── Rutas Protegidas del Workshop (RBAC) ── */}
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={[
+                  "admin",
+                  "director",
+                  "staff_registracion",
+                  "staff_bedele",
+                ]}
+              />
+            }
+          >
+            <Route path="dashboard" element={<PrivateLayout />}>
+              {/* Dashboard General: Acceso a todos los roles */}
+              <Route index element={<DashboardHome />} />
 
-            {/* Asistencia: admin, director y staff_registracion */}
-            <Route
-              element={
-                <ProtectedRoute
-                  allowedRoles={["admin", "director", "staff_registracion"]}
-                />
-              }
-            >
-              <Route path="asistencia" element={<AsistenciaPage />} />
-            </Route>
+              {/* Pre-inscripción: admin, director y staff_bedele */}
+              <Route
+                element={
+                  <ProtectedRoute
+                    allowedRoles={["admin", "director", "staff_bedele"]}
+                  />
+                }
+              >
+                <Route path="pre-ciclo" element={<CyclePreinscriptionPage />} />
+              </Route>
 
-            {/* Estadísticas: admin y director */}
-            <Route
-              element={<ProtectedRoute allowedRoles={["admin", "director"]} />}
-            >
-              <Route path="estadisticas" element={<EstadisticasPage />} />
-            </Route>
+              {/* Asistencia: admin, director y staff_registracion */}
+              <Route
+                element={
+                  <ProtectedRoute
+                    allowedRoles={["admin", "director", "staff_registracion"]}
+                  />
+                }
+              >
+                <Route path="asistencia" element={<AsistenciaPage />} />
+              </Route>
 
-            {/* Panel Admin: Solo admin */}
-            <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-              <Route path="admin" element={<AdminPage />} />
+              {/* Estadísticas: admin y director */}
+              <Route
+                element={<ProtectedRoute allowedRoles={["admin", "director"]} />}
+              >
+                <Route path="estadisticas" element={<EstadisticasPage />} />
+              </Route>
+
+              {/* Panel Admin: Solo admin */}
+              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                <Route path="admin" element={<AdminPage />} />
+              </Route>
             </Route>
           </Route>
         </Route>
+
+        {/* Redirecciones de compatibilidad para rutas previas del workshop */}
+        <Route path="/inscripcion" element={<Navigate to="/workshop/inscripcion" replace />} />
+        <Route path="/pre-inscripcion" element={<Navigate to="/workshop/pre-inscripcion" replace />} />
+        <Route path="/registro" element={<Navigate to="/workshop/registro" replace />} />
+        <Route path="/login" element={<Navigate to="/workshop/login" replace />} />
+        <Route path="/registro-usuario" element={<Navigate to="/workshop/registro-usuario" replace />} />
+        <Route path="/dashboard/*" element={<Navigate to="/workshop/dashboard" replace />} />
 
         {/* 404 */}
         <Route

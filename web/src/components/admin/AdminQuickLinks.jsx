@@ -5,9 +5,9 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import { useNavigate } from "react-router-dom";
 
 const links = [
-  { label: "Pre-inscripciones", description: "Consultar y editar aspirantes del ciclo 2027.", path: "/dashboard/pre-ciclo", icon: <AssignmentIcon /> },
-  { label: "Asistencia", description: "Buscar inscriptos y actualizar acreditaciones.", path: "/dashboard/asistencia", icon: <HowToRegIcon /> },
-  { label: "Estadísticas", description: "Revisar métricas y exportar reportes.", path: "/dashboard/estadisticas", icon: <BarChartIcon /> },
+  { label: "Pre-inscripciones", description: "Consultar y editar aspirantes del ciclo 2027.", path: "/workshop/dashboard/pre-ciclo", icon: <AssignmentIcon /> },
+  { label: "Asistencia", description: "Buscar inscriptos y actualizar acreditaciones.", path: "/workshop/dashboard/asistencia", icon: <HowToRegIcon /> },
+  { label: "Estadísticas", description: "Revisar métricas y exportar reportes.", path: "/workshop/dashboard/estadisticas", icon: <BarChartIcon /> },
 ];
 
 export const AdminQuickLinks = () => {

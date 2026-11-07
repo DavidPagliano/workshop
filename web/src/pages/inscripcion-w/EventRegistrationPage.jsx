@@ -98,7 +98,7 @@ const EventRegistrationPage = () => {
         <Box sx={{ mb: { xs: 2.5, sm: 3 } }}>
           <Button
             variant="contained"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/workshop")}
             sx={{
               backgroundColor: "#03083B",
               border: "2px solid #00B4FF",

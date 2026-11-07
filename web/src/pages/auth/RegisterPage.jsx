@@ -28,7 +28,7 @@ const RegisterPage = () => {
         texto:
           "Solicitud enviada correctamente. El administrador debe activar tu cuenta.",
       });
-      setTimeout(() => navigate("/login"), 2500);
+      setTimeout(() => navigate("/workshop/login"), 2500);
     } catch (err) {
       const errorData = err.response?.data;
       const errorMsg =
@@ -133,7 +133,7 @@ const RegisterPage = () => {
           </Button>
           <Button
             variant="text"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/workshop/login")}
             sx={{ color: "text.secondary", fontSize: "0.8rem" }}
           >
             Ya tengo cuenta (Iniciar Sesión)

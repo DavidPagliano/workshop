@@ -30,31 +30,31 @@ import { useAuth } from "../../context/AuthContext";
 const rawNavItems = [
   {
     label: "Inicio",
-    path: "/dashboard",
+    path: "/workshop/dashboard",
     icon: <HomeIcon />,
     roles: ["admin", "director", "staff_registracion", "staff_bedele"],
   },
   {
     label: "Pre-inscripción",
-    path: "/dashboard/pre-ciclo",
+    path: "/workshop/dashboard/pre-ciclo",
     icon: <AssignmentIcon />,
     roles: ["admin", "director", "staff_bedele"],
   },
   {
     label: "Asistencia",
-    path: "/dashboard/asistencia",
+    path: "/workshop/dashboard/asistencia",
     icon: <HowToRegIcon />,
     roles: ["admin", "director", "staff_registracion"],
   },
   {
     label: "Estadísticas",
-    path: "/dashboard/estadisticas",
+    path: "/workshop/dashboard/estadisticas",
     icon: <BarChartIcon />,
     roles: ["admin", "director"],
   },
   {
     label: "Admin",
-    path: "/dashboard/admin",
+    path: "/workshop/dashboard/admin",
     icon: <AdminPanelSettingsIcon />,
     roles: ["admin"],
   },
@@ -73,13 +73,13 @@ const PrivateLayout = () => {
   );
 
   const isActive = (path) => {
-    if (path === "/dashboard") return location.pathname === "/dashboard";
+    if (path === "/workshop/dashboard") return location.pathname === "/workshop/dashboard";
     return location.pathname.startsWith(path);
   };
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/workshop/login");
   };
 
   return (
@@ -103,7 +103,7 @@ const PrivateLayout = () => {
               gap: 1.5,
               cursor: "pointer",
             }}
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/workshop/dashboard")}
           >
             <Typography
               variant="h6"

@@ -24,7 +24,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(form.username, form.password);
-      navigate("/dashboard", { replace: true });
+      navigate("/workshop/dashboard", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Credenciales inválidas");
     } finally {
@@ -109,7 +109,7 @@ const LoginPage = () => {
           </Button>
           <Button
             variant="text"
-            onClick={() => navigate("/registro-usuario")}
+            onClick={() => navigate("/workshop/registro-usuario")}
             sx={{ color: "text.secondary", fontSize: "0.8rem" }}
           >
             Solicitar cuenta de operador
