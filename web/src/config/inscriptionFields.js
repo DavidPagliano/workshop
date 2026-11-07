@@ -128,6 +128,7 @@ export const INSCRIPTION_STEPS = [
   { key: "foto", label: "Foto", sections: [] },
   { key: "personal", label: "Datos principales", sections: PERSONAL_SECTIONS },
   { key: "medica", label: "Ficha médica", sections: MEDICAL_SECTIONS },
+  { key: "revision", label: "Revisión", sections: [] },
 ];
 
 export const ALL_FIELDS = INSCRIPTION_STEPS.flatMap((step) =>

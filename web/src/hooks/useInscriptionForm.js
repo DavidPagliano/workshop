@@ -151,6 +151,16 @@ const formatServerError = (requestError) => {
   return details.length ? `${base} (${details.join(" · ")})` : base;
 };
 
+// Mapeo para replicar los datos de Contacto de emergencia en Familia de referencia
+const EMERGENCIA_TO_FAMILIA_MAP = {
+  "emergencia.NombreYApellido": "fichaMedica.familiaDeReferencia.nombreYApellido",
+  "emergencia.Parentesco": "fichaMedica.familiaDeReferencia.parentesco",
+  "emergencia.Telefono": "fichaMedica.familiaDeReferencia.telefono",
+  "emergencia.Domicilio": "fichaMedica.familiaDeReferencia.domicilio",
+  "emergencia.Localidad": "fichaMedica.familiaDeReferencia.localidad",
+  provincia: "fichaMedica.familiaDeReferencia.provincia",
+};
+
 export const useInscriptionForm = () => {
   const [formData, setFormData] = useState(buildInitialForm);
   const [activeStep, setActiveStep] = useState(0);
@@ -165,7 +175,17 @@ export const useInscriptionForm = () => {
     const { name, value, type, checked } = event.target;
     const field = FIELD_MAP[name];
     const newValue = type === "checkbox" ? checked : sanitize(field, value);
-    const updated = setIn(formData, name, newValue);
+    let updated = setIn(formData, name, newValue);
+
+    // Replicar automáticamente Contacto de emergencia (y provincia) en Familia de referencia
+    const linkedPath = EMERGENCIA_TO_FAMILIA_MAP[name];
+    if (linkedPath) {
+      const prevSourceValue = getIn(formData, name) ?? "";
+      const currentTargetValue = getIn(formData, linkedPath) ?? "";
+      if (!currentTargetValue || currentTargetValue === prevSourceValue) {
+        updated = setIn(updated, linkedPath, newValue);
+      }
+    }
 
     setFormData(updated);
     setError("");

@@ -117,7 +117,7 @@ const InscriptionPage = () => {
                       variant="subtitle1"
                       sx={{ mb: { xs: 2.5, sm: 3.5 } }}
                     >
-                      Completá los tres pasos: tu foto, tus datos principales y la ficha médica.
+                      Completá los pasos: tu foto, tus datos principales, la ficha médica y la revisión final.
                     </Typography>
 
                     <InscriptionForm {...inscription} />

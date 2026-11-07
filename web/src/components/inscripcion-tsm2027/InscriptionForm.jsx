@@ -3,9 +3,11 @@ import { InscriptionStepper } from "./InscriptionStepper";
 import { InscriptionPhotoStep } from "./InscriptionPhotoStep";
 import { InscriptionPersonalStep } from "./InscriptionPersonalStep";
 import { InscriptionMedicalStep } from "./InscriptionMedicalStep";
+import { InscriptionReviewStep } from "./InscriptionReviewStep";
 
 /**
- * Formulario de inscripción por pasos: Foto → Datos principales → Ficha médica.
+ * Formulario de inscripción por pasos:
+ * 1. Foto → 2. Datos principales → 3. Ficha médica → 4. Revisión.
  * Recibe todo el estado desde useInscriptionForm y hereda institutionalTheme.
  */
 export const InscriptionForm = ({
@@ -41,8 +43,11 @@ export const InscriptionForm = ({
       )}
       {activeStep === 1 && <InscriptionPersonalStep {...sectionProps} />}
       {activeStep === 2 && <InscriptionMedicalStep {...sectionProps} />}
+      {activeStep === 3 && (
+        <InscriptionReviewStep formData={formData} getValue={getValue} onEditStep={goToStep} />
+      )}
 
-      {activeStep > 0 && (
+      {(activeStep === 1 || activeStep === 2) && (
         <Typography
           variant="caption"
           display="block"
