@@ -48,15 +48,16 @@ const TsmWelcomePage = () => {
         sx={{
           minHeight: "100vh",
           width: "100%",
+          boxSizing: "border-box",
           bgcolor: "background.default",
           color: "text.primary",
           display: "flex",
           alignItems: "center",
           py: { xs: 4, sm: 6, md: 8 },
-          px: { xs: 1.5, sm: 2 },
+          px: { xs: 2, sm: 3 },
         }}
       >
-        <Container maxWidth="md">
+        <Container maxWidth="md" disableGutters>
           <Fade in timeout={500}>
             <Card>
               <CardContent sx={{ p: { xs: 3, sm: 5, md: 6 } }}>

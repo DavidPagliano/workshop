@@ -28,20 +28,23 @@ const InscriptionPage = () => {
         sx={{
           minHeight: "100vh",
           width: "100%",
+          boxSizing: "border-box",
           bgcolor: "background.default",
           color: "text.primary",
-          pt: { xs: 2, sm: 3.5, md: 5 },
+          pt: { xs: 2.5, sm: 3.5, md: 5 },
           pb: { xs: 5, sm: 7, md: 8 },
-          px: { xs: 1, sm: 2 },
+          px: { xs: 2, sm: 3 },
         }}
       >
-        <Container maxWidth="md" sx={{ px: { xs: 0.5, sm: 2 } }}>
+        <Container maxWidth="md" disableGutters>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               width: "100%",
+              boxSizing: "border-box",
+              px: { xs: 1, sm: 0.5 },
               mb: { xs: 2, sm: 3 },
             }}
           >
