@@ -5,7 +5,7 @@ const PreCycleRegistration = require('../models/preCycleRegistration');
 const User = require('../models/User');
 const Audit = require('../models/Audit');
 const Counter = require('../models/Counter');
-const Inscription = require('../models/inscription');
+const Inscription = require('../models/Inscription');
 
 const connectDB = async () => {
   try {

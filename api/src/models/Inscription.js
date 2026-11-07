@@ -75,4 +75,4 @@ const inscriptionSchema = new mongoose.Schema(
 
 inscriptionSchema.index({ creado: -1 });
 
-module.exports = mongoose.model('Inscription', inscriptionSchema);
+module.exports = mongoose.models.Inscription || mongoose.model('Inscription', inscriptionSchema);
