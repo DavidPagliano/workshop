@@ -4,24 +4,19 @@ const AppError = require('../utils/AppError');
 
 // Genera el próximo registrarId secuencial (W-001, W-002, ...)
 const generateRegistrarId = async () => {
-  // Si el contador no existe aún, inicializarlo con el máximo actual de la colección
-  const existing = await Counter.findById('event_seq');
-  if (!existing) {
-    // Se ordena por fecha de creación (no por registrarId, cuyo orden
-    // lexicográfico se rompería pasando W-999) para tomar el mayor secuencial.
-    const lastDoc = await EventRegistration.findOne()
-      .sort({ creado: -1 })
-      .select('registrarId')
-      .lean();
-    const currentMax = lastDoc?.registrarId
-      ? parseInt(lastDoc.registrarId.split('-').pop(), 10) || 0
-      : 0;
-    await Counter.findByIdAndUpdate(
-      'event_seq',
-      { $setOnInsert: { seq: currentMax } },
-      { upsert: true }
-    );
-  }
+  const lastDoc = await EventRegistration.findOne()
+    .sort({ creado: -1 })
+    .select('registrarId')
+    .lean();
+  const currentMax = lastDoc?.registrarId
+    ? parseInt(lastDoc.registrarId.split('-').pop(), 10) || 0
+    : 0;
+
+  await Counter.findByIdAndUpdate(
+    'event_seq',
+    { $set: { seq: currentMax } },
+    { upsert: true }
+  );
 
   const counter = await Counter.findByIdAndUpdate(
     'event_seq',
@@ -32,10 +27,7 @@ const generateRegistrarId = async () => {
 };
 
 exports.registerParticipant = async (data) => {
-  // Generar registrarId en el servidor
-  data.registrarId = await generateRegistrarId();
-
-  // Validación de negocio: Verificar si el DNI ya está registrado
+  // Validación de negocio: Verificar si el DNI ya está registrado antes de tocar el contador
   const existingUser = await EventRegistration.findOne({ dni: data.dni });
 
   if (existingUser) {
@@ -43,7 +35,18 @@ exports.registerParticipant = async (data) => {
   }
 
   const newRegistration = new EventRegistration(data);
-  return await newRegistration.save();
+  await newRegistration.validate(
+    Object.keys(EventRegistration.schema.paths).filter((path) => path !== 'registrarId')
+  );
+
+  newRegistration.registrarId = await generateRegistrarId();
+
+  try {
+    return await newRegistration.save();
+  } catch (error) {
+    await Counter.findByIdAndUpdate('event_seq', { $inc: { seq: -1 } });
+    throw error;
+  }
 };
 
 exports.getAllParticipants = async (filters = {}) => {
@@ -93,4 +96,3 @@ exports.updateAttendance = async (registrarId, seRegistro) => {
 
   return updatedRegistration;
 };
-

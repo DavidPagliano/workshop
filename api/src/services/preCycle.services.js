@@ -4,24 +4,19 @@ const AppError = require('../utils/AppError');
 
 // Genera el próximo registrarId secuencial (pcr-001, pcr-002, ...)
 const generateRegistrarId = async () => {
-  // Si el contador no existe aún, inicializarlo con el máximo actual de la colección
-  const existing = await Counter.findById('cycle_seq');
-  if (!existing) {
-    // Se ordena por fecha de creación (no por registrarId, cuyo orden
-    // lexicográfico se rompería pasando pcr-999) para tomar el mayor secuencial.
-    const lastDoc = await coPreCycleRegistration.findOne()
-      .sort({ creado: -1 })
-      .select('registrarId')
-      .lean();
-    const currentMax = lastDoc?.registrarId
-      ? parseInt(lastDoc.registrarId.split('-').pop(), 10) || 0
-      : 0;
-    await Counter.findByIdAndUpdate(
-      'cycle_seq',
-      { $setOnInsert: { seq: currentMax } },
-      { upsert: true }
-    );
-  }
+  const lastDoc = await coPreCycleRegistration.findOne()
+    .sort({ creado: -1 })
+    .select('registrarId')
+    .lean();
+  const currentMax = lastDoc?.registrarId
+    ? parseInt(lastDoc.registrarId.split('-').pop(), 10) || 0
+    : 0;
+
+  await Counter.findByIdAndUpdate(
+    'cycle_seq',
+    { $set: { seq: currentMax } },
+    { upsert: true }
+  );
 
   const counter = await Counter.findByIdAndUpdate(
     'cycle_seq',
@@ -32,9 +27,6 @@ const generateRegistrarId = async () => {
 };
 
 exports.registerAspirant = async (data) => {
-  // Generar registrarId en el servidor
-  data.registrarId = await generateRegistrarId();
-
   const existingAspirant = await coPreCycleRegistration.findOne({ dni: data.dni });
 
   if (existingAspirant) {
@@ -42,7 +34,18 @@ exports.registerAspirant = async (data) => {
   }
 
   const newAspirant = new coPreCycleRegistration(data);
-  return await newAspirant.save();
+  await newAspirant.validate(
+    Object.keys(coPreCycleRegistration.schema.paths).filter((path) => path !== 'registrarId')
+  );
+
+  newAspirant.registrarId = await generateRegistrarId();
+
+  try {
+    return await newAspirant.save();
+  } catch (error) {
+    await Counter.findByIdAndUpdate('cycle_seq', { $inc: { seq: -1 } });
+    throw error;
+  }
 };
 
 exports.getAllAspirants = async () => {
