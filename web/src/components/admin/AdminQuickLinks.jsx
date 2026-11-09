@@ -1,11 +1,13 @@
 import { Box, Button, Card, CardContent, Grid, Typography } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import SchoolIcon from "@mui/icons-material/School";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import { useNavigate } from "react-router-dom";
 
 const links = [
   { label: "Pre-inscripciones", description: "Consultar y editar aspirantes del ciclo 2027.", path: "/workshop/dashboard/pre-ciclo", icon: <AssignmentIcon /> },
+  { label: "Inscripciones", description: "Consultar, editar y exportar inscriptos del ciclo 2027.", path: "/workshop/dashboard/inscripciones", icon: <SchoolIcon /> },
   { label: "Asistencia", description: "Buscar inscriptos y actualizar acreditaciones.", path: "/workshop/dashboard/asistencia", icon: <HowToRegIcon /> },
   { label: "Estadísticas", description: "Revisar métricas y exportar reportes.", path: "/workshop/dashboard/estadisticas", icon: <BarChartIcon /> },
 ];

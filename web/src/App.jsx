@@ -16,6 +16,11 @@ const CyclePreinscriptionPage = lazy(() =>
     default: m.CyclePreinscriptionPage,
   }))
 );
+const CycleInscriptionPage = lazy(() =>
+  import("./pages/inscripcion-tsm/CycleInscriptionPage").then((m) => ({
+    default: m.CycleInscriptionPage,
+  }))
+);
 const EstadisticasPage = lazy(() => import("./pages/estadisticas/estadisticasPage"));
 const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
 const EventRegistrationPage = lazy(() => import("./pages/inscripcion-w/EventRegistrationPage"));
@@ -86,7 +91,7 @@ const App = () => {
               {/* Dashboard General: Acceso a todos los roles */}
               <Route index element={<DashboardHome />} />
 
-              {/* Pre-inscripción: admin, director y staff_bedele */}
+              {/* Pre-inscripción e Inscripción: admin, director y staff_bedele */}
               <Route
                 element={
                   <ProtectedRoute
@@ -95,6 +100,7 @@ const App = () => {
                 }
               >
                 <Route path="pre-ciclo" element={<CyclePreinscriptionPage />} />
+                <Route path="inscripciones" element={<CycleInscriptionPage />} />
               </Route>
 
               {/* Asistencia: admin, director y staff_registracion */}

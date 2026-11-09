@@ -39,7 +39,7 @@ exports.createInscription = async(data) => {
     // Generar inscriptionId en el servidor
     data.inscriptionId = await generateInscriptionId();
 
-    const newInscription = new inscription(data);
+    const newInscription = new Inscription(data);
     return await newInscription.save();
 }
 

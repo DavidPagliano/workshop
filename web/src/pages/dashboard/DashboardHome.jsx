@@ -10,6 +10,7 @@ import {
   Fade,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import SchoolIcon from "@mui/icons-material/School";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -20,6 +21,13 @@ const sections = [
     description: "Gestión de pre-inscripciones al Ciclo 2027. Agregar, editar y eliminar registros.",
     icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
     path: "/workshop/dashboard/pre-ciclo",
+    color: "primary.main",
+  },
+  {
+    title: "Inscripciones",
+    description: "Gestión de inscripciones y fichas médicas del Ciclo 2027. Ver, editar, eliminar y exportar.",
+    icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+    path: "/workshop/dashboard/inscripciones",
     color: "primary.main",
   },
   {

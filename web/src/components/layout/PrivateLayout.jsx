@@ -20,6 +20,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import SchoolIcon from "@mui/icons-material/School";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -38,6 +39,12 @@ const rawNavItems = [
     label: "Pre-inscripción",
     path: "/workshop/dashboard/pre-ciclo",
     icon: <AssignmentIcon />,
+    roles: ["admin", "director", "staff_bedele"],
+  },
+  {
+    label: "Inscripciones",
+    path: "/workshop/dashboard/inscripciones",
+    icon: <SchoolIcon />,
     roles: ["admin", "director", "staff_bedele"],
   },
   {
