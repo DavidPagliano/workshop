@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -12,6 +13,8 @@ import {
   Avatar,
   Chip,
   Grid,
+  Tabs,
+  Tab,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -21,6 +24,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import BadgeIcon from "@mui/icons-material/Badge";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import {
   MEDICAL_SECTIONS,
   PERSONAL_SECTIONS,
@@ -125,29 +129,38 @@ const openBase64InNewTab = (dataUrl) => {
 };
 
 /**
- * Modal de vista detallada (solo lectura) para una inscripción.
+ * Modal de vista detallada (solo lectura) para una inscripción con navegación en solapas (tabs).
  */
 export const InscriptionViewModal = ({ open, onClose, data }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleClose = (event, reason) => {
+    setActiveTab(0);
+    if (onClose) onClose(event, reason);
+  };
 
   if (!data) return null;
 
   const isPdfReceipt = Boolean(
     data.comprobantePago &&
-    data.comprobantePago.startsWith("data:application/pdf"),
+      data.comprobantePago.startsWith("data:application/pdf"),
   );
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="md"
       fullWidth
       fullScreen={isMobile}
       slots={{ transition: Fade }}
       slotProps={{
-        transition: { timeout: 300 },
+        transition: {
+          timeout: 300,
+          onEnter: () => setActiveTab(0),
+        },
         paper: {
           sx: {
             border: "1.5px solid",
@@ -201,7 +214,7 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
           )}
         </Box>
         <IconButton
-          onClick={onClose}
+          onClick={handleClose}
           size="small"
           sx={{ color: "text.secondary" }}
         >
@@ -211,225 +224,424 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
 
       <DialogContent
         sx={{
-          pt: { xs: 2, sm: 3 },
+          pt: { xs: 2, sm: 2.5 },
           px: { xs: 2, sm: 3 },
           overflowY: "auto",
           flex: 1,
           minHeight: 0,
         }}
       >
-        {/* Cabecera con Foto de perfil */}
+        {/* Cabecera del Inscripto */}
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: { xs: "column", sm: "row" },
             alignItems: "center",
-            mb: 3,
+            gap: 2,
+            mb: 2,
+            p: 2,
+            bgcolor: "rgba(0, 180, 255, 0.05)",
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 1,
           }}
         >
           <Avatar
             src={data.foto || undefined}
             alt={`Foto de ${data.nombre || "inscripto"}`}
             sx={{
-              width: { xs: 120, sm: 150 },
-              height: { xs: 120, sm: 150 },
-              border: "3px solid",
+              width: { xs: 70, sm: 76 },
+              height: { xs: 70, sm: 76 },
+              border: "2px solid",
               borderColor: "primary.main",
               bgcolor: "rgba(0, 180, 255, 0.12)",
-              boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
-              mb: 1.5,
+              boxShadow: "2px 2px 0px rgba(213, 0, 186, 0.4)",
+              flexShrink: 0,
             }}
           >
-            <PersonIcon
-              sx={{ fontSize: { xs: 58, sm: 72 }, color: "primary.main" }}
-            />
+            <PersonIcon sx={{ fontSize: 40, color: "primary.main" }} />
           </Avatar>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 700, textAlign: "center" }}
+          <Box
+            sx={{
+              textAlign: { xs: "center", sm: "left" },
+              minWidth: 0,
+              flex: 1,
+            }}
           >
-            {data.nombre} {data.apellido}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            DNI: {data.dni}{" "}
-            {data.fichaMedica?.edad ? `· ${data.fichaMedica.edad} años` : ""}
-            {data.creado ? ` · Inscripto el ${formatDate(data.creado)}` : ""}
-          </Typography>
+            <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+              {data.nombre} {data.apellido}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.5 }}
+            >
+              DNI: <strong>{data.dni || "—"}</strong>
+              {data.fichaMedica?.edad ? ` · ${data.fichaMedica.edad} años` : ""}
+              {data.creado ? ` · Inscripto el ${formatDate(data.creado)}` : ""}
+            </Typography>
+          </Box>
         </Box>
 
-        {/* Sección: Documentación adjunta (DNI y Comprobante) */}
-        <Box sx={{ mb: 3 }}>
-          <Typography
-            variant="caption"
-            sx={{
-              display: "block",
-              color: "primary.main",
+        {/* Tabs de navegación */}
+        <Tabs
+          value={activeTab}
+          onChange={(_, val) => setActiveTab(val)}
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
+          sx={{
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            mb: 2.5,
+            "& .MuiTab-root": {
               fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              py: 0.75,
-              px: 1,
-              bgcolor: "rgba(0, 180, 255, 0.08)",
-              borderLeft: "3px solid",
-              borderColor: "secondary.main",
-              mb: 1.5,
-            }}
-          >
-            Documentación Adjunta (DNI y Comprobante de Pago)
-          </Typography>
+              fontSize: "0.85rem",
+              textTransform: "none",
+              minHeight: 46,
+            },
+          }}
+        >
+          <Tab
+            icon={<PersonIcon fontSize="small" />}
+            iconPosition="start"
+            label="Datos Personales"
+          />
+          <Tab
+            icon={<BadgeIcon fontSize="small" />}
+            iconPosition="start"
+            label="Foto DNI"
+          />
+          <Tab
+            icon={<MedicalServicesIcon fontSize="small" />}
+            iconPosition="start"
+            label="Ficha Médica"
+          />
+          <Tab
+            icon={<ReceiptLongIcon fontSize="small" />}
+            iconPosition="start"
+            label="Comprobante"
+          />
+        </Tabs>
 
-          <Grid container spacing={2}>
-            {/* DNI Frente */}
-            <Grid item xs={12} sm={6} md={4}>
-              <Box
-                sx={{
-                  p: 1.5,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 1,
-                }}
-              >
+        {/* TAB 0: Datos Personales */}
+        {activeTab === 0 && (
+          <Box>
+            {PERSONAL_SECTIONS.map((section) => (
+              <SectionDetail
+                key={section.title}
+                section={section}
+                data={data}
+              />
+            ))}
+          </Box>
+        )}
+
+        {/* TAB 1: Foto DNI */}
+        {activeTab === 1 && (
+          <Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Imágenes de documentación personal adjuntadas durante la
+              inscripción. Hacé clic en la imagen o en el botón para ver en
+              tamaño completo.
+            </Typography>
+            <Grid container spacing={2}>
+              {/* DNI Frente */}
+              <Grid item xs={12} sm={6}>
                 <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                  sx={{
+                    p: 2,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 1,
+                    bgcolor: "background.paper",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }}
                 >
-                  <BadgeIcon fontSize="small" color="primary" />
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    DNI — Frente
-                  </Typography>
-                </Box>
-                {data.dniFrente ? (
                   <Box
-                    component="img"
-                    src={data.dniFrente}
-                    alt="DNI Frente"
-                    onClick={() => openBase64InNewTab(data.dniFrente)}
                     sx={{
-                      width: "100%",
-                      aspectRatio: "1.58 / 1",
-                      objectFit: "contain",
-                      bgcolor: "#000",
-                      borderRadius: 1,
-                      cursor: "pointer",
-                      display: "block",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      mb: 1.5,
                     }}
-                  />
-                ) : (
-                  <Typography variant="caption" color="text.secondary">
-                    No adjuntado
-                  </Typography>
-                )}
-              </Box>
-            </Grid>
-
-            {/* DNI Dorso */}
-            <Grid item xs={12} sm={6} md={4}>
-              <Box
-                sx={{
-                  p: 1.5,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 1,
-                }}
-              >
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
-                >
-                  <BadgeIcon fontSize="small" color="primary" />
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    DNI — Dorso
-                  </Typography>
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <BadgeIcon fontSize="small" color="primary" />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                        DNI — Frente
+                      </Typography>
+                    </Box>
+                    {data.dniFrente && (
+                      <Button
+                        size="small"
+                        startIcon={<OpenInNewIcon />}
+                        onClick={() => openBase64InNewTab(data.dniFrente)}
+                        sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                      >
+                        Ver completo
+                      </Button>
+                    )}
+                  </Box>
+                  {data.dniFrente ? (
+                    <Box
+                      component="img"
+                      src={data.dniFrente}
+                      alt="DNI Frente"
+                      onClick={() => openBase64InNewTab(data.dniFrente)}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 280,
+                        objectFit: "contain",
+                        bgcolor: "#000",
+                        borderRadius: 1,
+                        cursor: "pointer",
+                        display: "block",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        transition: "transform 0.2s ease-in-out",
+                        "&:hover": {
+                          transform: "scale(1.02)",
+                        },
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        p: 4,
+                        textAlign: "center",
+                        bgcolor: "rgba(255,255,255,0.02)",
+                        borderRadius: 1,
+                        border: "1px dashed",
+                        borderColor: "divider",
+                      }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        No adjuntado
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
-                {data.dniDorso ? (
-                  <Box
-                    component="img"
-                    src={data.dniDorso}
-                    alt="DNI Dorso"
-                    onClick={() => openBase64InNewTab(data.dniDorso)}
-                    sx={{
-                      width: "100%",
-                      aspectRatio: "1.58 / 1",
-                      objectFit: "contain",
-                      bgcolor: "#000",
-                      borderRadius: 1,
-                      cursor: "pointer",
-                      display: "block",
-                    }}
-                  />
-                ) : (
-                  <Typography variant="caption" color="text.secondary">
-                    No adjuntado
-                  </Typography>
-                )}
-              </Box>
-            </Grid>
+              </Grid>
 
-            {/* Comprobante de Pago */}
-            <Grid item xs={12} sm={6} md={4}>
+              {/* DNI Dorso */}
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    p: 2,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 1,
+                    bgcolor: "background.paper",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      mb: 1.5,
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <BadgeIcon fontSize="small" color="primary" />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                        DNI — Dorso
+                      </Typography>
+                    </Box>
+                    {data.dniDorso && (
+                      <Button
+                        size="small"
+                        startIcon={<OpenInNewIcon />}
+                        onClick={() => openBase64InNewTab(data.dniDorso)}
+                        sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                      >
+                        Ver completo
+                      </Button>
+                    )}
+                  </Box>
+                  {data.dniDorso ? (
+                    <Box
+                      component="img"
+                      src={data.dniDorso}
+                      alt="DNI Dorso"
+                      onClick={() => openBase64InNewTab(data.dniDorso)}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 280,
+                        objectFit: "contain",
+                        bgcolor: "#000",
+                        borderRadius: 1,
+                        cursor: "pointer",
+                        display: "block",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        transition: "transform 0.2s ease-in-out",
+                        "&:hover": {
+                          transform: "scale(1.02)",
+                        },
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        p: 4,
+                        textAlign: "center",
+                        bgcolor: "rgba(255,255,255,0.02)",
+                        borderRadius: 1,
+                        border: "1px dashed",
+                        borderColor: "divider",
+                      }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        No adjuntado
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+
+        {/* TAB 2: Ficha Médica */}
+        {activeTab === 2 && (
+          <Box>
+            {MEDICAL_SECTIONS.map((section) => (
+              <SectionDetail
+                key={section.title}
+                section={section}
+                data={data}
+              />
+            ))}
+          </Box>
+        )}
+
+        {/* TAB 3: Comprobante */}
+        {activeTab === 3 && (
+          <Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Comprobante de pago o transferencia de la matrícula de inscripción.
+            </Typography>
+            <Box
+              sx={{
+                p: 2,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 1,
+                bgcolor: "background.paper",
+              }}
+            >
               <Box
                 sx={{
-                  p: 1.5,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  mb: 2,
                 }}
               >
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <ReceiptLongIcon fontSize="small" color="primary" />
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                     Comprobante de Pago
                   </Typography>
                 </Box>
-                {data.comprobantePago ? (
-                  isPdfReceipt ? (
-                    <Box sx={{ textAlign: "center", py: 2 }}>
-                      <PictureAsPdfIcon
-                        sx={{ color: "error.main", fontSize: 44, mb: 1 }}
-                      />
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        startIcon={<OpenInNewIcon />}
-                        onClick={() => openBase64InNewTab(data.comprobantePago)}
-                      >
-                        Ver Documento PDF
-                      </Button>
-                    </Box>
-                  ) : (
+                {data.comprobantePago && (
+                  <Button
+                    size="small"
+                    startIcon={<OpenInNewIcon />}
+                    onClick={() => openBase64InNewTab(data.comprobantePago)}
+                    sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                  >
+                    Abrir en nueva pestaña
+                  </Button>
+                )}
+              </Box>
+
+              {data.comprobantePago ? (
+                isPdfReceipt ? (
+                  <Box
+                    sx={{
+                      textAlign: "center",
+                      py: 5,
+                      px: 2,
+                      bgcolor: "rgba(255, 255, 255, 0.02)",
+                      border: "1px dashed",
+                      borderColor: "divider",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <PictureAsPdfIcon
+                      sx={{ color: "error.main", fontSize: 56, mb: 1.5 }}
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: 600, mb: 1 }}
+                    >
+                      Documento PDF Adjunto
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 2 }}
+                    >
+                      El comprobante fue cargado en formato PDF.
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<OpenInNewIcon />}
+                      onClick={() => openBase64InNewTab(data.comprobantePago)}
+                    >
+                      Ver / Descargar PDF
+                    </Button>
+                  </Box>
+                ) : (
+                  <Box sx={{ textAlign: "center" }}>
                     <Box
                       component="img"
                       src={data.comprobantePago}
                       alt="Comprobante de pago"
                       onClick={() => openBase64InNewTab(data.comprobantePago)}
                       sx={{
-                        width: "100%",
-                        aspectRatio: "1.58 / 1",
+                        maxWidth: "100%",
+                        maxHeight: 460,
                         objectFit: "contain",
                         bgcolor: "#000",
                         borderRadius: 1,
                         cursor: "pointer",
-                        display: "block",
+                        display: "inline-block",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        transition: "transform 0.2s ease-in-out",
+                        "&:hover": {
+                          transform: "scale(1.01)",
+                        },
                       }}
                     />
-                  )
-                ) : (
-                  <Typography variant="caption" color="text.secondary">
-                    No adjuntado
+                  </Box>
+                )
+              ) : (
+                <Box
+                  sx={{
+                    p: 4,
+                    textAlign: "center",
+                    bgcolor: "rgba(255,255,255,0.02)",
+                    borderRadius: 1,
+                    border: "1px dashed",
+                    borderColor: "divider",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    No se adjuntó comprobante de pago para esta inscripción.
                   </Typography>
-                )}
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-
-        {PERSONAL_SECTIONS.map((section) => (
-          <SectionDetail key={section.title} section={section} data={data} />
-        ))}
-
-        {MEDICAL_SECTIONS.map((section) => (
-          <SectionDetail key={section.title} section={section} data={data} />
-        ))}
+                </Box>
+              )}
+            </Box>
+          </Box>
+        )}
       </DialogContent>
 
       <DialogActions
@@ -442,7 +654,7 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
         }}
       >
         <Button
-          onClick={onClose}
+          onClick={handleClose}
           variant="outlined"
           sx={{ flex: { xs: "1 1 100%", sm: "0 0 auto" } }}
         >
