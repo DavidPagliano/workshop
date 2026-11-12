@@ -74,7 +74,10 @@ const inscriptionSchema = z.object({
   concurreAlgunaIglesia: z.boolean(),
   cualIglesia: z.string().trim().max(120).optional(),
   nombreDelPastor: z.string().trim().max(120).optional(),
-  foto: z.string().min(1, 'La foto es obligatoria').max(200000),
+  foto: z.string().min(1, 'La foto es obligatoria').max(10000000),
+  dniFrente: z.string().min(1, 'La foto de frente del DNI es obligatoria').max(10000000),
+  dniDorso: z.string().min(1, 'La foto de dorso del DNI es obligatoria').max(10000000),
+  comprobantePago: z.string().min(1, 'El comprobante de pago es obligatorio').max(15000000),
   emergencia: emergenciaSchema,
   fichaMedica: fichaMedicaSchema,
 }).strict();

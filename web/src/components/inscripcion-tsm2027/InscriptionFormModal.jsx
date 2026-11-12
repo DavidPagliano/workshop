@@ -19,6 +19,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import toast from "react-hot-toast";
 import { PhotoCapture } from "../common/PhotoCapture";
+import { DocumentCapture } from "../common/DocumentCapture";
 import { InscriptionSection } from "./InscriptionSection";
 import {
   ALL_FIELDS,
@@ -58,6 +59,9 @@ const buildFormFromData = (initialData) => {
 
   base.foto = initialData.foto || "";
   base.inscriptionId = initialData.inscriptionId || "";
+  base.dniFrente = initialData.dniFrente || "";
+  base.dniDorso = initialData.dniDorso || "";
+  base.comprobantePago = initialData.comprobantePago || "";
 
   ALL_FIELDS.forEach((field) => {
     const raw = getIn(initialData, field.name);
@@ -269,6 +273,9 @@ export const InscriptionFormModal = ({
       edad: calculateAge(formData.fechaNacimiento),
     };
     payload.foto = formData.foto;
+    if (formData.dniFrente) payload.dniFrente = formData.dniFrente;
+    if (formData.dniDorso) payload.dniDorso = formData.dniDorso;
+    if (formData.comprobantePago) payload.comprobantePago = formData.comprobantePago;
 
     onSave(payload);
   };
@@ -332,8 +339,9 @@ export const InscriptionFormModal = ({
         variant="fullWidth"
         sx={{ borderBottom: "1px solid", borderColor: "divider", flexShrink: 0 }}
       >
-        <Tab label="1. Foto y Datos Principales" />
+        <Tab label="1. Foto y Datos" />
         <Tab label="2. Ficha Médica" />
+        <Tab label="3. DNI y Pago" />
       </Tabs>
 
       <Box
@@ -358,7 +366,7 @@ export const InscriptionFormModal = ({
             </Alert>
           )}
 
-          {activeTab === 0 ? (
+          {activeTab === 0 && (
             <Box>
               <Box sx={{ mb: 3 }}>
                 <PhotoCapture
@@ -394,11 +402,41 @@ export const InscriptionFormModal = ({
                 <InscriptionSection key={section.title} section={section} {...sectionProps} />
               ))}
             </Box>
-          ) : (
+          )}
+
+          {activeTab === 1 && (
             <Box>
               {MEDICAL_SECTIONS.map((section) => (
                 <InscriptionSection key={section.title} section={section} {...sectionProps} />
               ))}
+            </Box>
+          )}
+
+          {activeTab === 2 && (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+              <DocumentCapture
+                value={formData.dniFrente}
+                onChange={(val) => setFormData((prev) => ({ ...prev, dniFrente: val }))}
+                disabled={loading}
+                label="DNI — Frente"
+                helperText="Foto de la parte delantera del DNI"
+              />
+              <DocumentCapture
+                value={formData.dniDorso}
+                onChange={(val) => setFormData((prev) => ({ ...prev, dniDorso: val }))}
+                disabled={loading}
+                label="DNI — Dorso"
+                helperText="Foto de la parte trasera del DNI"
+              />
+              <DocumentCapture
+                value={formData.comprobantePago}
+                onChange={(val) => setFormData((prev) => ({ ...prev, comprobantePago: val }))}
+                disabled={loading}
+                label="Comprobante de Pago"
+                helperText="Imagen o documento PDF del comprobante de transferencia"
+                accept="image/*,application/pdf"
+                allowPdf={true}
+              />
             </Box>
           )}
         </DialogContent>

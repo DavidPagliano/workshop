@@ -5,7 +5,8 @@ const PreCycleRegistration = require('../models/preCycleRegistration');
 const User = require('../models/User');
 const Audit = require('../models/Audit');
 const Counter = require('../models/Counter');
-const Inscription = require('../models/Inscription');
+const InscriptionTSM = require('../models/InscriptionTSM');
+const InscriptionTSP = require('../models/InscriptionTSP');
 
 const connectDB = async () => {
   try {
@@ -25,7 +26,8 @@ const connectDB = async () => {
     const expectedCollections = [
       { name: 'eventregistrations', model: EventRegistration },
       { name: 'precycleregistrations', model: PreCycleRegistration },
-      { name: 'inscriptions', model: Inscription },
+      { name: 'inscriptionsTSM', model: InscriptionTSM },
+      { name: 'inscriptionsTSP', model: InscriptionTSP },
       { name: 'users', model: User },
       { name: 'audits', model: Audit },
       { name: 'counters', model: Counter },

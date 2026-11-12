@@ -59,8 +59,8 @@ const InscriptionSuccess = ({ registration, onReset, onExit }) => {
       <Typography variant="h4" sx={{ mb: 1 }}>
         ¡Inscripción exitosa!
       </Typography>
-      <Typography variant="body1" sx={{ color: "text.secondary", maxWidth: 440, mb: 3 }}>
-        La inscripción al Ciclo Lectivo 2027 fue registrada correctamente.
+      <Typography variant="body1" sx={{ color: "text.secondary", maxWidth: 520, mb: 3 }}>
+        La inscripción al Ciclo Lectivo 2027 fue registrada correctamente. Verificaremos su inscripción, ficha médica y comprobante de pago, y nos comunicaremos con usted a la brevedad para continuar con el proceso.
       </Typography>
 
       <Box

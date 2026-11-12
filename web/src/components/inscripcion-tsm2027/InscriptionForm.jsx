@@ -2,13 +2,14 @@ import { Alert, Box, Button, CircularProgress, Stack, Typography } from "@mui/ma
 import { InscriptionStepper } from "./InscriptionStepper";
 import { InscriptionPhotoStep } from "./InscriptionPhotoStep";
 import { InscriptionPersonalStep } from "./InscriptionPersonalStep";
+import { InscriptionDniStep } from "./InscriptionDniStep";
 import { InscriptionMedicalStep } from "./InscriptionMedicalStep";
-import { InscriptionReviewStep } from "./InscriptionReviewStep";
+import { InscriptionPaymentStep } from "./InscriptionPaymentStep";
+import { InscriptionConfirmationStep } from "./InscriptionConfirmationStep";
 
 /**
- * Formulario de inscripción por pasos:
- * 1. Foto → 2. Datos principales → 3. Ficha médica → 4. Revisión.
- * Recibe todo el estado desde useInscriptionForm y hereda institutionalTheme.
+ * Formulario de inscripción por 6 pasos para TSM:
+ * 1. Foto → 2. Datos principales → 3. DNI frente y dorso → 4. Ficha médica → 5. Pago inscripción → 6. Confirmación.
  */
 export const InscriptionForm = ({
   formData,
@@ -21,12 +22,19 @@ export const InscriptionForm = ({
   handleChange,
   handleBlur,
   handlePhotoChange,
+  handleDniChange,
+  handlePaymentChange,
   prevStep,
   goToStep,
   submitInscription,
 }) => {
   const sectionProps = { formData, getValue, errors, loading, onChange: handleChange, onBlur: handleBlur };
-  const isNextDisabled = loading || (activeStep === 0 && !formData.foto);
+
+  const isNextDisabled =
+    loading ||
+    (activeStep === 0 && !formData.foto) ||
+    (activeStep === 2 && (!formData.dniFrente || !formData.dniDorso)) ||
+    (activeStep === 4 && !formData.comprobantePago);
 
   return (
     <Box component="form" onSubmit={submitInscription} noValidate sx={{ width: "100%" }}>
@@ -38,21 +46,48 @@ export const InscriptionForm = ({
         </Alert>
       )}
 
+      {/* Paso 1: Foto del inscripto */}
       {activeStep === 0 && (
         <InscriptionPhotoStep foto={formData.foto} loading={loading} onPhotoChange={handlePhotoChange} />
       )}
+
+      {/* Paso 2: Datos principales */}
       {activeStep === 1 && <InscriptionPersonalStep {...sectionProps} />}
-      {activeStep === 2 && <InscriptionMedicalStep {...sectionProps} />}
-      {activeStep === 3 && (
-        <InscriptionReviewStep formData={formData} getValue={getValue} onEditStep={goToStep} />
+
+      {/* Paso 3: Foto del DNI (Frente y Dorso) */}
+      {activeStep === 2 && (
+        <InscriptionDniStep
+          dniFrente={formData.dniFrente}
+          dniDorso={formData.dniDorso}
+          loading={loading}
+          onDniChange={handleDniChange}
+        />
       )}
 
-      {(activeStep === 1 || activeStep === 2) && (
+      {/* Paso 4: Ficha médica */}
+      {activeStep === 3 && <InscriptionMedicalStep {...sectionProps} />}
+
+      {/* Paso 5: Pago de inscripción (Mercado Pago y comprobante) */}
+      {activeStep === 4 && (
+        <InscriptionPaymentStep
+          comprobantePago={formData.comprobantePago}
+          comprobantePagoNombre={formData.comprobantePagoNombre}
+          loading={loading}
+          onPaymentChange={handlePaymentChange}
+        />
+      )}
+
+      {/* Paso 6: Confirmación y mensaje formal institucional */}
+      {activeStep === 5 && (
+        <InscriptionConfirmationStep formData={formData} career="TSM" />
+      )}
+
+      {(activeStep === 1 || activeStep === 3) && (
         <Typography
           variant="caption"
           display="block"
           align="center"
-          sx={{ color: "text.secondary", mb: 1.5 }}
+          sx={{ color: "text.secondary", mt: 2, mb: 1.5 }}
         >
           Los campos marcados con * son obligatorios.
         </Typography>

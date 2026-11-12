@@ -3,47 +3,129 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   Container,
   Fade,
-  Grid,
   Typography,
 } from "@mui/material";
 import { alpha, ThemeProvider } from "@mui/material/styles";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import AssignmentIndOutlinedIcon from "@mui/icons-material/AssignmentIndOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import MedicalInformationOutlinedIcon from "@mui/icons-material/MedicalInformationOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useNavigate } from "react-router-dom";
 
-import { institutionalTheme } from "../../config/theme";
+import { tsmTheme } from "../../config/theme";
 import logoTsm from "../../assets/images/logo-tsm.png";
 
 const STEPS_PREVIEW = [
   {
     number: "01",
     title: "Foto del estudiante",
-    description: "Tomate una foto de frente en el momento usando la cámara de tu dispositivo.",
-    icon: <CameraAltOutlinedIcon fontSize="medium" />,
+    icon: <CameraAltOutlinedIcon fontSize="small" />,
   },
   {
     number: "02",
     title: "Datos principales",
-    description: "Completá tus datos personales, de contacto, estudios y contacto de emergencia.",
-    icon: <AssignmentIndOutlinedIcon fontSize="medium" />,
+    icon: <AssignmentIndOutlinedIcon fontSize="small" />,
   },
   {
     number: "03",
+    title: "Fotos del DNI",
+    icon: <BadgeOutlinedIcon fontSize="small" />,
+  },
+  {
+    number: "04",
     title: "Ficha médica",
-    description: "Ingresá tu información de salud, obra social, emergencia médica y familia de referencia.",
-    icon: <MedicalInformationOutlinedIcon fontSize="medium" />,
+    icon: <MedicalInformationOutlinedIcon fontSize="small" />,
+  },
+  {
+    number: "05",
+    title: "Pago de inscripción",
+    icon: <ReceiptLongOutlinedIcon fontSize="small" />,
+  },
+  {
+    number: "06",
+    title: "Confirmación",
+    icon: <VerifiedUserOutlinedIcon fontSize="small" />,
   },
 ];
+
+const StepCard = ({ step }) => (
+  <Box
+    sx={(theme) => ({
+      p: 1.5,
+      height: "100%",
+      boxSizing: "border-box",
+      borderRadius: 2,
+      border: "1px solid",
+      borderColor: "divider",
+      bgcolor: alpha(theme.palette.primary.main, 0.02),
+      display: "flex",
+      alignItems: "center",
+      gap: 1.5,
+      transition: "all 0.15s ease-in-out",
+      "&:hover": {
+        transform: "translateY(-2px)",
+        boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.08)}`,
+        borderColor: "primary.main",
+      },
+    })}
+  >
+    <Box
+      sx={(theme) => ({
+        width: 36,
+        height: 36,
+        borderRadius: 1.5,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: alpha(theme.palette.secondary.main, 0.1),
+        color: "secondary.main",
+        flexShrink: 0,
+      })}
+    >
+      {step.icon}
+    </Box>
+
+    <Box sx={{ minWidth: 0, flex: 1 }}>
+      <Typography
+        variant="caption"
+        sx={{
+          fontWeight: 800,
+          color: "text.secondary",
+          letterSpacing: "0.06em",
+          display: "block",
+          lineHeight: 1.2,
+        }}
+      >
+        PASO {step.number}
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          fontWeight: 700,
+          color: "text.primary",
+          lineHeight: 1.25,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {step.title}
+      </Typography>
+    </Box>
+  </Box>
+);
 
 const TsmWelcomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <ThemeProvider theme={institutionalTheme}>
+    <ThemeProvider theme={tsmTheme}>
       <Box
         sx={{
           minHeight: "100vh",
@@ -53,21 +135,47 @@ const TsmWelcomePage = () => {
           color: "text.primary",
           display: "flex",
           alignItems: "center",
-          py: { xs: 4, sm: 6, md: 8 },
+          py: { xs: 2.5, sm: 4, md: 5 },
           px: { xs: 2, sm: 3 },
         }}
       >
         <Container maxWidth="md" disableGutters>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              boxSizing: "border-box",
+              px: { xs: 1, sm: 0.5 },
+              mb: { xs: 2, sm: 2.5 },
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => navigate("/")}
+            >
+              ← Volver al inicio
+            </Button>
+            <Chip
+              label="TSM · 2027"
+              color="primary"
+              variant="outlined"
+              sx={{ fontWeight: 700, letterSpacing: "0.05em" }}
+            />
+          </Box>
+
           <Fade in timeout={500}>
             <Card>
-              <CardContent sx={{ p: { xs: 3, sm: 5, md: 6 } }}>
+              <CardContent sx={{ p: { xs: 2.5, sm: 4, md: 4.5 } }}>
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     textAlign: "center",
-                    mb: { xs: 4, sm: 5 },
+                    mb: { xs: 2.5, sm: 3 },
                   }}
                 >
                   <Box
@@ -75,9 +183,9 @@ const TsmWelcomePage = () => {
                     src={logoTsm}
                     alt="Logo TSM"
                     sx={{
-                      height: { xs: 56, sm: 72 },
+                      height: { xs: 46, sm: 58 },
                       objectFit: "contain",
-                      mb: 2.5,
+                      mb: 1.5,
                     }}
                   />
 
@@ -87,6 +195,7 @@ const TsmWelcomePage = () => {
                       color: "secondary.main",
                       fontWeight: 700,
                       letterSpacing: "0.1em",
+                      lineHeight: 1.2,
                       mb: 0.5,
                     }}
                   >
@@ -95,10 +204,11 @@ const TsmWelcomePage = () => {
 
                   <Typography
                     component="h1"
-                    variant="h3"
+                    variant="h4"
                     sx={{
-                      fontSize: { xs: "1.85rem", sm: "2.4rem", md: "2.75rem" },
-                      mb: 1.5,
+                      fontSize: { xs: "1.75rem", sm: "2.15rem", md: "2.35rem" },
+                      fontWeight: 700,
+                      mb: 1,
                     }}
                   >
                     ¡Bienvenidos al TSM!
@@ -109,75 +219,63 @@ const TsmWelcomePage = () => {
                     sx={{
                       color: "text.secondary",
                       maxWidth: 560,
+                      fontSize: { xs: "0.95rem", sm: "1rem" },
+                      lineHeight: 1.5,
                     }}
                   >
-                    Desde este portal vas a poder completar tu inscripción al Ciclo Lectivo 2027
-                    de manera rápida y guiada en tres simples pasos.
+                    Portal de ingreso para la{" "}
+                    <strong>Tecnico Superior en Multimedia</strong>. Completá tu
+                    solicitud de inscripción online en simples pasos:
                   </Typography>
                 </Box>
 
-                <Grid container spacing={2.5} sx={{ mb: { xs: 4, sm: 5 } }}>
-                  {STEPS_PREVIEW.map((step) => (
-                    <Grid key={step.number} size={{ xs: 12, md: 4 }}>
-                      <Box
-                        sx={(theme) => ({
-                          height: "100%",
-                          p: 2.5,
-                          borderRadius: 2,
-                          border: "1px solid",
-                          borderColor: "divider",
-                          bgcolor: alpha(theme.palette.primary.main, 0.02),
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 1.25,
-                        })}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            width: "100%",
-                          }}
-                        >
-                          <Box
-                            sx={(theme) => ({
-                              width: 42,
-                              height: 42,
-                              borderRadius: 1.5,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              bgcolor: alpha(theme.palette.secondary.main, 0.1),
-                              color: "secondary.main",
-                            })}
-                          >
-                            {step.icon}
-                          </Box>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              fontWeight: 800,
-                              color: "text.secondary",
-                              letterSpacing: "0.08em",
-                            }}
-                          >
-                            PASO {step.number}
-                          </Typography>
-                        </Box>
+                {/* Pasos ordenados: Fila 1 (Pasos 1-4) | Fila 2 (Paso 5 y 6 centrados abajo del 2 y 3) */}
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: "repeat(2, 1fr)",
+                      md: "repeat(4, 1fr)",
+                    },
+                    gap: 1.5,
+                    mb: { xs: 3, sm: 3.5 },
+                  }}
+                >
+                  {/* Fila 1: Paso 1 al 4 */}
+                  <Box sx={{ minWidth: 0 }}>
+                    <StepCard step={STEPS_PREVIEW[0]} />
+                  </Box>
+                  <Box sx={{ minWidth: 0 }}>
+                    <StepCard step={STEPS_PREVIEW[1]} />
+                  </Box>
+                  <Box sx={{ minWidth: 0 }}>
+                    <StepCard step={STEPS_PREVIEW[2]} />
+                  </Box>
+                  <Box sx={{ minWidth: 0 }}>
+                    <StepCard step={STEPS_PREVIEW[3]} />
+                  </Box>
 
-                        <Typography variant="h6" sx={{ fontSize: "1.05rem" }}>
-                          {step.title}
-                        </Typography>
+                  {/* Fila 2: Paso 5 y 6 alineados exactamente abajo del Paso 2 y Paso 3 */}
+                  <Box
+                    sx={{
+                      minWidth: 0,
+                      gridColumn: { xs: "auto", md: "2 / 3" },
+                    }}
+                  >
+                    <StepCard step={STEPS_PREVIEW[4]} />
+                  </Box>
+                  <Box
+                    sx={{
+                      minWidth: 0,
+                      gridColumn: { xs: "auto", md: "3 / 4" },
+                    }}
+                  >
+                    <StepCard step={STEPS_PREVIEW[5]} />
+                  </Box>
+                </Box>
 
-                        <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.55 }}>
-                          {step.description}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-
+                {/* Botón principal visible inmediatamente */}
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <Button
                     variant="contained"
@@ -186,9 +284,10 @@ const TsmWelcomePage = () => {
                     endIcon={<ArrowForwardIcon />}
                     onClick={() => navigate("/inscripcion-tsm")}
                     sx={{
-                      minHeight: 52,
-                      px: { xs: 3, sm: 5 },
+                      minHeight: 50,
+                      px: { xs: 4, sm: 6 },
                       fontSize: "1rem",
+                      fontWeight: 700,
                       width: { xs: "100%", sm: "auto" },
                     }}
                   >
@@ -205,4 +304,3 @@ const TsmWelcomePage = () => {
 };
 
 export default TsmWelcomePage;
-

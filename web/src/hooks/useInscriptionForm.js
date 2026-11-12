@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { createInscription } from "../services/inscriptionService";
 import { ALL_FIELDS, FIELD_MAP, INSCRIPTION_STEPS } from "../config/inscriptionFields";
 
 // ── Helpers para leer/escribir rutas anidadas ("fichaMedica.ObraSocial.nombre") ──
@@ -15,7 +14,13 @@ const buildInitialForm = () =>
   ALL_FIELDS.reduce(
     (form, field) =>
       setIn(form, field.name, field.kind === "switch" ? false : field.defaultValue ?? ""),
-    { foto: "" },
+    {
+      foto: "",
+      dniFrente: "",
+      dniDorso: "",
+      comprobantePago: "",
+      comprobantePagoNombre: "",
+    },
   );
 
 const isVisible = (field, form) => !field.showIf || field.showIf(form);
@@ -99,9 +104,9 @@ const validateField = (field, rawValue) => {
 };
 
 const getStepFields = (stepIndex, form) =>
-  INSCRIPTION_STEPS[stepIndex].sections
-    .flatMap((section) => section.fields)
-    .filter((field) => isVisible(field, form));
+  INSCRIPTION_STEPS[stepIndex]?.sections
+    ?.flatMap((section) => section.fields)
+    ?.filter((field) => isVisible(field, form)) || [];
 
 const validateStepFields = (stepIndex, form) =>
   getStepFields(stepIndex, form).reduce((errors, field) => {
@@ -141,6 +146,9 @@ const buildPayload = (form) => {
   };
 
   if (form.foto) payload.foto = form.foto;
+  if (form.dniFrente) payload.dniFrente = form.dniFrente;
+  if (form.dniDorso) payload.dniDorso = form.dniDorso;
+  if (form.comprobantePago) payload.comprobantePago = form.comprobantePago;
 
   return payload;
 };
@@ -161,7 +169,7 @@ const EMERGENCIA_TO_FAMILIA_MAP = {
   provincia: "fichaMedica.familiaDeReferencia.provincia",
 };
 
-export const useInscriptionForm = () => {
+export const useInscriptionForm = (createInscriptionRequest) => {
   const [formData, setFormData] = useState(buildInitialForm);
   const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState({});
@@ -221,9 +229,34 @@ export const useInscriptionForm = () => {
     }
   };
 
+  const handleDniChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (value) {
+      setError("");
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
+  const handlePaymentChange = (comprobantePago, comprobantePagoNombre = "") => {
+    setFormData((prev) => ({ ...prev, comprobantePago, comprobantePagoNombre }));
+    if (comprobantePago) {
+      setError("");
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.comprobantePago;
+        return next;
+      });
+    }
+  };
+
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const validateStep = (stepIndex) => {
+    // Paso 0: Foto
     if (stepIndex === 0) {
       if (!formData.foto) {
         setErrors((prev) => ({ ...prev, foto: "La foto del inscripto es obligatoria." }));
@@ -232,13 +265,57 @@ export const useInscriptionForm = () => {
       return true;
     }
 
-    const stepErrors = validateStepFields(stepIndex, formData);
-    setErrors((prev) => {
-      const next = { ...prev };
-      getStepFields(stepIndex, formData).forEach((field) => delete next[field.name]);
-      return { ...next, ...stepErrors };
-    });
-    return Object.keys(stepErrors).length === 0;
+    // Paso 1: Datos principales
+    if (stepIndex === 1) {
+      const stepErrors = validateStepFields(stepIndex, formData);
+      setErrors((prev) => {
+        const next = { ...prev };
+        getStepFields(stepIndex, formData).forEach((field) => delete next[field.name]);
+        return { ...next, ...stepErrors };
+      });
+      return Object.keys(stepErrors).length === 0;
+    }
+
+    // Paso 2: Foto DNI frente y dorso
+    if (stepIndex === 2) {
+      const stepErrors = {};
+      if (!formData.dniFrente) stepErrors.dniFrente = "La foto de frente del DNI es obligatoria.";
+      if (!formData.dniDorso) stepErrors.dniDorso = "La foto de dorso del DNI es obligatoria.";
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.dniFrente;
+        delete next.dniDorso;
+        return { ...next, ...stepErrors };
+      });
+      return Object.keys(stepErrors).length === 0;
+    }
+
+    // Paso 3: Ficha médica
+    if (stepIndex === 3) {
+      const stepErrors = validateStepFields(stepIndex, formData);
+      setErrors((prev) => {
+        const next = { ...prev };
+        getStepFields(stepIndex, formData).forEach((field) => delete next[field.name]);
+        return { ...next, ...stepErrors };
+      });
+      return Object.keys(stepErrors).length === 0;
+    }
+
+    // Paso 4: Pago de inscripción
+    if (stepIndex === 4) {
+      if (!formData.comprobantePago) {
+        setErrors((prev) => ({ ...prev, comprobantePago: "El comprobante de pago es obligatorio." }));
+        return false;
+      }
+      return true;
+    }
+
+    // Paso 5: Confirmación final
+    if (stepIndex === 5) {
+      return true;
+    }
+
+    return true;
   };
 
   const nextStep = () => {
@@ -287,7 +364,7 @@ export const useInscriptionForm = () => {
     setLoading(true);
     setError("");
     try {
-      const result = await createInscription(buildPayload(formData));
+      const result = await createInscriptionRequest(buildPayload(formData));
       setRegistration(result);
       scrollTop();
     } catch (requestError) {
@@ -313,8 +390,15 @@ export const useInscriptionForm = () => {
     const completedFields = required.filter(
       (field) => String(getIn(formData, field.name) ?? "").trim() && !errors[field.name],
     ).length;
-    const total = required.length + 1;
-    return Math.round(((completedFields + 1) / total) * 100);
+
+    let completedDocs = 1; // foto ya cargada
+    if (formData.dniFrente && !errors.dniFrente) completedDocs++;
+    if (formData.dniDorso && !errors.dniDorso) completedDocs++;
+    if (formData.comprobantePago && !errors.comprobantePago) completedDocs++;
+
+    const total = required.length + 4; // foto + dniFrente + dniDorso + comprobante
+    const totalCompleted = completedFields + completedDocs;
+    return Math.min(100, Math.round((totalCompleted / total) * 100));
   }, [formData, errors]);
 
   return {
@@ -330,6 +414,8 @@ export const useInscriptionForm = () => {
     handleChange,
     handleBlur,
     handlePhotoChange,
+    handleDniChange,
+    handlePaymentChange,
     nextStep,
     prevStep,
     goToStep,
@@ -337,4 +423,3 @@ export const useInscriptionForm = () => {
     resetInscription,
   };
 };
-

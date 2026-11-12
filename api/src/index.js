@@ -9,7 +9,8 @@ const cycle = require('./routes/preCycle.route');
 const event = require('./routes/event.route');
 const auth = require('./routes/auth.route');
 const audit = require('./routes/audit.route');
-const inscription = require('./routes/inscription.route.js');
+const inscriptionTSM = require('./routes/inscriptionTSM.route.js');
+const inscriptionTSP = require('./routes/inscriptionTSP.route.js');
 const connectDB = require('./config/db');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 const AppError = require('./utils/AppError');
@@ -67,14 +68,16 @@ app.use(globalLimiter);
 app.use(cors(corsOptions));
 app.use(helmet());
 app.use(compression());
-app.use(express.json({ limit: '500kb' }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
 // Enrutamiento modular
 app.use('/workshop/auth', auth);
 app.use('/workshop/cycle', cycle);
 app.use('/workshop/event', event);
 app.use('/workshop/audit', audit);
-app.use('/tsm2027/inscription', inscription);
+app.use('/tsm2027/inscriptionTSM', inscriptionTSM);
+app.use('/tsp2027/inscription', inscriptionTSP);
 
 app.get('/', (req, res) => {
   // Solo exponer documentación detallada en desarrollo

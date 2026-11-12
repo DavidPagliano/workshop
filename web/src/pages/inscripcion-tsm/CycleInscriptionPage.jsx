@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Container,
   Paper,
@@ -27,12 +28,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FolderZipIcon from "@mui/icons-material/FolderZip";
 import { InscriptionFormModal } from "../../components/inscripcion-tsm2027/InscriptionFormModal";
 import { InscriptionViewModal } from "../../components/inscripcion-tsm2027/InscriptionViewModal";
 import { InscriptionDeleteModal } from "../../components/inscripcion-tsm2027/InscriptionDeleteModal";
 import { useInscriptions } from "../../hooks/useInscriptions";
+import { inscriptionTSMService } from "../../services/inscriptionTSMService";
 
-export const CycleInscriptionPage = () => {
+export const CycleInscriptionPage = ({ career = "TSM", service = inscriptionTSMService }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -57,14 +60,29 @@ export const CycleInscriptionPage = () => {
     handleOpenDelete,
     handleDeleteClose,
     handleDeleteConfirm,
-  } = useInscriptions();
+  } = useInscriptions(service);
+
+  const [exportingZip, setExportingZip] = useState(false);
 
   // Carga diferida de xlsx-js-style recién al exportar
   const handleExportExcel = async () => {
     const { exportInscripcionesXLSX } = await import(
       "../../utils/exportInscripcionesXLSX"
     );
-    exportInscripcionesXLSX(inscriptions);
+    exportInscripcionesXLSX(inscriptions, career);
+  };
+
+  // Carga diferida y descarga en ZIP de todos los comprobantes (imágenes o PDFs)
+  const handleExportReceipts = async () => {
+    setExportingZip(true);
+    try {
+      const { exportComprobantesZip } = await import(
+        "../../utils/exportComprobantesZip"
+      );
+      await exportComprobantesZip(inscriptions, career);
+    } finally {
+      setExportingZip(false);
+    }
   };
 
   // ── Columnas de la tabla ──
@@ -102,7 +120,7 @@ export const CycleInscriptionPage = () => {
               color="primary"
               sx={{ fontWeight: 700 }}
             >
-              Gestión de Inscripciones
+              Gestión de Inscripciones {career}
             </Typography>
             <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5 }}>
               Ciclo 2027 — {inscriptions.length} inscripto
@@ -160,6 +178,38 @@ export const CycleInscriptionPage = () => {
               }}
             >
               Exportar Excel
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={
+                exportingZip ? (
+                  <CircularProgress size={18} color="inherit" />
+                ) : (
+                  <FolderZipIcon />
+                )
+              }
+              onClick={handleExportReceipts}
+              disabled={tableLoading || exportingZip || inscriptions.length === 0}
+              sx={{
+                bgcolor: "rgba(7, 16, 82, 0.95)",
+                color: "#FFFFFF",
+                borderColor: "#00B4FF",
+                boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
+                "&:hover": {
+                  bgcolor: "#00B4FF",
+                  borderColor: "#00B4FF",
+                  color: "#071052",
+                  boxShadow: "6px 6px 0px rgba(213, 0, 186, 0.5)",
+                },
+                "&.Mui-disabled": {
+                  bgcolor: "rgba(7, 16, 82, 0.5)",
+                  borderColor: "rgba(0, 180, 255, 0.3)",
+                  color: "rgba(255, 255, 255, 0.3)",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              {exportingZip ? "Exportando..." : "Exportar Comprobantes"}
             </Button>
             <Button
               variant="contained"

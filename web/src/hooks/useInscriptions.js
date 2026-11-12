@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  createInscription,
-  deleteInscription,
-  getInscriptions,
-  updateInscription,
-} from "../services/inscriptionService";
+import { inscriptionTSMService } from "../services/inscriptionTSMService";
 
 const blurActiveElement = () => {
   if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
@@ -13,7 +8,7 @@ const blurActiveElement = () => {
   }
 };
 
-export const useInscriptions = () => {
+export const useInscriptions = (service = inscriptionTSMService) => {
   const [inscriptions, setInscriptions] = useState([]);
   const [tableLoading, setTableLoading] = useState(true);
 
@@ -31,7 +26,7 @@ export const useInscriptions = () => {
   const fetchInscriptions = useCallback(async () => {
     setTableLoading(true);
     try {
-      const data = await getInscriptions();
+      const data = await service.getInscriptions();
       const list = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
       setInscriptions(list);
     } catch (error) {
@@ -40,7 +35,7 @@ export const useInscriptions = () => {
     } finally {
       setTableLoading(false);
     }
-  }, []);
+  }, [service]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -69,10 +64,10 @@ export const useInscriptions = () => {
     setFormLoading(true);
     try {
       if (formEditData) {
-        await updateInscription(formEditData.inscriptionId, payload);
+        await service.updateInscription(formEditData.inscriptionId, payload);
         toast.success("Inscripción actualizada con éxito");
       } else {
-        await createInscription(payload);
+        await service.createInscription(payload);
         toast.success("Inscripción registrada con éxito");
       }
 
@@ -113,7 +108,7 @@ export const useInscriptions = () => {
     if (!deleteData) return;
     setDeleteLoading(true);
     try {
-      await deleteInscription(deleteData.inscriptionId);
+      await service.deleteInscription(deleteData.inscriptionId);
       toast.success("Inscripción eliminada con éxito");
       handleDeleteClose();
       await fetchInscriptions();

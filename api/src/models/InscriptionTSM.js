@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const inscriptionSchema = new mongoose.Schema(
+const inscriptionTSMSchema = new mongoose.Schema(
   {
     inscriptionId: { type: String, required: true, unique: true},
     apellido: {type: String, required: true},
@@ -21,6 +21,9 @@ const inscriptionSchema = new mongoose.Schema(
     cualIglesia: {type: String},
     nombreDelPastor: {type: String},
     foto: {type: String, required: true},
+    dniFrente: {type: String, required: true},
+    dniDorso: {type: String, required: true},
+    comprobantePago: {type: String, required: true},
     emergencia: {
         NombreYApellido: {type: String, required: true},
         Telefono: {type: String, required: true},
@@ -73,6 +76,6 @@ const inscriptionSchema = new mongoose.Schema(
     timestamps: { createdAt: 'creado', updatedAt: 'actualizado' },
 })
 
-inscriptionSchema.index({ creado: -1 });
+inscriptionTSMSchema.index({ creado: -1 });
 
-module.exports = mongoose.models.Inscription || mongoose.model('Inscription', inscriptionSchema);
+module.exports = mongoose.models.InscriptionTSM || mongoose.model('InscriptionTSM', inscriptionTSMSchema, 'inscriptions');

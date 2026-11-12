@@ -105,7 +105,7 @@ let theme = createTheme({
     },
   },
 });
-export const institutionalTheme = createTheme({
+export const tsmTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
@@ -218,6 +218,130 @@ export const institutionalTheme = createTheme({
     },
   },
 })
+
+export const tspTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#A3160A', // Rojo Borgoña / Carmesí
+      light: '#C43B2F',
+      dark: '#6E0D05',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: '#F25C05', // Naranja Vibrante
+      light: '#FF7D33',
+      dark: '#B84300',
+      contrastText: '#ffffff',
+    },
+    warning: {
+      main: '#E09F1F', // Amarillo Mostaza / Ocre
+      contrastText: '#ffffff',
+    },
+    info: {
+      main: '#E09F1F',
+    },
+    background: {
+      default: '#FAF8F5', // Fondo cálido tipo papel suave
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#2B1810',
+      secondary: '#6E5A53',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Montserrat", "Helvetica", "Arial", sans-serif',
+    h3: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 800,
+      color: '#A3160A',
+    },
+    h4: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 700,
+      color: '#A3160A',
+      letterSpacing: '-0.02em',
+    },
+    h6: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      fontWeight: 600,
+      color: '#A3160A',
+    },
+    subtitle1: {
+      fontWeight: 500,
+      color: '#6E5A53',
+    },
+    body1: {
+      fontSize: '0.95rem',
+      lineHeight: 1.6,
+    },
+    button: {
+      fontFamily: '"Montserrat", "Helvetica", "Arial", sans-serif',
+      textTransform: 'none',
+      fontWeight: 600,
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#FAF8F5',
+          backgroundImage: 'none',
+          cursor: 'auto',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          padding: '10px 24px',
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: '0px 4px 12px rgba(242, 92, 5, 0.2)',
+          },
+        },
+      },
+      defaultProps: {
+        disableElevation: true,
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: 'outlined',
+        size: 'medium',
+      },
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 8,
+            backgroundColor: '#ffffff',
+            '&.Mui-focused fieldset': {
+              borderColor: '#F25C05',
+            },
+          },
+          '& label.Mui-focused': {
+            color: '#A3160A',
+          },
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+          boxShadow: '0px 8px 32px rgba(163, 22, 10, 0.05)',
+          border: '1px solid rgba(163, 22, 10, 0.08)',
+        },
+      },
+    },
+  },
+});
+
+
 theme = responsiveFontSizes(theme);
 
 export default theme;

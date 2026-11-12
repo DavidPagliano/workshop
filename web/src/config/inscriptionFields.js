@@ -1,6 +1,6 @@
 // Configuración del formulario de inscripción TSM 2027.
 // Es la fuente única de verdad para renderizar los pasos y validarlos.
-// Estructura alineada con api/src/models/Inscription.js.
+// Estructura alineada con los modelos InscriptionTSM e InscriptionTSP.
 //
 // kind: name | text | textarea | digits | phone | email | date | select | switch
 // showIf(form): si devuelve false, el campo no se muestra, no se valida y no se envía.
@@ -124,11 +124,15 @@ export const MEDICAL_SECTIONS = [
   },
 ];
 
+export const MERCADO_PAGO_ALIAS = "IEMA.CANAL.LUZ.mp";
+
 export const INSCRIPTION_STEPS = [
   { key: "foto", label: "Foto", sections: [] },
   { key: "personal", label: "Datos principales", sections: PERSONAL_SECTIONS },
+  { key: "dni", label: "Fotos DNI", sections: [] },
   { key: "medica", label: "Ficha médica", sections: MEDICAL_SECTIONS },
-  { key: "revision", label: "Revisión", sections: [] },
+  { key: "pago", label: "Pago", sections: [] },
+  { key: "confirmacion", label: "Confirmación", sections: [] },
 ];
 
 export const ALL_FIELDS = INSCRIPTION_STEPS.flatMap((step) =>

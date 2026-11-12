@@ -1,11 +1,11 @@
 const Counter = require('../models/Counter');
-const Inscription = require('../models/Inscription');
+const InscriptionTSM = require('../models/InscriptionTSM');
 const AppError = require('../utils/AppError');
 
 // Genera el próximo inscriptionId secuencial (ins-001, ins-002, ...)
 // sincronizando el contador con el último documento realmente guardado.
-const generateInscriptionId = async () => {
-    const lastDoc = await Inscription.findOne()
+const generateInscriptionTSMId = async () => {
+    const lastDoc = await InscriptionTSM.findOne()
         .sort({ creado: -1 })
         .select('inscriptionId')
         .lean();
@@ -17,54 +17,54 @@ const generateInscriptionId = async () => {
     // Sincroniza la base del contador con el último registro real guardado
     // (evita saltos si hubo intentos fallidos previos) e incrementa en 1.
     await Counter.findByIdAndUpdate(
-        'inscription_seq',
+        'inscription_tsm_seq',
         { $set: { seq: currentMax } },
         { upsert: true }
     );
 
     const counter = await Counter.findByIdAndUpdate(
-        'inscription_seq',
+        'inscription_tsm_seq',
         { $inc: { seq: 1 } },
         { returnDocument: 'after' }
     );
     return `ins-${String(counter.seq).padStart(3, '0')}`;
 };
 
-exports.createInscription = async (data) => {
-    const existingInscription = await Inscription.findOne({ dni: data.dni });
+exports.createInscriptionTSM = async (data) => {
+    const existingInscriptionTSM = await InscriptionTSM.findOne({ dni: data.dni });
 
-    if (existingInscription) {
+    if (existingInscriptionTSM) {
         throw new AppError('Ya existe una inscripción con este DNI/Pasaporte', 409);
     }
 
-    const newInscription = new Inscription(data);
+    const newInscriptionTSM = new InscriptionTSM(data);
 
     // Validar todos los demás campos del documento antes de generar el inscriptionId
-    await newInscription.validate(
-        Object.keys(Inscription.schema.paths).filter((path) => path !== 'inscriptionId')
+    await newInscriptionTSM.validate(
+        Object.keys(InscriptionTSM.schema.paths).filter((path) => path !== 'inscriptionId')
     );
 
     // Recién cuando el documento es válido y está listo para guardarse se incrementa el contador
-    newInscription.inscriptionId = await generateInscriptionId();
+    newInscriptionTSM.inscriptionId = await generateInscriptionTSMId();
 
     try {
-        return await newInscription.save();
+        return await newInscriptionTSM.save();
     } catch (error) {
         // Si falla el guardado en base de datos, revertir el contador
-        await Counter.findByIdAndUpdate('inscription_seq', { $inc: { seq: -1 } });
+        await Counter.findByIdAndUpdate('inscription_tsm_seq', { $inc: { seq: -1 } });
         throw error;
     }
 };
 
-exports.getAllInscriptions = async () => {
-    return await Inscription.find().sort({ creado: -1 });
+exports.getAllInscriptionsTSM = async () => {
+    return await InscriptionTSM.find().sort({ creado: -1 });
 };
 
-exports.getAllInscriptionsPage = async ({ page = 1, limit = 10 } = {}) => {
+exports.getAllInscriptionsTSMPage = async ({ page = 1, limit = 10 } = {}) => {
     const skip = (page - 1) * limit;
     const [data, total] = await Promise.all([
-        Inscription.find().sort({ creado: -1 }).skip(skip).limit(limit),
-        Inscription.countDocuments()
+        InscriptionTSM.find().sort({ creado: -1 }).skip(skip).limit(limit),
+        InscriptionTSM.countDocuments()
     ]);
 
     return {
@@ -73,18 +73,18 @@ exports.getAllInscriptionsPage = async ({ page = 1, limit = 10 } = {}) => {
     };
 };
 
-exports.getInscriptionById = async (inscriptionId) => {
-    return await Inscription.findOne({ inscriptionId });
+exports.getInscriptionTSMById = async (inscriptionId) => {
+    return await InscriptionTSM.findOne({ inscriptionId });
 };
 
-exports.updateInscription = async (inscriptionId, data) => {
-    return await Inscription.findOneAndUpdate(
+exports.updateInscriptionTSM = async (inscriptionId, data) => {
+    return await InscriptionTSM.findOneAndUpdate(
         { inscriptionId },
         { $set: data },
         { returnDocument: 'after', runValidators: true, context: 'query' }
     );
 };
 
-exports.deleteInscription = async (inscriptionId) => {
-    return await Inscription.findOneAndDelete({ inscriptionId });
+exports.deleteInscriptionTSM = async (inscriptionId) => {
+    return await InscriptionTSM.findOneAndDelete({ inscriptionId });
 };

@@ -42,8 +42,14 @@ const rawNavItems = [
     roles: ["admin", "director", "staff_bedele"],
   },
   {
-    label: "Inscripciones",
+    label: "Inscripciones TSM",
     path: "/workshop/dashboard/inscripciones",
+    icon: <SchoolIcon />,
+    roles: ["admin", "director", "staff_bedele"],
+  },
+  {
+    label: "Inscripciones TSP",
+    path: "/workshop/dashboard/inscripciones-tsp",
     icon: <SchoolIcon />,
     roles: ["admin", "director", "staff_bedele"],
   },
@@ -81,7 +87,7 @@ const PrivateLayout = () => {
 
   const isActive = (path) => {
     if (path === "/workshop/dashboard") return location.pathname === "/workshop/dashboard";
-    return location.pathname.startsWith(path);
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
   const handleLogout = () => {

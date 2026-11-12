@@ -15,14 +15,14 @@ import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import { useNavigate } from "react-router-dom";
 
-import { institutionalTheme } from "../config/theme";
+import { tsmTheme } from "../config/theme";
 import logoTsm from "../assets/images/logo-tsm.png";
 
 const HomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <ThemeProvider theme={institutionalTheme}>
+    <ThemeProvider theme={tsmTheme}>
       <Box
         sx={{
           minHeight: "100vh",
@@ -96,7 +96,7 @@ const HomePage = () => {
                     mb: 4,
                   }}
                 >
-                  Estamos renovando nuestro sitio institucional de la Tecnicatura
+                  Estamos renovando nuestro sitio institucional de la Tecnico
                   Superior en Multimedia. Mientras tanto, podés acceder a los
                   portales activos:
                 </Typography>
@@ -114,7 +114,18 @@ const HomePage = () => {
                     onClick={() => navigate("/tsm")}
                     sx={{ flex: 1, minHeight: 50 }}
                   >
-                    Inscripción Ciclo 2027
+                    Inscripción TSM 2027
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                    startIcon={<SchoolOutlinedIcon />}
+                    onClick={() => navigate("/tsp")}
+                    sx={{ flex: 1, minHeight: 50 }}
+                  >
+                    Inscripción TSP 2027
                   </Button>
 
                   <Button

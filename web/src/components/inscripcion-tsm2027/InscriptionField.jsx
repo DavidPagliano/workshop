@@ -12,7 +12,7 @@ const NUMERIC_KINDS = ["digits", "phone"];
 
 /**
  * Renderiza un campo del formulario de inscripción a partir de su configuración
- * usando los estilos definidos en el ThemeProvider activo (institutionalTheme).
+ * usando los estilos definidos en el ThemeProvider activo (tsmTheme).
  */
 export const InscriptionField = ({ field, value, error, disabled, onChange, onBlur }) => {
   if (field.kind === "switch") {

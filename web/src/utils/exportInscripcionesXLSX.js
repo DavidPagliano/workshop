@@ -59,7 +59,7 @@ const formatDate = (val) => {
 
 const formatBool = (val) => (val ? "Sí" : "No");
 
-// ── Todas las columnas del modelo Inscription (sin la foto) ──
+// ── Campos compartidos por los modelos de inscripción (sin la foto) ──
 const columns = [
   { header: "N°", width: 5, center: true, isId: true, get: (_ins, i) => i + 1 },
   { header: "N° Inscripción", width: 14, center: true, isId: true, get: (ins) => ins.inscriptionId ?? "—" },
@@ -117,6 +117,9 @@ const columns = [
   { header: "Familia Ref. - Provincia", width: 20, get: (ins) => ins.fichaMedica?.familiaDeReferencia?.provincia ?? "—" },
   { header: "Familia Ref. - Teléfono", width: 20, get: (ins) => ins.fichaMedica?.familiaDeReferencia?.telefono ?? "—" },
   { header: "Familia Ref. - Otro Teléfono", width: 22, get: (ins) => ins.fichaMedica?.familiaDeReferencia?.otroTelefono || "—" },
+  { header: "¿DNI Frente?", width: 14, center: true, get: (ins) => formatBool(ins.dniFrente) },
+  { header: "¿DNI Dorso?", width: 14, center: true, get: (ins) => formatBool(ins.dniDorso) },
+  { header: "¿Comprobante Pago?", width: 18, center: true, get: (ins) => formatBool(ins.comprobantePago) },
   { header: "Fecha de Inscripción", width: 20, center: true, get: (ins) => formatDate(ins.creado) },
 ];
 
@@ -127,7 +130,7 @@ const columns = [
  *
  * @param {Array} inscriptions
  */
-export const exportInscripcionesXLSX = (inscriptions) => {
+export const exportInscripcionesXLSX = (inscriptions, career = "TSM") => {
   if (!inscriptions || inscriptions.length === 0) return;
 
   const ws = {};
@@ -168,6 +171,6 @@ export const exportInscripcionesXLSX = (inscriptions) => {
   XLSX.utils.book_append_sheet(wb, ws, "Inscripciones");
 
   const fecha = new Date().toISOString().split("T")[0];
-  XLSX.writeFile(wb, `Inscripciones_TSM_2027_${fecha}.xlsx`);
+  XLSX.writeFile(wb, `Inscripciones_${career}_2027_${fecha}.xlsx`);
 };
 

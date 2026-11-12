@@ -11,19 +11,20 @@ import {
 import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 
-import { institutionalTheme } from "../../config/theme";
+import { tsmTheme } from "../../config/theme";
 import { InscriptionForm } from "../../components/inscripcion-tsm2027/InscriptionForm";
 import InscriptionSuccess from "../../components/inscripcion-tsm2027/InscriptionSuccess";
 import { useInscriptionForm } from "../../hooks/useInscriptionForm";
+import { inscriptionTSMService } from "../../services/inscriptionTSMService";
 import logoTsm from "../../assets/images/logo-tsm.png";
 
-const InscriptionPage = () => {
+const InscriptionTSMPage = () => {
   const navigate = useNavigate();
-  const inscription = useInscriptionForm();
+  const inscription = useInscriptionForm(inscriptionTSMService.createInscription);
   const { registration, progress, resetInscription } = inscription;
 
   return (
-    <ThemeProvider theme={institutionalTheme}>
+    <ThemeProvider theme={tsmTheme}>
       <Box
         sx={{
           minHeight: "100vh",
@@ -114,13 +115,13 @@ const InscriptionPage = () => {
                         mb: 1,
                       }}
                     >
-                      Inscripción Ciclo Lectivo 2027
+                      Inscripción Ciclo Lectivo 2027 — TSM
                     </Typography>
                     <Typography
                       variant="subtitle1"
                       sx={{ mb: { xs: 2.5, sm: 3.5 } }}
                     >
-                      Completá los pasos: tu foto, tus datos principales, la ficha médica y la revisión final.
+                      Completá los pasos: tu foto, tus datos principales, fotos de tu DNI, ficha médica, comprobante de pago y confirmación.
                     </Typography>
 
                     <InscriptionForm {...inscription} />
@@ -135,4 +136,4 @@ const InscriptionPage = () => {
   );
 };
 
-export default InscriptionPage;
+export default InscriptionTSMPage;

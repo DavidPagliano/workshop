@@ -6,6 +6,7 @@ import PrivateLayout from "./components/layout/PrivateLayout";
 import HomePage from "./pages/HomePage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { usePageTracking } from "./hooks/usePageTracking";
+import { inscriptionTSPService } from "./services/inscriptionTSPService";
 
 // Carga bajo demanda solo cuando se navega a la sección
 const HomeWorshop = lazy(() => import("./pages/HomeWorshop"));
@@ -28,7 +29,9 @@ const PreCyclePublicRegistrationPage = lazy(() =>
   import("./pages/inscripcion-tsm/PreCyclePublicRegistrationPage")
 );
 const TsmWelcomePage = lazy(() => import("./pages/inscripcion-tsm/TsmWelcomePage"));
-const InscriptionPage = lazy(() => import("./pages/inscripcion-tsm/InscriptionPage"));
+const TspWelcomePage = lazy(() => import("./pages/inscripcion-tsp/TspWelcomePage"));
+const InscriptionTSMPage = lazy(() => import("./pages/inscripcion-tsm/InscriptionPage"));
+const InscriptionTSPPage = lazy(() => import("./pages/inscripcion-tsp/InscriptionTSPPage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/auth/RegisterPage"));
 
@@ -54,7 +57,9 @@ const App = () => {
         {/* ── Landing e Inscripción TSM 2027 ── */}
         <Route path="/" element={<HomePage />} />
         <Route path="/tsm" element={<TsmWelcomePage />} />
-        <Route path="/inscripcion-tsm" element={<InscriptionPage />} />
+        <Route path="/tsp" element={<TspWelcomePage />} />
+        <Route path="/inscripcion-tsm" element={<InscriptionTSMPage />} />
+        <Route path="/inscripcion-tsp" element={<InscriptionTSPPage />} />
 
         {/* ── Rutas del Workshop (/workshop/*) ── */}
         <Route path="/workshop">
@@ -101,6 +106,10 @@ const App = () => {
               >
                 <Route path="pre-ciclo" element={<CyclePreinscriptionPage />} />
                 <Route path="inscripciones" element={<CycleInscriptionPage />} />
+                <Route
+                  path="inscripciones-tsp"
+                  element={<CycleInscriptionPage career="TSP" service={inscriptionTSPService} />}
+                />
               </Route>
 
               {/* Asistencia: admin, director y staff_registracion */}
