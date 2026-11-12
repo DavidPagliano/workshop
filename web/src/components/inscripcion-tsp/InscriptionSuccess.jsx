@@ -235,7 +235,7 @@ export const InscriptionSuccess = ({ registration, onReset, onExit }) => {
           onClick={onExit}
           sx={{ flex: 1, minHeight: 48 }}
         >
-          Volver al inicio
+          Volver a Bienvenida
         </Button>
         <Button
           variant="contained"

@@ -50,7 +50,7 @@ const InscriptionTSMPage = () => {
             }}
           >
             <Button variant="outlined" color="primary" onClick={() => navigate("/tsm")}>
-              ← Volver al inicio
+              ← Volver
             </Button>
             <Box
               component="img"

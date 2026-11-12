@@ -56,7 +56,7 @@ const InscriptionTSPPage = () => {
               color="primary"
               onClick={() => navigate("/tsp")}
             >
-              ← Volver al inicio
+              ← Volver
             </Button>
             <Chip
               label="TSP · 2027"

@@ -163,7 +163,7 @@ const InscriptionSuccess = ({ registration, onReset, onExit }) => {
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }}>
         <Button variant="outlined" color="primary" onClick={onExit} sx={{ flex: 1, minHeight: 48 }}>
-          Volver al inicio
+          Volver a Bienvenida
         </Button>
         <Button variant="contained" color="primary" onClick={onReset} sx={{ flex: 1, minHeight: 48 }}>
           Nueva inscripción

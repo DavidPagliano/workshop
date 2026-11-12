@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardContent,
-  Chip,
   Container,
   Fade,
   Typography,
@@ -140,32 +139,6 @@ const TsmWelcomePage = () => {
         }}
       >
         <Container maxWidth="md" disableGutters>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              boxSizing: "border-box",
-              px: { xs: 1, sm: 0.5 },
-              mb: { xs: 2, sm: 2.5 },
-            }}
-          >
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => navigate("/")}
-            >
-              ← Volver al inicio
-            </Button>
-            <Chip
-              label="TSM · 2027"
-              color="primary"
-              variant="outlined"
-              sx={{ fontWeight: 700, letterSpacing: "0.05em" }}
-            />
-          </Box>
-
           <Fade in timeout={500}>
             <Card>
               <CardContent sx={{ p: { xs: 2.5, sm: 4, md: 4.5 } }}>
