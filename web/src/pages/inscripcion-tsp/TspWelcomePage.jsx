@@ -15,10 +15,10 @@ import MedicalInformationOutlinedIcon from "@mui/icons-material/MedicalInformati
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
 import { useNavigate } from "react-router-dom";
 
 import { tspTheme } from "../../config/theme";
+import logoTsp from "../../assets/images/logo-tsp.jpg";
 
 const STEPS_PREVIEW = [
   {
@@ -152,22 +152,17 @@ const TspWelcomePage = () => {
                   }}
                 >
                   <Box
-                    sx={(theme) => ({
-                      width: { xs: 52, sm: 60 },
-                      height: { xs: 52, sm: 60 },
+                    component="img"
+                    src={logoTsp}
+                    alt="Logo TSP"
+                    sx={{
+                      height: { xs: 64, sm: 80 },
+                      width: { xs: 64, sm: 80 },
+                      objectFit: "contain",
                       borderRadius: 2,
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
-                      color: "primary.main",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
                       mb: 1.5,
-                      border: "2px solid",
-                      borderColor: alpha(theme.palette.primary.main, 0.25),
-                    })}
-                  >
-                    <NewspaperIcon sx={{ fontSize: { xs: 28, sm: 34 } }} />
-                  </Box>
+                    }}
+                  />
 
                   <Typography
                     variant="overline"
