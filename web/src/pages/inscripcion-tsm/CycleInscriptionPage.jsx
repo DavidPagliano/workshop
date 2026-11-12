@@ -141,6 +141,9 @@ export const CycleInscriptionPage = ({ career = "TSM", service = inscriptionTSMS
                 flex: { xs: "1 1 auto", sm: "0 0 auto" },
                 minWidth: 0,
                 whiteSpace: "nowrap",
+                px: { xs: 1.5, sm: 2.5 },
+                py: { xs: 0.75, sm: 1 },
+                fontSize: { xs: "0.75rem", sm: "0.85rem" },
               },
             }}
           >

@@ -444,7 +444,14 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                         size="small"
                         startIcon={<OpenInNewIcon />}
                         onClick={() => openBase64InNewTab(data.dniFrente)}
-                        sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                        sx={{
+                          fontSize: "0.75rem",
+                          textTransform: "none",
+                          py: 0.5,
+                          px: 1.5,
+                          minWidth: 0,
+                          whiteSpace: "nowrap",
+                        }}
                       >
                         Ver completo
                       </Button>
@@ -523,7 +530,14 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                         size="small"
                         startIcon={<OpenInNewIcon />}
                         onClick={() => openBase64InNewTab(data.dniDorso)}
-                        sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                        sx={{
+                          fontSize: "0.75rem",
+                          textTransform: "none",
+                          py: 0.5,
+                          px: 1.5,
+                          minWidth: 0,
+                          whiteSpace: "nowrap",
+                        }}
                       >
                         Ver completo
                       </Button>
@@ -603,8 +617,10 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "stretch", sm: "center" },
                   justifyContent: "space-between",
+                  gap: 1.5,
                   mb: 2,
                 }}
               >
@@ -615,12 +631,26 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                   </Typography>
                 </Box>
                 {data.comprobantePago && (
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      width: { xs: "100%", sm: "auto" },
+                    }}
+                  >
                     <Button
                       size="small"
                       startIcon={<OpenInNewIcon />}
                       onClick={() => openBase64InNewTab(data.comprobantePago)}
-                      sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                      sx={{
+                        flex: { xs: 1, sm: "0 0 auto" },
+                        fontSize: "0.75rem",
+                        textTransform: "none",
+                        py: 0.75,
+                        px: { xs: 1.5, sm: 2 },
+                        minWidth: 0,
+                        whiteSpace: "nowrap",
+                      }}
                     >
                       Abrir
                     </Button>
@@ -633,7 +663,15 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                           `Comprobante_${data.dni || "pago"}.${isPdfReceipt ? "pdf" : "jpg"}`,
                         )
                       }
-                      sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                      sx={{
+                        flex: { xs: 1, sm: "0 0 auto" },
+                        fontSize: "0.75rem",
+                        textTransform: "none",
+                        py: 0.75,
+                        px: { xs: 1.5, sm: 2 },
+                        minWidth: 0,
+                        whiteSpace: "nowrap",
+                      }}
                     >
                       Descargar
                     </Button>
@@ -673,22 +711,33 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                     <Box
                       sx={{
                         display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
                         justifyContent: "center",
                         gap: 1.5,
-                        flexWrap: "wrap",
+                        width: "100%",
+                        maxWidth: 420,
+                        mx: "auto",
                       }}
                     >
                       <Button
                         variant="contained"
                         color="primary"
+                        fullWidth
                         startIcon={<OpenInNewIcon />}
                         onClick={() => openBase64InNewTab(data.comprobantePago)}
+                        sx={{
+                          py: 1,
+                          px: 2,
+                          fontSize: "0.8rem",
+                          whiteSpace: "nowrap",
+                        }}
                       >
-                        Abrir PDF en pestaña
+                        Abrir PDF
                       </Button>
                       <Button
                         variant="outlined"
                         color="primary"
+                        fullWidth
                         startIcon={<DownloadIcon />}
                         onClick={() =>
                           downloadBase64(
@@ -696,6 +745,12 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                             `Comprobante_${data.dni || "pago"}.pdf`,
                           )
                         }
+                        sx={{
+                          py: 1,
+                          px: 2,
+                          fontSize: "0.8rem",
+                          whiteSpace: "nowrap",
+                        }}
                       >
                         Descargar PDF
                       </Button>
