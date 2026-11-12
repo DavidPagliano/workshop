@@ -228,15 +228,17 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
         },
         paper: {
           sx: {
-            border: "1.5px solid",
+            border: isMobile ? "none" : "1.5px solid",
             borderColor: "primary.main",
-            boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
+            boxShadow: isMobile ? "none" : "4px 4px 0px rgba(213, 0, 186, 0.5)",
             borderRadius: 0,
-            bgcolor: "background.paper",
-            maxHeight: isMobile ? "100vh" : "calc(100vh - 32px)",
-            height: isMobile ? "100vh" : "auto",
+            bgcolor: "#071052",
+            height: isMobile ? "100%" : "auto",
+            maxHeight: isMobile ? "100%" : "calc(100vh - 32px)",
+            m: isMobile ? 0 : 2,
             display: "flex",
             flexDirection: "column",
+            overflow: "hidden",
           },
         },
       }}
@@ -248,7 +250,11 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
           justifyContent: "space-between",
           borderBottom: "1px solid",
           borderColor: "divider",
-          pb: 1.5,
+          py: { xs: 1.25, sm: 1.5 },
+          px: { xs: 2, sm: 3 },
+          flexShrink: 0,
+          bgcolor: "#071052",
+          zIndex: 10,
         }}
       >
         <Box
@@ -260,6 +266,7 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
             minWidth: 0,
             pr: 1,
             fontWeight: 700,
+            fontSize: { xs: "0.95rem", sm: "1.2rem" },
           }}
         >
           <PersonIcon sx={{ color: "primary.main" }} />
@@ -281,9 +288,21 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
         <IconButton
           onClick={handleClose}
           size="small"
-          sx={{ color: "text.secondary" }}
+          aria-label="Cerrar modal"
+          sx={{
+            color: "#FFFFFF",
+            bgcolor: "rgba(0, 180, 255, 0.15)",
+            border: "1px solid rgba(0, 180, 255, 0.4)",
+            borderRadius: 1,
+            "&:hover": {
+              bgcolor: "rgba(213, 0, 186, 0.3)",
+              borderColor: "secondary.main",
+            },
+            p: 0.75,
+            flexShrink: 0,
+          }}
         >
-          <CloseIcon />
+          <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
 
@@ -292,8 +311,9 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
           pt: { xs: 2, sm: 2.5 },
           px: { xs: 2, sm: 3 },
           overflowY: "auto",
-          flex: 1,
+          flex: "1 1 auto",
           minHeight: 0,
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Cabecera del Inscripto */}
@@ -804,10 +824,11 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
       <DialogActions
         sx={{
           px: { xs: 2, sm: 3 },
-          pb: { xs: 2, sm: 2.5 },
-          pt: 1.5,
+          py: 1.5,
           borderTop: "1px solid",
           borderColor: "divider",
+          flexShrink: 0,
+          bgcolor: "#071052",
         }}
       >
         <Button

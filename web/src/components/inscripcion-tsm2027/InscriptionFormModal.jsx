@@ -302,15 +302,17 @@ export const InscriptionFormModal = ({
         transition: { timeout: 300 },
         paper: {
           sx: {
-            border: "1.5px solid",
+            border: isMobile ? "none" : "1.5px solid",
             borderColor: "primary.main",
-            boxShadow: "4px 4px 0px rgba(213, 0, 186, 0.5)",
+            boxShadow: isMobile ? "none" : "4px 4px 0px rgba(213, 0, 186, 0.5)",
             borderRadius: 0,
-            bgcolor: "background.paper",
-            maxHeight: isMobile ? "100vh" : "calc(100vh - 32px)",
-            height: isMobile ? "100vh" : "auto",
+            bgcolor: "#071052",
+            height: isMobile ? "100%" : "auto",
+            maxHeight: isMobile ? "100%" : "calc(100vh - 32px)",
+            m: isMobile ? 0 : 2,
             display: "flex",
             flexDirection: "column",
+            overflow: "hidden",
           },
         },
       }}
@@ -322,7 +324,10 @@ export const InscriptionFormModal = ({
           justifyContent: "space-between",
           borderBottom: "1px solid",
           borderColor: "divider",
-          pb: 1.5,
+          py: { xs: 1.25, sm: 1.5 },
+          px: { xs: 2, sm: 3 },
+          flexShrink: 0,
+          bgcolor: "#071052",
         }}
       >
         <Box sx={{ fontWeight: 700, minWidth: 0, pr: 1 }}>
