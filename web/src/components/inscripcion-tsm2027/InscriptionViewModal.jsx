@@ -25,6 +25,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import BadgeIcon from "@mui/icons-material/Badge";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   MEDICAL_SECTIONS,
   PERSONAL_SECTIONS,
@@ -118,13 +119,77 @@ const SectionDetail = ({ section, data }) => (
   </Box>
 );
 
+const dataUrlToBlob = (dataUrl) => {
+  if (!dataUrl || typeof dataUrl !== "string") return null;
+  if (!dataUrl.startsWith("data:")) return null;
+  try {
+    const parts = dataUrl.split(",");
+    const mimeMatch = parts[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+    const b64Data = parts[1] || "";
+    const binaryStr = atob(b64Data);
+    const len = binaryStr.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+    return new Blob([bytes], { type: mime });
+  } catch (e) {
+    console.error("Error convirtiendo data URI a Blob:", e);
+    return null;
+  }
+};
+
 const openBase64InNewTab = (dataUrl) => {
   if (!dataUrl) return;
-  const win = window.open();
-  if (win) {
-    win.document.write(
-      `<iframe src="${dataUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`,
-    );
+
+  if (
+    dataUrl.startsWith("http://") ||
+    dataUrl.startsWith("https://") ||
+    dataUrl.startsWith("blob:")
+  ) {
+    window.open(dataUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  const blob = dataUrlToBlob(dataUrl);
+  if (blob) {
+    const blobUrl = URL.createObjectURL(blob);
+    const newWindow = window.open(blobUrl, "_blank");
+    if (!newWindow) {
+      downloadBase64(dataUrl, "documento");
+    } else {
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+    }
+  } else {
+    const win = window.open();
+    if (win) {
+      win.location.href = dataUrl;
+    }
+  }
+};
+
+const downloadBase64 = (dataUrl, filename = "documento") => {
+  if (!dataUrl) return;
+  try {
+    let url = dataUrl;
+    let shouldRevoke = false;
+    const blob = dataUrlToBlob(dataUrl);
+    if (blob) {
+      url = URL.createObjectURL(blob);
+      shouldRevoke = true;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    if (shouldRevoke) {
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+  } catch (err) {
+    console.error("Error al descargar archivo:", err);
   }
 };
 
@@ -550,14 +615,29 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                   </Typography>
                 </Box>
                 {data.comprobantePago && (
-                  <Button
-                    size="small"
-                    startIcon={<OpenInNewIcon />}
-                    onClick={() => openBase64InNewTab(data.comprobantePago)}
-                    sx={{ fontSize: "0.75rem", textTransform: "none" }}
-                  >
-                    Abrir en nueva pestaña
-                  </Button>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      onClick={() => openBase64InNewTab(data.comprobantePago)}
+                      sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                    >
+                      Abrir
+                    </Button>
+                    <Button
+                      size="small"
+                      startIcon={<DownloadIcon />}
+                      onClick={() =>
+                        downloadBase64(
+                          data.comprobantePago,
+                          `Comprobante_${data.dni || "pago"}.${isPdfReceipt ? "pdf" : "jpg"}`,
+                        )
+                      }
+                      sx={{ fontSize: "0.75rem", textTransform: "none" }}
+                    >
+                      Descargar
+                    </Button>
+                  </Box>
                 )}
               </Box>
 
@@ -590,14 +670,36 @@ export const InscriptionViewModal = ({ open, onClose, data }) => {
                     >
                       El comprobante fue cargado en formato PDF.
                     </Typography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<OpenInNewIcon />}
-                      onClick={() => openBase64InNewTab(data.comprobantePago)}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: 1.5,
+                        flexWrap: "wrap",
+                      }}
                     >
-                      Ver / Descargar PDF
-                    </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<OpenInNewIcon />}
+                        onClick={() => openBase64InNewTab(data.comprobantePago)}
+                      >
+                        Abrir PDF en pestaña
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<DownloadIcon />}
+                        onClick={() =>
+                          downloadBase64(
+                            data.comprobantePago,
+                            `Comprobante_${data.dni || "pago"}.pdf`,
+                          )
+                        }
+                      >
+                        Descargar PDF
+                      </Button>
+                    </Box>
                   </Box>
                 ) : (
                   <Box sx={{ textAlign: "center" }}>
